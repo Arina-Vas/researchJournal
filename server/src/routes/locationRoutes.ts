@@ -1,6 +1,5 @@
 import { Router } from 'express';
-import {getLocationById, getLocations} from "../controllers/locationController";
-
+import { getLocationById, getLocations } from '../controllers/locationController.js';
 
 const router = Router();
 
