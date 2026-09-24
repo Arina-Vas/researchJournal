@@ -1,9 +1,16 @@
 import { Schema, model, Document } from 'mongoose';
 
+interface Session {
+  refreshToken: string;
+  userAgent?: string;
+  ip?: string;
+  createdAt: Date;
+}
+
 export interface User extends Document {
   email: string;
   passwordHash: string;
-  refreshTokens: string[];
+  refreshTokens: Session[];
 }
 
 const UserSchema = new Schema<User>(

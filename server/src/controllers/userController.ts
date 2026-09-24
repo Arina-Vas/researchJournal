@@ -1,36 +1,20 @@
 import { type Request, type Response } from 'express';
-import { Types } from 'mongoose';
 import { User } from '../models/User.js';
 import bcrypt from 'bcrypt';
 import { generateToken, verifyRefreshToken } from '../utils/tokens.js';
+import { AuthDTO, AuthResponse, AuthRequest, JWTPayload } from '../types/user.js';
 
-export interface JWTPayload {
-  userId: string;
-}
-
-export interface AuthRequest extends Request {
-  user?: JWTPayload;
-}
-
-interface UserBody {
-  email: string;
-  password: string;
-}
-
-export interface AuthResponse {
-  message: string;
-  accessToken: string;
-  refreshToken: string;
-  user: {
-    id: string;
-    email: string;
-  };
-}
-
+const MAX_SESSIONS = 5;
 const SALT_ROUNDS = 10;
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict' as const,
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
+};
 
 export const registerUser = async (
-  req: Request<{}, {}, UserBody>,
+  req: Request<{}, {}, AuthDTO>,
   res: Response<AuthResponse | { message: string }>,
 ): Promise<void> => {
   try {
@@ -44,6 +28,7 @@ export const registerUser = async (
     const user = await User.findOne({ email });
     if (user) {
       res.status(400).json({ message: 'User already exists' });
+      return;
     }
 
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
@@ -54,14 +39,21 @@ export const registerUser = async (
       refreshTokens: [],
     });
 
-    const tokens = generateToken({ userId: newUser.id.toString() });
+    const { refreshToken, accessToken } = generateToken({ userId: newUser.id.toString() });
 
-    newUser.refreshTokens.push(tokens.refreshToken);
+    newUser.refreshTokens.push({
+      refreshToken,
+      userAgent: req.headers['user-agent'] || '',
+      ip: req.ip || '',
+      createdAt: new Date(),
+    });
     await newUser.save();
+
+    res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
 
     res.status(201).json({
       message: 'User successfully registered',
-      ...tokens,
+      accessToken,
       user: {
         id: newUser.id.toString(),
         email: newUser.email,
@@ -73,7 +65,7 @@ export const registerUser = async (
 };
 
 export const loginUser = async (
-  req: Request<{}, {}, UserBody>,
+  req: Request<{}, {}, AuthDTO>,
   res: Response<AuthResponse | { message: string }>,
 ): Promise<void> => {
   try {
@@ -97,18 +89,41 @@ export const loginUser = async (
       return;
     }
 
-    const tokens = generateToken({ userId: user.id.toString() });
+    const { refreshToken, accessToken } = generateToken({ userId: user.id.toString() });
 
-    const MAX_SESSIONS = 5;
-    user.refreshTokens.push(tokens.refreshToken);
-    if (user.refreshTokens.length > MAX_SESSIONS) {
-      user.refreshTokens = user.refreshTokens.slice(-MAX_SESSIONS);
+    // check session exist
+    const currentUserAgent = req.headers['user-agent'] || 'unknown';
+    const currentIp = req.ip || 'unknown';
+
+    const sessionIndex = user.refreshTokens.findIndex(i => i.ip === currentIp && i.userAgent === currentUserAgent);
+
+    if (sessionIndex !== -1) {
+      user.refreshTokens[sessionIndex] = {
+        ...user.refreshTokens[sessionIndex],
+        refreshToken,
+        createdAt: new Date(),
+      };
+    } else {
+      if (user.refreshTokens.length >= MAX_SESSIONS) {
+        user.refreshTokens.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+        user.refreshTokens.shift();
+      }
+
+      user.refreshTokens.push({
+        refreshToken,
+        userAgent: req.headers['user-agent'] || '',
+        ip: req.ip || '',
+        createdAt: new Date(),
+      });
     }
+
     await user.save();
+
+    res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
 
     res.status(200).json({
       message: 'User successfully logged in',
-      ...tokens,
+      accessToken,
       user: { id: user.id.toString(), email: user.email },
     });
   } catch (error) {
@@ -122,20 +137,21 @@ export const logoutUser = async (
   res: Response<{ message: string }>,
 ): Promise<void> => {
   try {
-    const { refreshToken } = req.body;
-
+    const refreshToken = req.cookies?.refreshToken;
     if (refreshToken) {
-      // await User.updateOne({ refreshTokens: refreshToken }, { $pull: { refreshTokens: refreshToken } });
-
-      const userWhoLoggedOut = await User.findOneAndUpdate(
-        { refreshTokens: refreshToken },
-        { $pull: { refreshTokens: refreshToken } },
-        { new: false },
+      await User.updateOne(
+        { 'refreshTokens.refreshToken': refreshToken },
+        { $pull: { refreshTokens: { refreshToken } } },
       );
 
-      console.log(`Вышел пользователь: ${userWhoLoggedOut.email} (ID: ${userWhoLoggedOut._id})`);
+      // const userWhoLoggedOut = await User.findOneAndUpdate(
+      //   { 'refreshTokens.refreshToken': refreshToken },
+      //   { $pull: { refreshTokens: { refreshToken } } },
+      //   { new: false },
+      // );
     }
 
+    res.clearCookie('refreshToken', COOKIE_OPTIONS);
     res.json({ message: 'User successfully logged out' });
   } catch (error) {
     console.error('Login error details:', error);
@@ -145,30 +161,41 @@ export const logoutUser = async (
 
 export const refreshToken = async (req: Request, res: Response): Promise<void> => {
   try {
-    const refreshToken = req.cookies.refreshToken;
+    const refreshToken = req.cookies?.refreshToken;
 
     if (!refreshToken) {
-      res.status(400).json({ message: 'Refresh token is invalid or expired' });
+      res.status(401).json({ message: 'Refresh token not provided' });
+      return;
     }
 
-    const userId = verifyRefreshToken(refreshToken);
+    const payload = verifyRefreshToken(refreshToken);
 
-    if (!userId) {
-      res.status(400).json({ message: 'Refresh token is invalid or expired' });
+    if (!payload || !payload.userId) {
+      res.status(401).json({ message: 'Refresh token is invalid or expired' });
+      return;
     }
 
-    const user = await User.findById(userId);
+    const user = await User.findOne({ _id: payload.userId, 'refreshTokens.refreshToken': refreshToken });
 
-    user.refreshTokens = user.refreshTokens.filter(t => t !== refreshToken);
+    if (!user) {
+      res.status(403).json({ message: 'Invalid refresh token' });
+      return;
+    }
 
-    const tokens = generateToken({ userId: userId.toString() });
+    const tokens = generateToken({ userId: payload.userId });
 
-    user.refreshTokens.push(tokens.refreshToken);
+    user.refreshTokens = user.refreshTokens.map(session =>
+      session.refreshToken === refreshToken
+        ? { ...session, refreshToken: tokens.refreshToken, createdAt: new Date() }
+        : session,
+    );
+
     await user.save();
 
-    res.json(tokens);
+    res.cookie('refreshToken', tokens.refreshToken, COOKIE_OPTIONS);
+    res.status(200).json({ accessToken: tokens.accessToken });
   } catch (error) {
-    res.status(403).json({ message: 'Refresh token is invalid or expired' });
+    res.status(500).json({ message: 'Server error during token refresh' });
   }
 };
 
@@ -176,7 +203,7 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
   try {
     const { id } = req.query;
 
-    if (!id || !Types.ObjectId.isValid(id)) {
+    if (!id) {
       res.status(400).json({ message: 'Incorrect id of user' });
       return;
     }
