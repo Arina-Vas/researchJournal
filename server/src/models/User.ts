@@ -27,9 +27,18 @@ const UserSchema = new Schema<User>(
       type: String,
       required: [true, 'Password is required'],
       minlength: [8, 'Password must be at least 8 characters'],
-      select: true,
+      select: false,
     },
-    refreshTokens: { type: [String], default: [] },
+    refreshTokens: {
+      type: [
+        {
+          refreshToken: { type: String, required: true },
+          userAgent: { type: String },
+          ip: { type: String },
+          createdAt: { type: Date, default: Date.now },
+        },
+      ],
+    },
   },
   { timestamps: true },
 );

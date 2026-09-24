@@ -2,7 +2,7 @@ import { type Request, type Response } from 'express';
 import { User } from '../models/User.js';
 import bcrypt from 'bcrypt';
 import { generateToken, verifyRefreshToken } from '../utils/tokens.js';
-import { AuthDTO, AuthResponse, AuthRequest, JWTPayload } from '../types/user.js';
+import { type AuthDTO, type AuthResponse, type AuthRequest, type JWTPayload } from '../types/user.js';
 
 const MAX_SESSIONS = 5;
 const SALT_ROUNDS = 10;
@@ -25,7 +25,7 @@ export const registerUser = async (
       return;
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+passwordHash');
     if (user) {
       res.status(400).json({ message: 'User already exists' });
       return;
@@ -76,7 +76,7 @@ export const loginUser = async (
       return;
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+passwordHash');
 
     if (!user) {
       res.status(400).json({ message: 'Invalid email or password' });
