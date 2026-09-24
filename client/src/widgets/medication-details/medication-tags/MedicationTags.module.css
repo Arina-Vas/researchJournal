@@ -1,0 +1,17 @@
+.tagList {
+  max-width: 400px;
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tag {
+  background-color: var(--color-lavender-gray);
+  min-width: 130px;
+
+  border-radius: 8px;
+  padding: 4px 12px;
+  width: 95px;
+}

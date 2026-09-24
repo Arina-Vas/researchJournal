@@ -1,0 +1,23 @@
+.paginationContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.pages,
+.pageSize {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nextBtn {
+  svg {
+    transform: rotate(-90deg);
+  }
+}
+
+.prevBtn {
+  svg {
+    transform: rotate(90deg);
+  }
+}

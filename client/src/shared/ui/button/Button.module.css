@@ -1,0 +1,117 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-primary-blue);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: var(--color-medium-gray);
+}
+
+/* === Sizes === */
+.sm {
+  padding: 6px 12px;
+  font-size: var(--fs-sm);
+  height: 32px;
+}
+
+.md {
+  padding: 10px 16px;
+  font-size: var(--fs-base);
+  height: 40px;
+}
+
+.lg {
+  padding: 12px 24px;
+  font-size: var(--fs-large);
+  height: 48px;
+}
+
+/* === Variants === */
+.primary {
+  background-color: var(--color-primary-blue);
+  color: var(--color-white);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--color-deep-navy);
+}
+
+.secondary {
+  background-color: var(--color-periwinkle);
+  color: var(--color-white);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--color-dark-blue);
+}
+
+.outline {
+  background-color: transparent;
+  border-color: var(--color-periwinkle);
+  color: var(--color-primary-blue);
+}
+
+.outline:hover:not(:disabled) {
+  background-color: var(--color-periwinkle);
+  border-color: var(--color-dark-blue);
+}
+
+.text {
+  background-color: transparent;
+  color: var(--color-primary-blue);
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.text:hover:not(:disabled) {
+  color: var(--color-deep-navy);
+}
+
+/* === Modifiers === */
+.fullWidth {
+  width: 100%;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.active {
+  background-color: var(--color-primary-blue);
+  color: var(--color-white);
+}
+
+/* === Loading Spinner === */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

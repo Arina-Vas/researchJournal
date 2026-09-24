@@ -1,0 +1,50 @@
+.row {
+  align-items: center;
+  justify-content: start;
+  border-bottom: 1px solid var(--color-light-gray);
+  height: 60px;
+
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--color-ligth-gray);
+  }
+}
+
+.item {
+  vertical-align: middle;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.nameCell {
+  color: var(--color-primary-blue);
+  font-weight: 600;
+}
+
+/* Process Progress Bar */
+.processWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 120px;
+}
+
+.processText {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+
+.progressBarTrack {
+  width: 100%;
+  height: 4px;
+  background-color: var(--color-lavender-gray);
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background-color: var(--color-green);
+  transition: width 0.3s ease;
+}
