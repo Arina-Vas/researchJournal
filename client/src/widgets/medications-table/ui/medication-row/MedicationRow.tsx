@@ -1,7 +1,7 @@
 import s from './MedicationRow.module.css';
 import Success from '@/shared/assets/images/Success.svg';
 import Error from '@/shared/assets/images/Error.svg';
-import { Medication, MedicationItem } from '../../../../entities/medications/lib/type';
+import { MedicationItem } from '../../../../entities/medications/lib/type';
 import { useNavigate } from '@tanstack/react-router';
 import { formatDate } from '../../../../shared/utils/formatDate';
 

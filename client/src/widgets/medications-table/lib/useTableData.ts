@@ -27,7 +27,7 @@ type UseTableDataResult = {
 
 export const useTableData = (
   filters: MedicationFilters,
-  sortBy: string,
+  sortBy: MedicationFilters['sortBy'],
   sortDirection: 'asc' | 'desc',
 ): UseTableDataResult => {
   const { name, successReaction, location, startDate, endDate } = filters;

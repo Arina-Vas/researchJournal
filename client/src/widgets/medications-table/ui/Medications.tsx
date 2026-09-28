@@ -12,10 +12,10 @@ import { Pagination } from '../../../shared/ui/pagination/Pagination';
 export const Medications = () => {
   const [filters, setFilters] = useState<MedicationFilters>({});
 
-  const [sortBy, setSortBy] = useState<string>('startDate');
+  const [sortBy, setSortBy] = useState<MedicationFilters['sortBy']>('startDate');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-  const onSort = (value: string) => {
+  const onSort = (value: MedicationFilters['sortBy']) => {
     setSortBy(value);
     setSortDirection(p => (p === 'asc' ? 'desc' : 'asc'));
   };

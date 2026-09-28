@@ -24,14 +24,14 @@ export interface Medication {
   startDate: string;
   successReaction: boolean;
   approvalRate: number;
-  locationId: string;
+  location: string;
   process: Process;
   participants: Participants;
 }
 
 export interface MedicationFilters {
   name?: string;
-  sortBy?: string;
+  sortBy?: 'name' | 'location' | 'startDate' | 'endDate' | 'successReaction';
   sortDirection?: 'asc' | 'desc';
   location?: string;
   startDate?: string;

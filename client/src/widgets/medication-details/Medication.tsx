@@ -19,7 +19,7 @@ type Props = {
 };
 export const Medication = ({ id }: Props) => {
   const { data, isLoading: isMedicationLoading } = useMedicationById(id);
-  const { data: location, isLoading: isLocationLoading } = useFetchLocationById(data?.locationId || '');
+  const { data: location, isLoading: isLocationLoading } = useFetchLocationById(data?.location || '');
 
   const isLoading = isMedicationLoading || isLocationLoading;
 

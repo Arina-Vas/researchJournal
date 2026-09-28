@@ -24,7 +24,7 @@ export interface Medication extends Document {
   startDate: string;
   successReaction: boolean;
   approvalRate: number;
-  location: Types.ObjectId;
+  location: string;
   process: Process;
   participants: Participants;
 }
@@ -42,7 +42,7 @@ const medicationSchema = new Schema<Medication>({
   startDate: { type: String, required: true },
   successReaction: Boolean,
   approvalRate: Number,
-  location: { type: Schema.Types.ObjectId, ref: 'Location', required: true },
+  location: { type: String, ref: 'Location', required: true },
   process: {
     current: Number,
     total: Number,
