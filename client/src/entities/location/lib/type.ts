@@ -10,5 +10,5 @@ export interface Location {
   id: string;
   clinicName: string;
   address: LocationAddress;
-  coordinates: { lat: string; lng: string };
+  coordinate: { lat: string; lng: string };
 }

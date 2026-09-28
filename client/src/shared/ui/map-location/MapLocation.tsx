@@ -4,13 +4,13 @@ import { memo } from 'react';
 import { useTheme } from '../../../app/providers/theme-provider/useTheme';
 
 type Props = {
-  coordinates: { lat: string; lng: string } | null;
+  coordinate: { lat: string; lng: string } | null;
   mapId: string;
 };
-export const MapLocation = memo(({ coordinates, mapId }: Props) => {
+export const MapLocation = memo(({ coordinate, mapId }: Props) => {
   const { theme } = useTheme();
 
-  if (!coordinates) return null;
+  if (!coordinate) return null;
 
   return (
     <Map
@@ -25,9 +25,9 @@ export const MapLocation = memo(({ coordinates, mapId }: Props) => {
       streetViewControl={false}
       mapId={mapId}
       defaultZoom={12}
-      defaultCenter={coordinates}
+      defaultCenter={coordinate}
     >
-      <AdvancedMarker clickable={false} position={coordinates}>
+      <AdvancedMarker clickable={false} position={coordinate}>
         <Pin background={'#3874ff'} glyphColor={'#000'} borderColor={'#000'} />
       </AdvancedMarker>
     </Map>

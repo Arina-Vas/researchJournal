@@ -27,7 +27,7 @@ export const Medication = ({ id }: Props) => {
 
   const handleGetDirection = useCallback(() => {
     if (!location) return;
-    const { lat, lng } = location.coordinates;
+    const { lat, lng } = location.coordinate;
 
     const link = `${DIRECTION_BASE_URL}${lat},${lng}`;
 
@@ -51,7 +51,7 @@ export const Medication = ({ id }: Props) => {
         </div>
         <div className={s.section}>
           <span className={s.title}>Location</span>
-          <MapLocation mapId={MAP_ID} coordinates={location?.coordinates || null} />
+          <MapLocation mapId={MAP_ID} coordinate={location?.coordinate || null} />
           <span>
             {building} {street}, {city}, {country}
           </span>
