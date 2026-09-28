@@ -1,4 +1,4 @@
-import { Schema, model, Types } from 'mongoose';
+import { Schema, model, Types, Document } from 'mongoose';
 
 export interface Process {
   current: number;
@@ -24,7 +24,7 @@ export interface Medication extends Document {
   startDate: string;
   successReaction: boolean;
   approvalRate: number;
-  locationId: Types.ObjectId;
+  location: Types.ObjectId;
   process: Process;
   participants: Participants;
 }
@@ -42,7 +42,7 @@ const medicationSchema = new Schema<Medication>({
   startDate: { type: String, required: true },
   successReaction: Boolean,
   approvalRate: Number,
-  locationId: { type: Schema.Types.ObjectId, ref: 'Location', required: true },
+  location: { type: Schema.Types.ObjectId, ref: 'Location', required: true },
   process: {
     current: Number,
     total: Number,

@@ -8,7 +8,7 @@ export interface AuthRequest extends Request {
   user?: JWTPayload;
 }
 
-interface AuthDTO {
+export interface AuthDTO {
   email: string;
   password: string;
 }
