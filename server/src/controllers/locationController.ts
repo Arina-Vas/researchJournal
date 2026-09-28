@@ -1,5 +1,6 @@
 import { type Request, type Response } from 'express';
 import { Location } from '../models/Location.js';
+import { Types } from 'mongoose';
 
 export const getLocations = async (req: Request, res: Response) => {
   try {
@@ -14,7 +15,7 @@ export const getLocations = async (req: Request, res: Response) => {
 export const getLocationById = async (req: Request<{ locationId: string }>, res: Response) => {
   try {
     const { locationId } = req.params;
-    const location = await Location.findOne({ id: locationId });
+    const location = await Location.findOne({ _id: new Types.ObjectId(locationId) });
 
     res.json(location);
   } catch (error) {

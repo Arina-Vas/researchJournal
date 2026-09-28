@@ -7,7 +7,6 @@ import type {
   MedicationsDTO,
 } from '../types/medication.js';
 import { buildFilters } from '../utils/buildFilters.js';
-import { Location } from '../models/Location.js';
 
 export const getMedications = async (
   req: Request<{}, {}, {}, MedicationsDTO>,
