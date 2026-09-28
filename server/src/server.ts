@@ -4,6 +4,7 @@ dotenv.config();
 
 import express, { type Express, type Request, type Response } from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { connectDB } from './db.js';
 import medicationRoutes from './routes/medicationRoutes.js';
 import locationRoutes from './routes/locationRoutes.js';
@@ -19,6 +20,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(cookieParser());
 
 const port = process.env.PORT || '3001';
 
@@ -29,10 +31,6 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/api/medications', medicationRoutes);
 app.use('/api/locations', locationRoutes);
 app.use('/api/auth', authRoutes);
-
-// app.listen(port, () => {
-//   console.log(`Example app listening on port ${port}`);
-// });
 
 const startServer = async () => {
   await connectDB();

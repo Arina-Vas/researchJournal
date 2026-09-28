@@ -40,7 +40,7 @@ export const getMedications = async (
     }
 
     res.status(200).json({
-      data: documents,
+      data: documents as unknown as MedicationResponseDTO[],
       pagination: {
         page: pageNum,
         pageSize: limitNum,

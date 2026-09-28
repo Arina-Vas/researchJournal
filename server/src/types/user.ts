@@ -13,11 +13,18 @@ export interface AuthDTO {
   password: string;
 }
 
+export interface UserDTO {
+  id: string;
+  email: string;
+}
+
 export interface AuthResponse {
   message: string;
   accessToken: string;
-  user: {
-    id: string;
-    email: string;
-  };
+  user: UserDTO;
 }
+
+export interface MeResponse {
+  user: UserDTO;
+}
+

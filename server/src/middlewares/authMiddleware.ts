@@ -1,4 +1,4 @@
-import type { AuthRequest, JWTPayload } from '../controllers/userController.js';
+import type { AuthRequest } from '../types/user.js';
 import type { NextFunction, Response } from 'express';
 import { verifyAccessToken } from '../utils/tokens.js';
 

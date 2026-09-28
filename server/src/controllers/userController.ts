@@ -2,15 +2,15 @@ import { type Request, type Response } from 'express';
 import { User } from '../models/User.js';
 import bcrypt from 'bcrypt';
 import { generateToken, verifyRefreshToken } from '../utils/tokens.js';
-import { type AuthDTO, type AuthResponse, type AuthRequest, type JWTPayload } from '../types/user.js';
+import { type AuthDTO, type AuthResponse, type AuthRequest, type MeResponse } from '../types/user.js';
 
 const MAX_SESSIONS = 5;
 const SALT_ROUNDS = 10;
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
-  sameSite: 'strict' as const,
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
+  sameSite: (process.env.NODE_ENV === 'production' ? 'strict' : 'lax') as 'strict' | 'lax',
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
 export const registerUser = async (
@@ -212,5 +212,29 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
     res.json({ message: 'User successfully deleted' });
   } catch (err) {
     res.status(500).json({ message: 'Server error during deleting user' });
+  }
+};
+
+export const getMe = async (req: AuthRequest, res: Response<MeResponse | { message: string }>): Promise<void> => {
+  try {
+    if (!req.user?.userId) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
+    }
+
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    res.status(200).json({
+      user: {
+        id: user.id.toString(),
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error retrieving user' });
   }
 };
