@@ -26,11 +26,11 @@ export const buildFilters = (filters: MedicationsDTO = {}) => {
   }
 
   if (startDate) {
-    readyFilters.startDate = startDate;
+    readyFilters.startDate = { $gte: new Date(startDate).toISOString() };
   }
 
   if (endDate) {
-    readyFilters.endDate = endDate;
+    readyFilters.endDate = { $lte: new Date(endDate).toISOString() };
   }
 
   const sortOrder = sortDirection === 'asc' ? 1 : -1;
