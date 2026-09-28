@@ -7,24 +7,15 @@ export const usePagination = () => {
   const [page, setPage] = useState(DEFAULT_PAGE);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
-  const [pageCursors, setPageCursors] = useState<null[]>([null]);
-
-  const activeCursor = pageCursors[page - 1] ?? null;
-
   const [showAll, setShowAll] = useState(false);
 
   const resetPagination = () => {
     setPage(DEFAULT_PAGE);
-    setPageCursors([null]);
+    setPageSize(DEFAULT_PAGE_SIZE);
   };
 
-  const onNextPage = (rowsLength: number, lastVisibleDoc: null | undefined) => {
-    if (rowsLength === pageSize && lastVisibleDoc) {
-      setPageCursors(prev => {
-        const nextCursors = [...prev];
-        nextCursors[page] = lastVisibleDoc;
-        return nextCursors;
-      });
+  const onNextPage = (rowsLength: number, hasNextPage: boolean) => {
+    if (hasNextPage) {
       setPage(prev => prev + 1);
     }
   };
@@ -38,7 +29,6 @@ export const usePagination = () => {
   const onPageSizeChange = (pageSize: number) => {
     setPage(DEFAULT_PAGE);
     setPageSize(pageSize);
-    setPageCursors([null]);
     setShowAll(false);
   };
 
@@ -53,7 +43,6 @@ export const usePagination = () => {
     page,
     pageSize,
     showAll,
-    activeCursor,
     resetPagination,
     onNextPage,
     onPreviousPage,

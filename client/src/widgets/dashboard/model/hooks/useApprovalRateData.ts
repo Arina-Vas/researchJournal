@@ -4,7 +4,7 @@ import { useMedications } from '../../../../entities/medications/lib/hooks';
 import { useMemo } from 'react';
 
 export const useApprovalRateData = (): DashboardData<ApprovalRateDataItem> => {
-  const { data, isLoading } = useMedications();
+  const { data, isLoading } = useMedications({ pageSize: 100 });
 
   const approvalRateData = useMemo(() => selectApprovalRateByMonth(data?.data || []), [data?.data]);
 

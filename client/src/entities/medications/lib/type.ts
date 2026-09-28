@@ -1,3 +1,5 @@
+import { Location } from '../../location/lib/type';
+
 export interface Process {
   current: number;
   total: number;
@@ -31,18 +33,27 @@ export interface MedicationFilters {
   name?: string;
   sortBy?: string;
   sortDirection?: 'asc' | 'desc';
-  locationId?: string;
+  location?: string;
   startDate?: string;
   endDate?: string;
   successReaction?: boolean;
   pageSize?: number;
-  // cursorDoc?: QueryDocumentSnapshot | null;
+  page?: number;
 }
 
-export type MedicationItem = Medication & { location: Location };
+export type MedicationItem = Omit<Medication, 'location'> & { location: Location };
+
+export interface Pagination {
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  totalFilteredItems: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
 
 export interface AllMedications {
-  items: MedicationItem[];
-  // firstVisibleDoc: QueryDocumentSnapshot;
-  // lastVisibleDoc: QueryDocumentSnapshot;
+  data: MedicationItem[];
+  pagination: Pagination;
 }

@@ -19,15 +19,15 @@ type Props = {
 };
 export const Medication = ({ id }: Props) => {
   const { data, isLoading: isMedicationLoading } = useMedicationById(id);
-  const { data: location, isLoading: isLocationLoading } = useFetchLocationById(data?.data.locationId || '');
+  const { data: location, isLoading: isLocationLoading } = useFetchLocationById(data?.locationId || '');
 
   const isLoading = isMedicationLoading || isLocationLoading;
 
-  const { street, city, country, building } = location?.data.address || {};
+  const { street, city, country, building } = location?.address || {};
 
   const handleGetDirection = useCallback(() => {
     if (!location) return;
-    const { lat, lng } = location.data.coordinates;
+    const { lat, lng } = location.coordinates;
 
     const link = `${DIRECTION_BASE_URL}${lat},${lng}`;
 
@@ -38,7 +38,7 @@ export const Medication = ({ id }: Props) => {
     <div className={s.wrapper}>
       {isLoading && <Spinner />}
       <div className={s.medicine}>
-        <h2 className={s.name}>{data?.data.name}</h2>
+        <h2 className={s.name}>{data?.name}</h2>
         <div className={s.description}>
           <span>About this medicine</span>
           <p>{description}</p>
@@ -47,11 +47,11 @@ export const Medication = ({ id }: Props) => {
       <div className={s.location}>
         <div className={s.section}>
           <span className={s.title}>Manufacturer</span>
-          <span>{location?.data.clinicName}</span>
+          <span>{location?.clinicName}</span>
         </div>
         <div className={s.section}>
           <span className={s.title}>Location</span>
-          <MapLocation mapId={MAP_ID} coordinates={location?.data.coordinates || null} />
+          <MapLocation mapId={MAP_ID} coordinates={location?.coordinates || null} />
           <span>
             {building} {street}, {city}, {country}
           </span>
@@ -61,7 +61,7 @@ export const Medication = ({ id }: Props) => {
         </div>
         <div className={s.section}>
           <span className={s.title}>Tags</span>
-          <MedicationTags locationId={location?.data.id || ''} />
+          <MedicationTags location={location?._id || ''} />
         </div>
       </div>
     </div>

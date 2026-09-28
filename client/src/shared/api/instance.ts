@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 export const instance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,

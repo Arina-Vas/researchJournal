@@ -90,7 +90,6 @@ export const Medications = () => {
               </tr>
             ) : (
               rows?.map(item => {
-                console.log(item);
                 return <MedicationRow item={item} key={item._id} />;
               })
             )}

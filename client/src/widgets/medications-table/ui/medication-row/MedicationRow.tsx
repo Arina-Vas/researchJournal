@@ -7,13 +7,12 @@ import { formatDate } from '../../../../shared/utils/formatDate';
 
 const processPercent = (current: number, total: number) => Math.round((current / total) * 100);
 
-export const MedicationRow = ({ item }: { item: MedicationItem | Medication }) => {
-  console.log(item);
+export const MedicationRow = ({ item }: { item: MedicationItem }) => {
   const navigate = useNavigate();
   return (
     <tr className={s.row} onClick={() => navigate({ to: `/medications/${item._id}` })}>
       <td className={`${s.item} ${s.nameCell}`}>{item.name}</td>
-      <td className={s.item}>{'clinicName'}</td>
+      <td className={s.item}>{item.location.clinicName}</td>
       <td className={s.item}>{formatDate(item.startDate)}</td>
       <td className={s.item}>{formatDate(item.endDate)}</td>
       <td className={s.item}>{item.successReaction ? <Success /> : <Error />}</td>

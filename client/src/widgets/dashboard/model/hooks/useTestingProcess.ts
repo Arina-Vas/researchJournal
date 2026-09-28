@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { selectTestingProcessByPhase } from '../../lib/dashbord-data-selectors';
 
 export const useTestingProcess = (): DashboardData<TestingProcessDataItem> => {
-  const { data, isLoading } = useMedications();
+  const { data, isLoading } = useMedications({ pageSize: 100 });
 
   const testingProcessData = useMemo(() => {
     return selectTestingProcessByPhase(data?.data || []);

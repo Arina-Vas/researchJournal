@@ -2,12 +2,12 @@ import s from './MedicationTags.module.css';
 import { useMedications } from '../../../entities/medications/lib/hooks';
 import { NavButton } from '../../../shared/ui/nav-button/NavButton';
 
-// type Props = {
-//   locationId: string;
-// };
-export const MedicationTags = () => {
-  const { data: medications } = useMedications();
-  // const { data: medications } = useMedications({ filters: { locationId, pageSize: 6 } });
+type Props = {
+  location: string;
+};
+export const MedicationTags = ({ location }: Props) => {
+  // const { data: medications } = useMedications();
+  const { data: medications } = useMedications({ location, pageSize: 6 });
 
   return (
     <ul className={s.tagList}>

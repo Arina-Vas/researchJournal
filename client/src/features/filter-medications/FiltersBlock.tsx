@@ -26,7 +26,7 @@ export const FiltersBlock = ({ onChange }: Props) => {
   const applyFilters = () => {
     onChange({
       name: isValidValue ? debouncedSearch : '',
-      locationId: location,
+      location: location,
       successReaction: successReaction,
       startDate: startDate,
       endDate: endDate,
@@ -68,7 +68,7 @@ export const FiltersBlock = ({ onChange }: Props) => {
               <span className={s.filterTitle}>Location</span>
               <Dropdown
                 label={'Choose location'}
-                options={locations?.data || []}
+                options={locations || []}
                 onChange={setLocation}
                 currentOption={location}
               />

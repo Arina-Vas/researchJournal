@@ -6,6 +6,7 @@ export interface LocationAddress {
 }
 
 export interface Location {
+  _id: string;
   id: string;
   clinicName: string;
   address: LocationAddress;

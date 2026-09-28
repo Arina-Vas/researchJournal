@@ -10,11 +10,11 @@ export const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [errorLocale, setErrorLocale] = useState('');
 
-  const resetForm = () => {
-    setEmail('');
-    setPassword('');
-    setErrorLocale('');
-  };
+  // const resetForm = () => {
+  //   setEmail('');
+  //   setPassword('');
+  //   setErrorLocale('');
+  // };
   // const {
   //   mutate: signUp,
   //   error: signUpError,
@@ -28,7 +28,7 @@ export const LoginForm = () => {
   //   isPending: isSignInPending,
   // } = useSignInMutation(resetForm);
 
-  const serverError = null;
+  // const serverError = null;
   // const serverError = isSignUpError ? signUpError : isSignInError ? signInError : null;
   const error = '';
   // const error = serverError ? serverError.message : errorLocale ? errorLocale : '';
