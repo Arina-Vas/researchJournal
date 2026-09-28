@@ -11,9 +11,6 @@ import DirectionIcon from '../../shared/assets/images/Directions.svg';
 const MAP_ID = import.meta.env.VITE_MAP_ID || '';
 const DIRECTION_BASE_URL = 'https://www.google.com/maps/dir/?api=1&destination=';
 
-const description =
-  'Oral suspension belonging to the class of analgesics. Prescribed for the reducing inflammation and improving general patient mobility. Consult a healthcare provider before modifying the dosage.Oral suspension belonging to the class of analgesics. Prescribed for the reducing inflammation and improving general patient mobility. Consult a healthcare provider before modifying the dosage.Oral suspension belonging to the class of analgesics. Prescribed for the reducing inflammation and improving general patient mobility. Consult a healthcare provider before modifying the dosage.Oral suspension belonging to the class of analgesics. Prescribed for the reducing inflammation and improving general patient mobility. Consult a healthcare provider before modifying the dosage.Oral suspension belonging to the class of analgesics. Prescribed for the reducing inflammation and improving general patient mobility. Consult a healthcare provider before modifying the dosage.Oral suspension belonging to the class of analgesics. Prescribed for the reducing inflammation and improving general patient mobility. Consult a healthcare provider before modifying the dosage.Oral suspension belonging to the class of analgesics. Prescribed for the reducing inflammation and improving general patient mobility. Consult a healthcare provider before modifying the dosage.Oral suspension belonging to the class of analgesics. Prescribed for the reducing inflammation and improving general patient mobility. Consult a healthcare provider before modifying the dosage.Oral suspension belonging to the class of analgesics. Prescribed for the reducing inflammation and improving general patient mobility. Consult a healthcare provider before modifying the dosage.Oral suspension belonging to the class of analgesics. Prescribed for the reducing inflammation and improving general patient mobility. Consult a healthcare provider before modifying the dosage.';
-
 type Props = {
   id: string;
 };
@@ -41,7 +38,7 @@ export const Medication = ({ id }: Props) => {
         <h2 className={s.name}>{data?.name}</h2>
         <div className={s.description}>
           <span>About this medicine</span>
-          <p>{description}</p>
+          <p>{data?.description.repeat(5)}</p>
         </div>
       </div>
       <div className={s.location}>

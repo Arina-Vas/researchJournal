@@ -5,7 +5,7 @@
 
 /* Header */
 .header {
-  margin-bottom: 24px;
+  margin-bottom: 10px;
 }
 
 .title {
@@ -20,22 +20,57 @@
   margin: 0;
 }
 
+.tableWrapper {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 10px;
+}
+
 /* Table layout */
 .table {
   width: 100%;
-  table-layout: auto;
-  border-collapse: collapse;
+  min-width: 900px;
+  display: flex;
+  flex-direction: column;
+  border-collapse: separate;
+  border-spacing: 0;
   text-align: left;
-  overflow-x: auto;
-
-  margin-top: 10px;
-  min-height: 400px;
   box-sizing: border-box;
+
+  tbody {
+    position: relative;
+    width: 100%;
+    max-height: 300px;
+    min-height: auto;
+    overflow-y: auto;
+    display: block;
+
+    scrollbar-gutter: stable;
+
+    tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+  }
 }
 
 .columnWrapper {
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 1px solid var(--color-light-gray);
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+  padding-right: 6px;
+
+  th {
+    z-index: 2;
+    background-color: var(--color-periwinkle);
+    border-top: 1px solid var(--color-light-gray);
+    border-bottom: 1px solid var(--color-light-gray);
+    padding: 0 8px;
+    box-sizing: border-box;
+  }
 
   .columnTitle {
     display: flex;
@@ -66,7 +101,25 @@
   }
 }
 
+.tableWrapper::-webkit-scrollbar,
+tbody::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb,
+tbody::-webkit-scrollbar-thumb {
+  background-color: var(--color-light-gray, #ccc);
+  border-radius: 3px;
+}
+
+.tableWrapper::-webkit-scrollbar-track,
+tbody::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 .stateCell {
   text-align: center;
   font-size: 20px;
+  padding: 40px 0;
 }

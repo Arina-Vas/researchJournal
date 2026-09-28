@@ -55,7 +55,6 @@ export const Medications = () => {
       <FiltersBlock onChange={onFiltersChange} />
       <div className={s.tableWrapper}>
         {isDataLoading && <Spinner />}
-
         <table className={s.table}>
           <thead className={s.columnWrapper}>
             <tr>
@@ -95,20 +94,20 @@ export const Medications = () => {
             )}
           </tbody>
         </table>
-        <Pagination
-          onNextPage={onNextPage}
-          onPrevPage={onPreviousPage}
-          hasNextPage={hasNextPage}
-          totalItems={totalItems}
-          endItem={endItem}
-          onPageSizeChange={onPageSizeChange}
-          onShowAll={onShowAll}
-          page={page}
-          pageSize={pageSize}
-          showAll={showAll}
-          startItem={startItem}
-        />
       </div>
+      <Pagination
+        onNextPage={onNextPage}
+        onPrevPage={onPreviousPage}
+        hasNextPage={hasNextPage}
+        totalItems={totalItems}
+        endItem={endItem}
+        onPageSizeChange={onPageSizeChange}
+        onShowAll={onShowAll}
+        page={page}
+        pageSize={pageSize}
+        showAll={showAll}
+        startItem={startItem}
+      />
     </div>
   );
 };
