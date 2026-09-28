@@ -9,15 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as NotFoundRouteImport } from './routes/not-found'
-import { Route as MedicationsIndexRouteImport } from './routes/medications/index'
-import { Route as MedicationsIdRouteImport } from './routes/medications/$id'
+import { Route as AuthIndexRouteImport } from './routes/_auth/index'
+import { Route as AuthMedicationsIndexRouteImport } from './routes/_auth/medications/index'
+import { Route as AuthMedicationsIdRouteImport } from './routes/_auth/medications/$id'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -30,69 +30,74 @@ const NotFoundRoute = NotFoundRouteImport.update({
   path: '/not-found',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MedicationsIndexRoute = MedicationsIndexRouteImport.update({
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthMedicationsIndexRoute = AuthMedicationsIndexRouteImport.update({
   id: '/medications/',
   path: '/medications/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthRoute,
 } as any)
-const MedicationsIdRoute = MedicationsIdRouteImport.update({
+const AuthMedicationsIdRoute = AuthMedicationsIdRouteImport.update({
   id: '/medications/$id',
   path: '/medications/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AuthIndexRoute
   '/login': typeof LoginRoute
   '/not-found': typeof NotFoundRoute
-  '/medications/$id': typeof MedicationsIdRoute
-  '/medications/': typeof MedicationsIndexRoute
+  '/medications/$id': typeof AuthMedicationsIdRoute
+  '/medications/': typeof AuthMedicationsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/not-found': typeof NotFoundRoute
-  '/medications/$id': typeof MedicationsIdRoute
-  '/medications': typeof MedicationsIndexRoute
+  '/': typeof AuthIndexRoute
+  '/medications/$id': typeof AuthMedicationsIdRoute
+  '/medications': typeof AuthMedicationsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
   '/not-found': typeof NotFoundRoute
-  '/medications/$id': typeof MedicationsIdRoute
-  '/medications/': typeof MedicationsIndexRoute
+  '/_auth/': typeof AuthIndexRoute
+  '/_auth/medications/$id': typeof AuthMedicationsIdRoute
+  '/_auth/medications/': typeof AuthMedicationsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     '/' | '/login' | '/not-found' | '/medications/$id' | '/medications/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/not-found' | '/medications/$id' | '/medications'
+  to: '/login' | '/not-found' | '/' | '/medications/$id' | '/medications'
   id:
     | '__root__'
-    | '/'
+    | '/_auth'
     | '/login'
     | '/not-found'
-    | '/medications/$id'
-    | '/medications/'
+    | '/_auth/'
+    | '/_auth/medications/$id'
+    | '/_auth/medications/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRouteWithChildren
   LoginRoute: typeof LoginRoute
   NotFoundRoute: typeof NotFoundRoute
-  MedicationsIdRoute: typeof MedicationsIdRoute
-  MedicationsIndexRoute: typeof MedicationsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
+    '/_auth': {
+      id: '/_auth'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -109,29 +114,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotFoundRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/medications/': {
-      id: '/medications/'
+    '/_auth/': {
+      id: '/_auth/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/medications/': {
+      id: '/_auth/medications/'
       path: '/medications'
       fullPath: '/medications/'
-      preLoaderRoute: typeof MedicationsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthMedicationsIndexRouteImport
+      parentRoute: typeof AuthRoute
     }
-    '/medications/$id': {
-      id: '/medications/$id'
+    '/_auth/medications/$id': {
+      id: '/_auth/medications/$id'
       path: '/medications/$id'
       fullPath: '/medications/$id'
-      preLoaderRoute: typeof MedicationsIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthMedicationsIdRouteImport
+      parentRoute: typeof AuthRoute
     }
   }
 }
 
+interface AuthRouteChildren {
+  AuthIndexRoute: typeof AuthIndexRoute
+  AuthMedicationsIdRoute: typeof AuthMedicationsIdRoute
+  AuthMedicationsIndexRoute: typeof AuthMedicationsIndexRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthIndexRoute: AuthIndexRoute,
+  AuthMedicationsIdRoute: AuthMedicationsIdRoute,
+  AuthMedicationsIndexRoute: AuthMedicationsIndexRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AuthRoute: AuthRouteWithChildren,
   LoginRoute: LoginRoute,
   NotFoundRoute: NotFoundRoute,
-  MedicationsIdRoute: MedicationsIdRoute,
-  MedicationsIndexRoute: MedicationsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

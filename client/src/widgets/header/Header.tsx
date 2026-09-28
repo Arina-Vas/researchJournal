@@ -6,16 +6,22 @@ import Dark from '@/shared/assets/images/Dark.svg';
 import { NavButton } from '../../shared/ui/nav-button/NavButton';
 import { Button } from '../../shared/ui/button/Button';
 import { useTheme } from '../../app/providers/theme-provider/useTheme';
+import { useAuth } from '../../app/providers/auth-provider/use-auth';
+import { useSignOutMutation } from '../../features/login/lib/useLogin';
+import { useLocation } from '@tanstack/react-router';
 
 export const Header = () => {
-  // const { mutate: signOut } = useSignOutMutation();
+  const { mutate: signOut } = useSignOutMutation();
   const { theme, toggleTheme } = useTheme();
 
+  const pathname = useLocation({
+    select: location => location.pathname,
+  });
   const onLogout = () => {
-    console.log('signOut');
+    signOut();
   };
 
-  // const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   return (
     <div className={s.headerWrapper}>
@@ -31,11 +37,11 @@ export const Header = () => {
         <Button onClick={toggleTheme} variant={'outline'}>
           {theme === 'LIGHT' ? <Dark /> : <Light />}
         </Button>
-
-        <Button variant={'outline'} onClick={onLogout}>
-          {'SignIn'}
-          {/*{user ? 'LogOut' : 'SignIn'}*/}
-        </Button>
+        {pathname !== '/login' && (
+          <Button variant={'outline'} onClick={onLogout}>
+            {isAuthenticated ? 'SignOut' : 'SignIn'}
+          </Button>
+        )}
       </div>
     </div>
   );

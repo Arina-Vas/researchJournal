@@ -6,33 +6,29 @@ import { RouterProvider } from '@tanstack/react-router';
 import { router } from './app/router/router';
 import { ThemeProvider } from './app/providers/theme-provider/ThemeProvider';
 import { QueryProvider } from './app/providers/query-provider/QueryProvider';
+import { AuthProvider } from './app/providers/auth-provider/AuthProvider';
+import { useAuth } from './app/providers/auth-provider/use-auth';
+import { Spinner } from './shared/ui/spinner/Spinner';
+
+const App = () => {
+  const auth = useAuth();
+
+  if (auth.isLoading) {
+    return <Spinner />;
+  }
+
+  return <RouterProvider router={router} context={{ auth }}></RouterProvider>;
+};
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
-      {/*<AuthProvider>*/}
-      <QueryProvider>
-        <RouterProvider router={router}></RouterProvider>
-        <ToastContainer />
-      </QueryProvider>
-      {/*</AuthProvider>*/}
+      <AuthProvider>
+        <QueryProvider>
+          <App />
+          <ToastContainer />
+        </QueryProvider>
+      </AuthProvider>
     </ThemeProvider>
   </StrictMode>,
 );
-
-// import { useMedicationById, useMedications } from './api/medications/lib/hooks';
-// import { useFetchLocationById, useFetchLocations } from './api/location/lib/hooks';
-//
-// export const App = () => {
-//   const { data } = useMedications();
-//   const { data: locations } = useFetchLocations();
-//   const { data: location } = useFetchLocationById('loc_vitality_medical');
-//   const { data: medication } = useMedicationById('6ab274545e9586a827a229cf');
-//
-//   console.log(data?.data?.length);
-//   console.log(locations?.data?.length);
-//   console.log(location?.data);
-//   console.log(medication?.data);
-//
-//   return <div></div>;
-// };

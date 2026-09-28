@@ -2,6 +2,7 @@ import { type SubmitEvent, useState } from 'react';
 import s from './LoginForm.module.css';
 import { Input } from '../../../shared/ui/input/input';
 import { Button } from '../../../shared/ui/button/Button';
+import { useSignInMutation, useSignUpMutation } from '../lib/useLogin';
 
 export const LoginForm = () => {
   const [isAccount, setIsAccount] = useState(true);
@@ -10,31 +11,29 @@ export const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [errorLocale, setErrorLocale] = useState('');
 
-  // const resetForm = () => {
-  //   setEmail('');
-  //   setPassword('');
-  //   setErrorLocale('');
-  // };
-  // const {
-  //   mutate: signUp,
-  //   error: signUpError,
-  //   isError: isSignUpError,
-  //   isPending: isSignUpPending,
-  // } = useSignUpMutation(resetForm);
-  // const {
-  //   mutate: signIn,
-  //   error: signInError,
-  //   isError: isSignInError,
-  //   isPending: isSignInPending,
-  // } = useSignInMutation(resetForm);
+  const resetForm = () => {
+    setEmail('');
+    setPassword('');
+    setErrorLocale('');
+  };
 
-  // const serverError = null;
-  // const serverError = isSignUpError ? signUpError : isSignInError ? signInError : null;
-  const error = '';
-  // const error = serverError ? serverError.message : errorLocale ? errorLocale : '';
+  const {
+    mutate: signIn,
+    error: signInError,
+    isError: isSignInError,
+    isPending: isSignInPending,
+  } = useSignInMutation(resetForm);
+  const {
+    mutate: signUp,
+    error: signUpError,
+    isError: isSignUpError,
+    isPending: isSignUpPending,
+  } = useSignUpMutation(resetForm);
 
-  const isPending = false;
-  // const isPending = isSignUpPending || isSignInPending;
+  const serverError = isSignUpError ? signUpError : isSignInError ? signInError : null;
+  const error = serverError ? serverError.message : errorLocale ? errorLocale : '';
+
+  const isPending = isSignUpPending || isSignInPending;
 
   const isFormValid = () => {
     if (!email.trim() && !password.trim()) {
@@ -58,8 +57,8 @@ export const LoginForm = () => {
     if (!isFormValid()) return;
 
     if (isAccount) {
-      console.log({ email, password });
-    } else console.log({ email, password });
+      signIn({ email, password });
+    } else signUp({ email, password });
   };
 
   const toggleAccountMode = () => {

@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { MapProvider } from '../../app/providers/map-provider/MapProvider';
-import { Medication } from '../../widgets/medication-details/Medication';
+import { MapProvider } from '../../../app/providers/map-provider/MapProvider';
+import { Medication } from '../../../widgets/medication-details/Medication';
 
-export const Route = createFileRoute('/medications/$id')({
+export const Route = createFileRoute('/_auth/medications/$id')({
   component: RouteComponent,
 });
 

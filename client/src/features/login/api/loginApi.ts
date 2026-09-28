@@ -1,38 +1,20 @@
-// import {
-//   createUserWithEmailAndPassword,
-//   signInWithEmailAndPassword,
-//   signOut,
-//   type User,
-//   type UserCredential,
-// } from 'firebase/auth';
-// import { auth } from '@/shared/api/firebase';
-//
-// export const loginApi = {
-//   signUp: async (email: string, password: string): Promise<UserCredential> => {
-//     try {
-//       return await createUserWithEmailAndPassword(auth, email, password);
-//     } catch (error) {
-//       console.error('Ошибка при регистрации:', error);
-//       throw error;
-//     }
-//   },
-//   signIn: async (email: string, password: string): Promise<UserCredential> => {
-//     try {
-//       return await signInWithEmailAndPassword(auth, email, password);
-//     } catch (error) {
-//       console.error('Ошибка при регистрации:', error);
-//       throw error;
-//     }
-//   },
-//   logOut: async (): Promise<void> => {
-//     try {
-//       await signOut(auth);
-//     } catch (error) {
-//       console.error('Ошибка при при выходе:', error);
-//       throw error;
-//     }
-//   },
-//   me: async (): Promise<User | null> => {
-//     return auth.currentUser;
-//   },
-// };
+import { instance } from '../../../shared/api/instance';
+import type { AuthDTO, AuthResponse, MeResponse, RefreshResponse } from '../../../entities/user/lib/type';
+
+export const loginApi = {
+  signUp: async (credentials: AuthDTO): Promise<AuthResponse> => {
+    return await instance.post<AuthResponse>('/auth/register', credentials).then(res => res.data);
+  },
+  signIn: async (credentials: AuthDTO): Promise<AuthResponse> => {
+    return await instance.post<AuthResponse>('/auth/login', credentials).then(res => res.data);
+  },
+  logOut: async (): Promise<{ message: string }> => {
+    return await instance.post<{ message: string }>('/auth/logout').then(res => res.data);
+  },
+  refresh: async (): Promise<RefreshResponse> => {
+    return await instance.post<RefreshResponse>('/auth/refresh').then(res => res.data);
+  },
+  me: async (): Promise<MeResponse> => {
+    return await instance.get<MeResponse>('/auth/me').then(res => res.data);
+  },
+};
