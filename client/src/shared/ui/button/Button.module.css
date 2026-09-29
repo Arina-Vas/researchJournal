@@ -84,6 +84,10 @@
   color: var(--color-deep-navy);
 }
 
+.text:disabled {
+  background-color: transparent;
+}
+
 /* === Modifiers === */
 .fullWidth {
   width: 100%;

@@ -10,6 +10,7 @@ export const usePagination = () => {
   const [showAll, setShowAll] = useState(false);
 
   const resetPagination = () => {
+    setShowAll(false);
     setPage(DEFAULT_PAGE);
     setPageSize(DEFAULT_PAGE_SIZE);
   };
