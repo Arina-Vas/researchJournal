@@ -31,7 +31,6 @@ export const Pagination = ({
   return (
     <div className={s.paginationContainer}>
       <div className={s.pages}>
-        {page > 1 && !showAll && (
           <Button
             aria-label={'prev button'}
             variant={'text'}
@@ -41,11 +40,9 @@ export const Pagination = ({
           >
             <Arrow />
           </Button>
-        )}
         <span>
           {startItem} to {endItem} of {totalItems} items{' '}
         </span>
-        {hasNextPage && !showAll && (
           <Button
             aria-label={'next button'}
             variant={'text'}
@@ -55,8 +52,7 @@ export const Pagination = ({
           >
             <Arrow />
           </Button>
-        )}
-        <label>
+        <label className={s.showAllWrapper}>
           <input
             type={'checkbox'}
             onChange={e => {

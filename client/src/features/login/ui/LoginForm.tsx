@@ -1,6 +1,6 @@
 import { type SubmitEvent, useState } from 'react';
 import s from './LoginForm.module.css';
-import { Input } from '../../../shared/ui/input/input';
+import { Input } from '../../../shared/ui/input/Input';
 import { Button } from '../../../shared/ui/button/Button';
 import { useSignInMutation, useSignUpMutation } from '../lib/useLogin';
 

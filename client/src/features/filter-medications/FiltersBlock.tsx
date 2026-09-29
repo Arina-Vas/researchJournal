@@ -3,7 +3,7 @@ import s from './FiltersBlock.module.css';
 import { MedicationFilters } from '../../entities/medications/lib/type';
 import { useFetchLocations } from '../../entities/location/lib/hooks';
 import { useDebounce } from '../../shared/hooks/useDebounce';
-import { Input } from '../../shared/ui/input/input';
+import { Input } from '../../shared/ui/input/Input';
 import { Button } from '../../shared/ui/button/Button';
 import { Dropdown } from '../../shared/ui/dropdown/Dropdown';
 
