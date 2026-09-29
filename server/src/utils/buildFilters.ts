@@ -1,10 +1,4 @@
 import type { MedicationsDTO } from '../types/medication.js';
-import { Types } from 'mongoose';
-
-interface buildFiltersProps {
-  filters?: MedicationsDTO;
-  forCountOnly?: boolean;
-}
 
 export const buildFilters = (filters: MedicationsDTO = {}) => {
   const { name, startDate, endDate, successReaction, pageSize = 6, sortBy, sortDirection = 'asc', location } = filters;
@@ -18,7 +12,7 @@ export const buildFilters = (filters: MedicationsDTO = {}) => {
   }
 
   if (successReaction !== undefined) {
-    readyFilters.successReaction = successReaction;
+    readyFilters.successReaction = String(successReaction) === 'true';
   }
 
   if (location) {

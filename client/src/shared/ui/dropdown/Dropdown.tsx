@@ -4,7 +4,7 @@ import s from './LocationsDropdown.module.css';
 
 type Props = {
   options: Location[];
-  onChange: Dispatch<SetStateAction<string>>;
+  onChange: Dispatch<SetStateAction<string | null>>;
   currentOption: string;
   label: string;
 };

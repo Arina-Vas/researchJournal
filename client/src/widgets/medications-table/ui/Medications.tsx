@@ -1,6 +1,6 @@
 import s from './Medications.module.css';
 import Arrow from '@/shared/assets/images/Arrow.svg';
-import { MedicationFilters } from '../../../entities/medications/lib/type';
+import { MedicationFilters, SortAndPaginationParams } from '../../../entities/medications/lib/type';
 import { useState } from 'react';
 import { useTableData } from '../lib/useTableData';
 import { FiltersBlock } from '../../../features/filter-medications/FiltersBlock';
@@ -10,12 +10,12 @@ import { MedicationRow } from './medication-row/MedicationRow';
 import { Pagination } from '../../../shared/ui/pagination/Pagination';
 
 export const Medications = () => {
-  const [filters, setFilters] = useState<MedicationFilters>({});
+  const [filters, setFilters] = useState<MedicationFilters | null>(null);
 
-  const [sortBy, setSortBy] = useState<MedicationFilters['sortBy']>('startDate');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [sortBy, setSortBy] = useState<SortAndPaginationParams['sortBy']>(null);
+  const [sortDirection, setSortDirection] = useState<SortAndPaginationParams['sortDirection']>(null);
 
-  const onSort = (value: MedicationFilters['sortBy']) => {
+  const onSort = (value: SortAndPaginationParams['sortBy']) => {
     setSortBy(value);
     setSortDirection(p => (p === 'asc' ? 'desc' : 'asc'));
   };
@@ -39,7 +39,7 @@ export const Medications = () => {
     pageSize,
   } = useTableData(filters, sortBy, sortDirection);
 
-  const onFiltersChange = (filters: MedicationFilters) => {
+  const onFiltersChange = (filters: MedicationFilters | null) => {
     setFilters(filters);
     resetPagination();
   };

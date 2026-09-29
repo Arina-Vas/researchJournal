@@ -8,28 +8,35 @@ import { Button } from '../../shared/ui/button/Button';
 import { Dropdown } from '../../shared/ui/dropdown/Dropdown';
 
 type Props = {
-  onChange: (filters: MedicationFilters) => void;
+  onChange: (filters: MedicationFilters | null) => void;
 };
 export const FiltersBlock = ({ onChange }: Props) => {
   const { data: locations } = useFetchLocations();
-  const [location, setLocation] = useState<string>('');
-  const [successReaction, setSuccessReaction] = useState<boolean | undefined>(undefined);
-  const [searchName, setSearchName] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const debouncedSearch = useDebounce(searchName.trim(), 500);
+  const [location, setLocation] = useState<string | null>(null);
+  const [successReaction, setSuccessReaction] = useState<boolean | null>(null);
+  const [searchName, setSearchName] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [endDate, setEndDate] = useState<string | null>(null);
+  const debouncedSearch = useDebounce(searchName, 500);
 
-  const isValidValue = debouncedSearch.length > 2 || debouncedSearch.length === 0;
+  const isValidValue = debouncedSearch?.length > 2 || (debouncedSearch?.length === 0 && searchName !== null);
 
   const [showFilters, setShowFilters] = useState(false);
 
   const applyFilters = () => {
+    let nameValue: string | null = null;
+    if (debouncedSearch.length > 2) {
+      nameValue = debouncedSearch;
+    } else if (debouncedSearch.length === 0 && searchName !== null) {
+      nameValue = '';
+    }
+
     onChange({
-      name: isValidValue ? debouncedSearch : '',
-      location: location,
-      successReaction: successReaction,
-      startDate: startDate,
-      endDate: endDate,
+      name: nameValue,
+      location,
+      successReaction,
+      startDate,
+      endDate,
     });
   };
 
@@ -43,20 +50,20 @@ export const FiltersBlock = ({ onChange }: Props) => {
   };
 
   const onReset = () => {
-    onChange({});
-    setLocation('');
-    setSuccessReaction(undefined);
-    setSearchName('');
+    onChange(null);
+    setLocation(null);
+    setSuccessReaction(null);
+    setSearchName(null);
+    setStartDate(null);
+    setEndDate(null);
     setShowFilters(false);
-    setStartDate('');
-    setEndDate('');
   };
 
   return (
     <div className={s.filtersContainer}>
       <div>
         <div className={s.searchRow}>
-          <Input value={searchName} onChange={setSearchName} placeholder={'Search by name...'} type="search" />
+          <Input value={searchName || ''} onChange={setSearchName} placeholder={'Search by name...'} type="search" />
           <Button variant={'outline'} onClick={() => setShowFilters(p => !p)} className={s.filterTriggerBtn}>
             Filters
           </Button>
@@ -70,13 +77,17 @@ export const FiltersBlock = ({ onChange }: Props) => {
                 label={'Choose location'}
                 options={locations || []}
                 onChange={setLocation}
-                currentOption={location}
+                currentOption={location || ''}
               />
             </div>
             <div className={s.filterGroup}>
               <span className={s.filterTitle}>Reaction</span>
               <div className={s.buttonGroup}>
-                <Button variant={'outline'} isActive={successReaction} onClick={() => setSuccessReaction(true)}>
+                <Button
+                  variant={'outline'}
+                  isActive={successReaction === true}
+                  onClick={() => setSuccessReaction(true)}
+                >
                   Successful
                 </Button>
                 <Button
@@ -90,8 +101,8 @@ export const FiltersBlock = ({ onChange }: Props) => {
             </div>
             <div className={s.filterGroup}>
               <span className={s.filterTitle}>Dates</span>
-              <Input label={'Start Date'} type={'date'} value={startDate} onChange={setStartDate} />
-              <Input label={'End Date'} type={'date'} value={endDate} onChange={setEndDate} />
+              <Input label={'Start Date'} type={'date'} value={startDate || ''} onChange={setStartDate} />
+              <Input label={'End Date'} type={'date'} value={endDate || ''} onChange={setEndDate} />
             </div>
             <div className={s.actions}>
               <Button variant={'primary'} className={s.applyBtn} onClick={onApply}>

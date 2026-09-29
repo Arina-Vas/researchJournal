@@ -30,16 +30,21 @@ export interface Medication {
 }
 
 export interface MedicationFilters {
-  name?: string;
-  sortBy?: 'name' | 'location' | 'startDate' | 'endDate' | 'successReaction';
-  sortDirection?: 'asc' | 'desc';
-  location?: string;
-  startDate?: string;
-  endDate?: string;
-  successReaction?: boolean;
-  pageSize?: number;
-  page?: number;
+  name: string | null;
+  location: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  successReaction: boolean | null;
 }
+
+export interface SortAndPaginationParams {
+  sortBy: 'name' | 'location' | 'startDate' | 'endDate' | 'successReaction' | null;
+  sortDirection: 'asc' | 'desc' | null;
+  pageSize: number | null;
+  page: number | null;
+}
+
+export type MedicationParams = MedicationFilters & SortAndPaginationParams;
 
 export type MedicationItem = Omit<Medication, 'location'> & { location: Location };
 

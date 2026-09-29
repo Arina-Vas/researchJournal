@@ -1,5 +1,9 @@
-import { useMemo } from 'react';
-import { MedicationFilters, MedicationItem } from '../../../entities/medications/lib/type';
+import {
+  MedicationFilters,
+  MedicationItem,
+  MedicationParams,
+  SortAndPaginationParams,
+} from '../../../entities/medications/lib/type';
 import { usePagination } from './usePagination';
 import { useMedications } from '../../../entities/medications/lib/hooks';
 import { MEDICATIONS_COLUMNS } from './config';
@@ -26,29 +30,26 @@ type UseTableDataResult = {
 };
 
 export const useTableData = (
-  filters: MedicationFilters,
-  sortBy: MedicationFilters['sortBy'],
-  sortDirection: 'asc' | 'desc',
+  filters: MedicationFilters | null,
+  sortBy: SortAndPaginationParams['sortBy'],
+  sortDirection: SortAndPaginationParams['sortDirection'],
 ): UseTableDataResult => {
-  const { name, successReaction, location, startDate, endDate } = filters;
+  const { name = null, successReaction = null, location = null, startDate = null, endDate = null } = filters || {};
 
   const { page, pageSize, showAll, resetPagination, onNextPage, onPreviousPage, onPageSizeChange, onShowAll } =
     usePagination();
 
-  const queryFilters: MedicationFilters = useMemo(
-    () => ({
-      name,
-      successReaction,
-      location,
-      sortBy,
-      sortDirection,
-      page,
-      pageSize,
-      startDate,
-      endDate,
-    }),
-    [name, successReaction, location, sortBy, sortDirection, page, pageSize, startDate, endDate],
-  );
+  const queryFilters: MedicationParams = {
+    name,
+    successReaction,
+    location,
+    sortBy,
+    sortDirection,
+    page,
+    pageSize,
+    startDate,
+    endDate,
+  };
 
   console.log(queryFilters);
 

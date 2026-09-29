@@ -1,11 +1,10 @@
 import { instance } from '../../../shared/api/instance';
-import { AllMedications, Medication, MedicationFilters } from '../lib/type';
+import { AllMedications, Medication, MedicationParams } from '../lib/type';
 
-export const fetchMedications = async (filters: MedicationFilters): Promise<AllMedications> => {
-  console.log('filters');
+export const fetchMedications = async (params: MedicationParams): Promise<AllMedications> => {
   return await instance
     .get('/medications', {
-      params: filters,
+      params,
     })
     .then(res => res.data);
 };
