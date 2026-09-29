@@ -3,8 +3,6 @@ import type { MedicationsDTO } from '../types/medication.js';
 export const buildFilters = (filters: MedicationsDTO = {}) => {
   const { name, startDate, endDate, successReaction, pageSize = 6, sortBy, sortDirection = 'asc', location } = filters;
 
-  console.log(filters);
-
   const readyFilters: Record<string, any> = {};
 
   if (name && name.trim().length >= 3) {
