@@ -10,7 +10,7 @@ import medicationRoutes from './routes/medicationRoutes.js';
 import locationRoutes from './routes/locationRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import authRoutes from './routes/authRoutes.js';
-import { WebSocketServer } from 'ws';
+import userRoutes from './routes/userRoutes.js';
 import http from 'http';
 import { initWebSocketServer } from './webSocket/ws.js';
 
@@ -36,6 +36,7 @@ app.use('/api/medications', medicationRoutes);
 app.use('/api/locations', locationRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/users', userRoutes);
 
 const server = http.createServer(app);
 const startServer = async () => {
@@ -50,9 +51,6 @@ const startServer = async () => {
   } catch (e) {
     console.error(e);
   }
-  // app.listen(port, () => {
-  //   console.log(`Сервер запущен ${port}`);
-  // });
 };
 
 startServer();

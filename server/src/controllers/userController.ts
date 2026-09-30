@@ -2,7 +2,7 @@ import { type Request, type Response } from 'express';
 import { User } from '../models/User.js';
 import bcrypt from 'bcrypt';
 import { generateToken, verifyRefreshToken } from '../utils/tokens.js';
-import { type AuthDTO, type AuthResponse, type AuthRequest, type MeResponse } from '../types/user.js';
+import { type AuthDTO, type AuthResponse, type AuthRequest, type MeResponse, type UserDTO } from '../types/user.js';
 
 const MAX_SESSIONS = 5;
 const SALT_ROUNDS = 10;
@@ -236,5 +236,15 @@ export const getMe = async (req: AuthRequest, res: Response<MeResponse | { messa
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error retrieving user' });
+  }
+};
+
+export const getUsers = async (req: AuthRequest, res: Response<UserDTO[] | { message: string }>): Promise<void> => {
+  try {
+    const users = await User.find({ _id: { $ne: req.user?.userId } }, 'email').sort({ email: 1 });
+
+    res.json(users.map(user => ({ id: user.id.toString(), email: user.email })));
+  } catch (error) {
+    res.status(500).json({ message: 'Server error retrieving users' });
   }
 };

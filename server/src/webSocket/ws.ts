@@ -1,75 +1,141 @@
+import type { IncomingMessage, Server } from 'http';
+import type { Duplex } from 'stream';
 import { WebSocketServer, WebSocket } from 'ws';
-import { Server } from 'http';
-import {
-  type CustomWebSocket,
-  type IncomingWsMessage,
-  Message,
-  type MessageItem,
-  type OutgoingWsMessage,
-} from '../models/Message.js';
+import { verifyAccessToken } from '../utils/tokens.js';
+import { createMessage, getRoomHistory, isRoomMember, parseClientEvent } from '../utils/chat.js';
+import type { AuthedSocket, ServerEvent } from '../types/chat.js';
+
+const WS_PATH = '/ws';
+const HEARTBEAT_INTERVAL = 30_000;
+
+const send = (ws: WebSocket, event: ServerEvent) => {
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify(event));
+  }
+};
+
+const sendError = (ws: WebSocket, message: string) => send(ws, { type: 'ERROR', payload: { message } });
+
+const rejectUpgrade = (socket: Duplex, status: number, reason: string) => {
+  socket.write(`HTTP/1.1 ${status} ${reason}\r\nConnection: close\r\n\r\n`);
+  socket.destroy();
+};
 
 export const initWebSocketServer = (server: Server) => {
-  const wss = new WebSocketServer({ server });
+  const wss = new WebSocketServer({ noServer: true });
+  const rooms = new Map<string, Set<AuthedSocket>>();
 
-  wss.on('connection', (ws: CustomWebSocket) => {
-    console.log('Новое WebSocket-соединение установлено');
+  const joinRoom = (ws: AuthedSocket, room: string) => {
+    let members = rooms.get(room);
+    if (!members) {
+      members = new Set();
+      rooms.set(room, members);
+    }
+    members.add(ws);
+    ws.rooms.add(room);
+  };
 
-    ws.on('message', async (data: string) => {
+  const leaveRoom = (ws: AuthedSocket, room: string) => {
+    const members = rooms.get(room);
+    members?.delete(ws);
+    if (members?.size === 0) rooms.delete(room);
+    ws.rooms.delete(room);
+  };
+
+  const broadcast = (room: string, event: ServerEvent) => {
+    rooms.get(room)?.forEach(client => send(client, event));
+  };
+
+  server.on('upgrade', (req: IncomingMessage, socket: Duplex, head: Buffer) => {
+    const url = new URL(req.url ?? '', `http://${req.headers.host}`);
+
+    if (url.pathname !== WS_PATH) {
+      rejectUpgrade(socket, 404, 'Not Found');
+      return;
+    }
+
+    let userId: string;
+    try {
+      userId = verifyAccessToken(url.searchParams.get('token') ?? '').userId;
+    } catch {
+      rejectUpgrade(socket, 401, 'Unauthorized');
+      return;
+    }
+
+    wss.handleUpgrade(req, socket, head, ws => {
+      const authed = ws as AuthedSocket;
+      authed.userId = userId;
+      authed.rooms = new Set();
+      authed.isAlive = true;
+      wss.emit('connection', authed, req);
+    });
+  });
+
+  wss.on('connection', (ws: AuthedSocket) => {
+    ws.on('pong', () => {
+      ws.isAlive = true;
+    });
+
+    ws.on('message', async raw => {
+      const event = parseClientEvent(raw);
+      if (!event) {
+        sendError(ws, 'Invalid message');
+        return;
+      }
+
+      const { room } = event.payload;
+      if (!isRoomMember(room, ws.userId)) {
+        sendError(ws, 'Access to this room is denied');
+        return;
+      }
+
       try {
-        const { type, payload } = JSON.parse(data) as IncomingWsMessage;
-
-        switch (type) {
+        switch (event.type) {
           case 'JOIN_ROOM': {
-            const { room, senderId } = payload;
-
-            ws.room = room;
-            ws.senderId = senderId;
-
-            const messages = await Message.find<MessageItem>({ room })
-              .populate('sender', 'email')
-              .sort({ createdAt: 1 })
-              .limit(50);
-
-            const res: OutgoingWsMessage = {
-              type: 'ROOM_HISTORY',
-              payload: messages,
-            };
-
-            ws.send(JSON.stringify(res));
+            joinRoom(ws, room);
+            const messages = await getRoomHistory(room);
+            send(ws, { type: 'ROOM_HISTORY', payload: { room, messages } });
             break;
           }
+          case 'LEAVE_ROOM':
+            leaveRoom(ws, room);
+            break;
           case 'SEND_MESSAGE': {
-            const { room, senderId, text } = payload;
-
-            const newMessage = new Message<MessageItem>({ room, sender: senderId, text });
-            await newMessage.save();
-
-            const broadcastPayload = JSON.stringify({
-              type: 'NEW_MESSAGE',
-              payload: await newMessage.populate('sender', 'email'),
-            });
-
-            wss.clients.forEach((client: CustomWebSocket) => {
-              if (client.readyState === WebSocket.OPEN && client.room === room) {
-                client.send(broadcastPayload);
-              }
-            });
-
-            console.log(`Сообщение "${text}" от ${senderId} отправлено в комнату ${room}`);
+            const message = await createMessage(room, ws.userId, event.payload.text);
+            broadcast(room, { type: 'NEW_MESSAGE', payload: message });
             break;
           }
-          default:
-            console.log('default');
-            break;
+          default: {
+            const exhaustive: never = event;
+            return exhaustive;
+          }
         }
-
-        // console.log(`message ${text} received from room ${room} with user ${userId} `);
       } catch (error) {
-        console.log(error);
+        console.error(error);
+        sendError(ws, 'Server error');
       }
     });
 
-    ws.send('something');
+    ws.on('close', () => {
+      [...ws.rooms].forEach(room => leaveRoom(ws, room));
+    });
+
     ws.on('error', console.error);
   });
+
+  const heartbeat = setInterval(() => {
+    wss.clients.forEach(client => {
+      const ws = client as AuthedSocket;
+      if (!ws.isAlive) {
+        ws.terminate();
+        return;
+      }
+      ws.isAlive = false;
+      ws.ping();
+    });
+  }, HEARTBEAT_INTERVAL);
+
+  wss.on('close', () => clearInterval(heartbeat));
+
+  return wss;
 };

@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { getMessagesHistory } from '../controllers/messageController.js';
+import { getUsers } from '../controllers/userController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
 router.use(authMiddleware);
 
-router.get('/:room', getMessagesHistory);
+router.get('/', getUsers);
 
 export default router;
