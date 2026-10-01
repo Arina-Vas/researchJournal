@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { tokenStorage } from '../../../shared/api/tokenStorage';
+import { isTokenExpired, tokenStorage } from '../../../shared/api/tokenStorage';
 import { ChatMessageDTO, ClientEvent, SocketStatus, ServerEvent } from '../../../entities/message/lib/type';
 import { createWebSocket } from './utils/createWebSocket';
 import { toast } from 'react-toastify';
@@ -7,6 +7,7 @@ import { refreshAccessToken } from '../../../shared/api/instance';
 import { isSessionExpiredError } from '../../../shared/api/isSessionExpiredError';
 
 const WS_URL = import.meta.env.VITE_WS_URL as string;
+const WS_CLOSE_TOKEN_EXPIRED = 4001;
 const RECONNECT_BASE_DELAY = 1000;
 const RECONNECT_MAX_DELAY = 10_000;
 
@@ -38,7 +39,8 @@ export const useChatSocket = (room: string): UseChatSocketReturnType => {
     let attempt = 0;
 
     const reconnect = async (wasOpened: boolean) => {
-      if (!wasOpened) {
+      const token = tokenStorage.get();
+      if (!wasOpened && (attempt === 0 || !token || isTokenExpired(token))) {
         try {
           await refreshAccessToken();
         } catch (error) {
@@ -50,7 +52,7 @@ export const useChatSocket = (room: string): UseChatSocketReturnType => {
         if (signal.aborted) return;
       }
 
-      const delay = Math.min(RECONNECT_BASE_DELAY * 2 ** attempt, RECONNECT_MAX_DELAY); // 1s, 2s, 4s, 8s, 10s…
+      const delay = Math.min(RECONNECT_BASE_DELAY * 2 ** attempt, RECONNECT_MAX_DELAY);
       attempt += 1;
 
       const timer = setTimeout(() => {
@@ -76,33 +78,37 @@ export const useChatSocket = (room: string): UseChatSocketReturnType => {
       };
 
       ws.onmessage = e => {
-        const res = JSON.parse(e.data) as ServerEvent;
-        switch (res.type) {
-          case 'ROOM_HISTORY': {
-            setHistory({ room, messages: res.payload.messages });
-            break;
+        try {
+          const res = JSON.parse(e.data) as ServerEvent;
+          switch (res.type) {
+            case 'ROOM_HISTORY': {
+              setHistory({ room, messages: res.payload.messages });
+              break;
+            }
+            case 'NEW_MESSAGE': {
+              setHistory(p => (p.room === room ? { ...p, messages: [...p.messages, res.payload] } : p));
+              break;
+            }
+            case 'ERROR': {
+              toast.error(res.payload.message);
+              break;
+            }
+            default: {
+              const exhaustive: never = res;
+              return exhaustive;
+            }
           }
-          case 'NEW_MESSAGE': {
-            setHistory(p => (p.room === room ? { ...p, messages: [...p.messages, res.payload] } : p));
-            break;
-          }
-          case 'ERROR': {
-            toast.error(res.payload.message);
-            break;
-          }
-          default: {
-            const exhaustive: never = res;
-            return exhaustive;
-          }
+        } catch (err) {
+          console.error(err);
         }
       };
 
-      ws.onclose = () => {
+      ws.onclose = e => {
         if (signal.aborted) return;
         if (socketRef.current === ws) {
           socketRef.current = null;
           setConnection({ room, status: 'closed' });
-          reconnect(wasOpened);
+          reconnect(wasOpened && e.code !== WS_CLOSE_TOKEN_EXPIRED);
         }
       };
     };

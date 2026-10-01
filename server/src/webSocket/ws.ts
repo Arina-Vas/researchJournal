@@ -4,9 +4,11 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { verifyAccessToken } from '../utils/tokens.js';
 import { createMessage, getRoomHistory, isRoomMember, parseClientEvent } from '../utils/chat.js';
 import type { AuthedSocket, ServerEvent } from '../types/chat.js';
+import type { VerifiedJWTPayload } from '../types/user.js';
 
 const WS_PATH = '/ws';
 const HEARTBEAT_INTERVAL = 30_000;
+const WS_CLOSE_TOKEN_EXPIRED = 4001;
 
 const send = (ws: WebSocket, event: ServerEvent) => {
   if (ws.readyState === WebSocket.OPEN) {
@@ -54,9 +56,9 @@ export const initWebSocketServer = (server: Server) => {
       return;
     }
 
-    let userId: string;
+    let payload: VerifiedJWTPayload;
     try {
-      userId = verifyAccessToken(url.searchParams.get('token') ?? '').userId;
+      payload = verifyAccessToken(url.searchParams.get('token') ?? '');
     } catch {
       rejectUpgrade(socket, 401, 'Unauthorized');
       return;
@@ -64,9 +66,12 @@ export const initWebSocketServer = (server: Server) => {
 
     wss.handleUpgrade(req, socket, head, ws => {
       const authed = ws as AuthedSocket;
-      authed.userId = userId;
+      authed.userId = payload.userId;
       authed.rooms = new Set();
       authed.isAlive = true;
+      const ttl = payload.exp * 1000 - Date.now();
+      const expiryTimer = setTimeout(() => authed.close(WS_CLOSE_TOKEN_EXPIRED, 'Token expired'), ttl);
+      authed.once('close', () => clearTimeout(expiryTimer));
       wss.emit('connection', authed, req);
     });
   });

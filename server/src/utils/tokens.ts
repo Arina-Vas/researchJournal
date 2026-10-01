@@ -1,4 +1,4 @@
-import type { JWTPayload } from '../types/user.js';
+import type { JWTPayload, VerifiedJWTPayload } from '../types/user.js';
 import jwt from 'jsonwebtoken';
 
 interface Tokens {
@@ -16,4 +16,5 @@ export const generateToken = (payload: JWTPayload): Tokens => ({
 
 export const verifyRefreshToken = (token: string): JWTPayload => jwt.verify(token, JWT_REFRESH_SECRET) as JWTPayload;
 
-export const verifyAccessToken = (token: string): JWTPayload => jwt.verify(token, JWT_ACCESS_SECRET) as JWTPayload;
+export const verifyAccessToken = (token: string): VerifiedJWTPayload =>
+  jwt.verify(token, JWT_ACCESS_SECRET) as VerifiedJWTPayload;

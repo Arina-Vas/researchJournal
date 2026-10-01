@@ -17,8 +17,8 @@ export const getMedications = async (
 
     const { page = 1, pageSize = 6 } = req.query;
 
-    const pageNum = Math.max(1, page || 1);
-    const limitNum = Math.max(1, pageSize || 6);
+    const pageNum = Math.max(1, Number(page) || 1);
+    const limitNum = Math.min(100, Math.max(1, Number(pageSize) || 6));
     const skip = (pageNum - 1) * limitNum;
 
     const [[documents, totalFilteredItems], totalItems] = await Promise.all([
@@ -33,10 +33,6 @@ export const getMedications = async (
     ]);
 
     const totalPages = Math.ceil(totalFilteredItems / limitNum);
-
-    if (!documents) {
-      return res.status(404).json({ message: 'Medications not found' });
-    }
 
     res.status(200).json({
       data: documents as unknown as MedicationResponseDTO[],

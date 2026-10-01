@@ -1,7 +1,7 @@
 import type { MedicationsDTO } from '../types/medication.js';
 
 export const buildFilters = (filters: MedicationsDTO = {}) => {
-  const { name, startDate, endDate, successReaction, sortBy, sortDirection = 'asc', location } = filters;
+  const { name, startDate, endDate, successReaction, sortBy = '_id', sortDirection = 'asc', location } = filters;
 
   const readyFilters: Record<string, any> = {};
 
@@ -26,13 +26,10 @@ export const buildFilters = (filters: MedicationsDTO = {}) => {
     readyFilters.endDate = { $lte: new Date(endDate).toISOString() };
   }
 
-  let sortOptions: Record<string, 1 | -1> | null = null;
-  if (sortBy) {
-    const sortOrder = sortDirection === 'asc' ? 1 : -1;
-    sortOptions = {
-      [sortBy]: sortOrder,
-    };
-  }
+  const sortOrder = sortDirection === 'asc' ? 1 : -1;
+  const sortOptions: Record<string, 1 | -1> = {
+    [sortBy]: sortOrder,
+  };
 
   return { readyFilters, sortOptions };
 };

@@ -4,6 +4,11 @@ export interface JWTPayload {
   userId: string;
 }
 
+export interface VerifiedJWTPayload extends JWTPayload {
+  iat: number;
+  exp: number;
+}
+
 export interface AuthRequest extends Request {
   user?: JWTPayload;
 }
@@ -27,4 +32,3 @@ export interface AuthResponse {
 export interface MeResponse {
   user: UserDTO;
 }
-
