@@ -18,6 +18,7 @@ export const Medications = () => {
   const onSort = (value: SortAndPaginationParams['sortBy']) => {
     setSortBy(value);
     setSortDirection(p => (p === 'asc' ? 'desc' : 'asc'));
+    resetPagination();
   };
 
   const {

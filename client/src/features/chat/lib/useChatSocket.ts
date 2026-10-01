@@ -15,10 +15,11 @@ interface UseChatSocketReturnType {
   messages: ChatMessageDTO[];
   sendMessage: (message: string) => void;
   status: SocketStatus;
+  isHistoryLoaded: boolean;
 }
 
 export const useChatSocket = (room: string): UseChatSocketReturnType => {
-  const [history, setHistory] = useState<{ room: string; messages: ChatMessageDTO[] }>({ room, messages: [] });
+  const [history, setHistory] = useState<{ room: string; messages: ChatMessageDTO[] }>({ room: '', messages: [] });
   const [connection, setConnection] = useState<{ room: string; status: SocketStatus }>({
     room,
     status: 'connecting',
@@ -123,6 +124,7 @@ export const useChatSocket = (room: string): UseChatSocketReturnType => {
 
   const messages = history.room === room ? history.messages : [];
   const status = connection.room === room ? connection.status : 'connecting';
+  const isHistoryLoaded = history.room === room;
 
-  return { messages, status, sendMessage };
+  return { messages, status, sendMessage, isHistoryLoaded };
 };

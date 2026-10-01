@@ -14,10 +14,9 @@ export const Chats = () => {
       <h1 className={s.title}>Dialogs</h1>
       {isLoading && <Spinner />}
       {!isLoading && users.length === 0 && <p className={s.empty}>No users to chat with yet</p>}
-      {/* TODO пустой список */}
-      <ul className={s.list}>
-        {user &&
-          users.map(u => (
+      {user && users.length > 0 && (
+        <ul className={s.list}>
+          {users.map(u => (
             <li key={u.id}>
               <Link to="/chat/$room" params={{ room: getRoomId(user.id, u.id) }} className={s.item}>
                 <span className={s.avatar}>{u.email[0]?.toUpperCase()}</span>
@@ -25,7 +24,8 @@ export const Chats = () => {
               </Link>
             </li>
           ))}
-      </ul>
+        </ul>
+      )}
     </div>
   );
 };

@@ -9,29 +9,27 @@ import { Button } from '../../shared/ui/button/Button';
 import { useTheme } from '../../app/providers/theme-provider/useTheme';
 import { useAuth } from '../../app/providers/auth-provider/use-auth';
 import { useSignOutMutation } from '../../features/login/lib/useLogin';
-import { useLocation } from '@tanstack/react-router';
+import { useLocation, useNavigate } from '@tanstack/react-router';
 
 export const Header = () => {
   const { mutate: signOut } = useSignOutMutation();
   const { theme, toggleTheme } = useTheme();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const pathname = useLocation({
     select: location => location.pathname,
   });
-  const onLogout = () => {
-    signOut();
-  };
-
-  const { isAuthenticated } = useAuth();
+  const onSignButton = () => (isAuthenticated ? signOut() : navigate({ to: '/login' }));
 
   return (
     <div className={s.headerWrapper}>
       <div className={s.navigation}>
-        <NavButton title={'Home'}>
-          <HomeIcon />
-        </NavButton>
         {isAuthenticated && (
           <>
+            <NavButton title={'Home'}>
+              <HomeIcon />
+            </NavButton>
             <NavButton title={'Tables'} link={'/medications'}>
               <GridIcon />
             </NavButton>
@@ -46,7 +44,7 @@ export const Header = () => {
           {theme === 'LIGHT' ? <Dark /> : <Light />}
         </Button>
         {pathname !== '/login' && (
-          <Button variant={'outline'} onClick={onLogout}>
+          <Button variant={'outline'} onClick={onSignButton}>
             {isAuthenticated ? 'SignOut' : 'SignIn'}
           </Button>
         )}

@@ -9,6 +9,7 @@ import { Button } from '../../shared/ui/button/Button';
 import type { SocketStatus } from '../../entities/message/lib/type';
 import { useChatSocket } from './lib/useChatSocket';
 import { formatTime } from '../../shared/utils/formatTime';
+import { Spinner } from '../../shared/ui/spinner/Spinner';
 
 const STATUS_LABEL: Record<SocketStatus, string> = {
   connecting: 'Connecting…',
@@ -25,12 +26,21 @@ export const ChatRoom = ({ room }: Props) => {
   const peerId = user ? getPeerId(room, user.id) : '';
   const { data: friend } = useGetUserById(peerId || '');
 
-  const { messages, status, sendMessage } = useChatSocket(room);
+  const { messages, status, sendMessage, isHistoryLoaded } = useChatSocket(room);
   const [text, setText] = useState('');
-  const bottomRef = useRef<HTMLDivElement>(null);
+
+  const listRef = useRef<HTMLDivElement>(null);
+  const isFirstScroll = useRef(true);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    isFirstScroll.current = true;
+  }, [room]);
+
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    list.scrollTo({ top: list.scrollHeight, behavior: isFirstScroll.current ? 'auto' : 'smooth' });
+    if (messages.length) isFirstScroll.current = false;
   }, [messages]);
 
   const onSubmit = (e: SubmitEvent<HTMLFormElement>) => {
@@ -50,8 +60,13 @@ export const ChatRoom = ({ room }: Props) => {
         <span className={`${s.status} ${s[status] ?? ''}`}>{STATUS_LABEL[status]}</span>
       </div>
 
-      <div className={s.messages}>
-        {messages.length === 0 && <p className={s.empty}>No messages yet</p>}
+      <div className={s.messages} ref={listRef}>
+        {isHistoryLoaded && messages.length === 0 && <p className={s.empty}>No messages yet</p>}
+        {!isHistoryLoaded && (
+          <div className={s.empty}>
+            <Spinner overlay={false} />
+          </div>
+        )}
         {messages.map(m => {
           const isOwn = m.sender.id === user?.id;
           return (
@@ -61,7 +76,6 @@ export const ChatRoom = ({ room }: Props) => {
             </div>
           );
         })}
-        <div ref={bottomRef} />
       </div>
 
       <form className={s.form} onSubmit={onSubmit}>
