@@ -6,8 +6,14 @@ interface Tokens {
   refreshToken: string;
 }
 
-const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'access_secret_123';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'refresh_secret_456';
+const requireEnv = (name: string): string => {
+  const value = process.env[name];
+  if (!value) throw new Error(`Missing required env variable: ${name}`);
+  return value;
+};
+
+const JWT_ACCESS_SECRET = requireEnv('JWT_ACCESS_SECRET');
+const JWT_REFRESH_SECRET = requireEnv('JWT_REFRESH_SECRET');
 
 export const generateToken = (payload: JWTPayload): Tokens => ({
   accessToken: jwt.sign(payload, JWT_ACCESS_SECRET, { expiresIn: '15m' }),

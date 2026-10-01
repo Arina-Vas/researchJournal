@@ -1,6 +1,4 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
+import 'dotenv/config';
 
 import express, { type Express, type Request, type Response } from 'express';
 import cors from 'cors';
@@ -18,7 +16,7 @@ const app: Express = express();
 
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
     credentials: true,
   }),
 );
