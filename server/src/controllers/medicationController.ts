@@ -8,6 +8,11 @@ import type {
 } from '../types/medication.js';
 import { buildFilters } from '../utils/buildFilters.js';
 
+// Keep in sync with client/src/entities/medications/lib/constants.ts
+const MAX_PAGE_SIZE = 100;
+const DEFAULT_PAGE_SIZE = 6;
+const DEFAULT_PAGE = 1;
+
 export const getMedications = async (
   req: Request<{}, {}, {}, MedicationsDTO>,
   res: Response<GetMedicationsResponse | ErrorResponse>,
@@ -15,10 +20,10 @@ export const getMedications = async (
   try {
     const { readyFilters, sortOptions } = buildFilters(req.query || {});
 
-    const { page = 1, pageSize = 6 } = req.query;
+    const { page = DEFAULT_PAGE, pageSize = DEFAULT_PAGE_SIZE } = req.query;
 
-    const pageNum = Math.max(1, Number(page) || 1);
-    const limitNum = Math.min(100, Math.max(1, Number(pageSize) || 6));
+    const pageNum = Math.max(1, Number(page) || DEFAULT_PAGE);
+    const limitNum = Math.min(MAX_PAGE_SIZE, Math.max(1, Number(pageSize) || DEFAULT_PAGE_SIZE));
     const skip = (pageNum - 1) * limitNum;
 
     const [[documents, totalFilteredItems], totalItems] = await Promise.all([

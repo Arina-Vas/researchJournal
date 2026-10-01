@@ -1,50 +1,34 @@
 import { useState } from 'react';
-
-const DEFAULT_PAGE_SIZE = 6;
-const DEFAULT_PAGE = 1;
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from '../../../entities/medications/lib/constants';
 
 export const usePagination = () => {
-  const [page, setPage] = useState(DEFAULT_PAGE);
-  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [page, setPage] = useState<number>(DEFAULT_PAGE);
+  const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
 
-  const [showAll, setShowAll] = useState(false);
+  const showAll = pageSize === MAX_PAGE_SIZE;
 
-  const resetPagination = () => {
-    setShowAll(false);
+  const resetPage = () => {
     setPage(DEFAULT_PAGE);
-    setPageSize(DEFAULT_PAGE_SIZE);
   };
 
-  const onNextPage = (rowsLength: number, hasNextPage: boolean) => {
-    if (hasNextPage) {
-      setPage(prev => prev + 1);
-    }
+  const onNextPage = (totalPages: number) => {
+    setPage(prev => Math.min(prev + 1, Math.max(totalPages, DEFAULT_PAGE)));
   };
 
-  const onPreviousPage = () => {
-    if (page > 1) {
-      setPage(prev => prev - 1);
-    }
-  };
+  const onPreviousPage = () => setPage(prev => Math.max(prev - 1, DEFAULT_PAGE));
 
   const onPageSizeChange = (pageSize: number) => {
     setPage(DEFAULT_PAGE);
-    setPageSize(pageSize);
-    setShowAll(false);
+    setPageSize(Math.min(pageSize, MAX_PAGE_SIZE));
   };
 
-  const onShowAll = (show: boolean, totalItems: number) => {
-    setPage(1);
-    setShowAll(show);
-    if (show) setPageSize(totalItems || 0);
-    else setPageSize(DEFAULT_PAGE_SIZE);
-  };
+  const onShowAll = (show: boolean) => onPageSizeChange(show ? MAX_PAGE_SIZE : DEFAULT_PAGE_SIZE);
 
   return {
     page,
     pageSize,
     showAll,
-    resetPagination,
+    resetPage,
     onNextPage,
     onPreviousPage,
     onPageSizeChange,

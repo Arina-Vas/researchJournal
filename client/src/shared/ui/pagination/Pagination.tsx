@@ -14,6 +14,7 @@ type Props = {
   onPrevPage: () => void;
   onShowAll: (show: boolean) => void;
   pageSize: number;
+  pageSizeOptions: readonly number[];
 };
 export const Pagination = ({
   page,
@@ -27,6 +28,7 @@ export const Pagination = ({
   onPageSizeChange,
   showAll,
   pageSize,
+  pageSizeOptions,
 }: Props) => {
   return (
     <div className={s.paginationContainer}>
@@ -36,7 +38,7 @@ export const Pagination = ({
           variant={'text'}
           className={s.prevBtn}
           onClick={onPrevPage}
-          disabled={page === 1 || showAll}
+          disabled={page === 1}
         >
           <Arrow />
         </Button>
@@ -48,7 +50,7 @@ export const Pagination = ({
           variant={'text'}
           className={s.nextBtn}
           onClick={onNextPage}
-          disabled={!hasNextPage || showAll}
+          disabled={!hasNextPage}
         >
           <Arrow />
         </Button>
@@ -66,24 +68,18 @@ export const Pagination = ({
 
       <div className={s.pageSize}>
         <span>Page size</span>
-        <Button
-          aria-label={'page size 6'}
-          size={'sm'}
-          isActive={pageSize === 6}
-          variant={'outline'}
-          onClick={() => onPageSizeChange(6)}
-        >
-          6
-        </Button>
-        <Button
-          aria-label={'page size 12'}
-          size={'sm'}
-          isActive={pageSize === 12}
-          variant={'outline'}
-          onClick={() => onPageSizeChange(12)}
-        >
-          12
-        </Button>
+        {pageSizeOptions.map(size => (
+          <Button
+            key={size}
+            aria-label={`page size ${size}`}
+            size={'sm'}
+            isActive={pageSize === size}
+            variant={'outline'}
+            onClick={() => onPageSizeChange(size)}
+          >
+            {size}
+          </Button>
+        ))}
       </div>
     </div>
   );

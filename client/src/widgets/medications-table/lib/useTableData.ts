@@ -24,9 +24,9 @@ type UseTableDataResult = {
   onPreviousPage: () => void;
   isLoading: boolean;
   isFetching: boolean;
-  resetPagination: () => void;
   isError: boolean;
   error: Error | null;
+  resetPage: () => void;
 };
 
 export const useTableData = (
@@ -36,7 +36,7 @@ export const useTableData = (
 ): UseTableDataResult => {
   const { name = null, successReaction = null, location = null, startDate = null, endDate = null } = filters || {};
 
-  const { page, pageSize, showAll, resetPagination, onNextPage, onPreviousPage, onPageSizeChange, onShowAll } =
+  const { page, pageSize, showAll, resetPage, onNextPage, onPreviousPage, onPageSizeChange, onShowAll } =
     usePagination();
 
   const queryFilters: MedicationParams = {
@@ -54,15 +54,14 @@ export const useTableData = (
   const { data, isLoading, isFetching, isError, error } = useMedications(queryFilters);
 
   const { data: medication, pagination } = data || {};
-  const { totalItems, totalPages, totalFilteredItems, hasNextPage } = pagination || {};
+  const { totalPages = 1, totalFilteredItems = 0, hasNextPage = false } = pagination || {};
 
   const rowData = medication || [];
 
   const startItem = rowData.length > 0 ? (page - 1) * pageSize + 1 : 0;
   const endItem = (page - 1) * pageSize + rowData.length;
 
-  const onNextPageHandler = () => onNextPage(rowData.length, hasNextPage || false);
-  const onShowAllHandler = (show: boolean) => onShowAll(show, totalItems || 0);
+  const onNextPageHandler = () => onNextPage(totalPages);
 
   return {
     columns: MEDICATIONS_COLUMNS,
@@ -75,12 +74,12 @@ export const useTableData = (
     endItem,
     hasNextPage: hasNextPage || false,
     onPageSizeChange,
-    onShowAll: onShowAllHandler,
+    resetPage,
+    onShowAll,
     onNextPage: onNextPageHandler,
     onPreviousPage,
     isLoading,
     isFetching,
-    resetPagination,
     isError,
     error,
   };

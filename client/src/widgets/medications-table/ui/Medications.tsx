@@ -8,18 +8,13 @@ import { Spinner } from '../../../shared/ui/spinner/Spinner';
 import { Button } from '../../../shared/ui/button/Button';
 import { MedicationRow } from './medication-row/MedicationRow';
 import { Pagination } from '../../../shared/ui/pagination/Pagination';
+import { PAGE_SIZE_OPTIONS } from '../../../entities/medications/lib/constants';
 
 export const Medications = () => {
   const [filters, setFilters] = useState<MedicationFilters | null>(null);
 
   const [sortBy, setSortBy] = useState<SortAndPaginationParams['sortBy']>(null);
   const [sortDirection, setSortDirection] = useState<SortAndPaginationParams['sortDirection']>(null);
-
-  const onSort = (value: SortAndPaginationParams['sortBy']) => {
-    setSortBy(value);
-    setSortDirection(p => (p === 'asc' ? 'desc' : 'asc'));
-    resetPagination();
-  };
 
   const {
     totalItems,
@@ -36,13 +31,19 @@ export const Medications = () => {
     onPreviousPage,
     isLoading,
     isFetching,
-    resetPagination,
+    resetPage,
     pageSize,
   } = useTableData(filters, sortBy, sortDirection);
 
+  const onSort = (value: SortAndPaginationParams['sortBy']) => {
+    setSortBy(value);
+    setSortDirection(p => (p === 'asc' ? 'desc' : 'asc'));
+    resetPage();
+  };
+
   const onFiltersChange = (filters: MedicationFilters | null) => {
     setFilters(filters);
-    resetPagination();
+    resetPage();
   };
 
   const isDataLoading = isLoading || isFetching;
@@ -97,6 +98,7 @@ export const Medications = () => {
         </table>
       </div>
       <Pagination
+        pageSizeOptions={PAGE_SIZE_OPTIONS}
         onNextPage={onNextPage}
         onPrevPage={onPreviousPage}
         hasNextPage={hasNextPage}
