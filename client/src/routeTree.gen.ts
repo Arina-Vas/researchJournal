@@ -13,6 +13,8 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as AuthIndexRouteImport } from './routes/_auth/index'
+import { Route as AuthChatIndexRouteImport } from './routes/_auth/chat/index'
+import { Route as AuthChatRoomRouteImport } from './routes/_auth/chat/$room'
 import { Route as AuthMedicationsIndexRouteImport } from './routes/_auth/medications/index'
 import { Route as AuthMedicationsIdRouteImport } from './routes/_auth/medications/$id'
 
@@ -35,6 +37,16 @@ const AuthIndexRoute = AuthIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthChatIndexRoute = AuthChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthChatRoomRoute = AuthChatRoomRouteImport.update({
+  id: '/chat/$room',
+  path: '/chat/$room',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthMedicationsIndexRoute = AuthMedicationsIndexRouteImport.update({
   id: '/medications/',
   path: '/medications/',
@@ -50,14 +62,18 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthIndexRoute
   '/login': typeof LoginRoute
   '/not-found': typeof NotFoundRoute
+  '/chat/$room': typeof AuthChatRoomRoute
   '/medications/$id': typeof AuthMedicationsIdRoute
+  '/chat/': typeof AuthChatIndexRoute
   '/medications/': typeof AuthMedicationsIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/not-found': typeof NotFoundRoute
   '/': typeof AuthIndexRoute
+  '/chat/$room': typeof AuthChatRoomRoute
   '/medications/$id': typeof AuthMedicationsIdRoute
+  '/chat': typeof AuthChatIndexRoute
   '/medications': typeof AuthMedicationsIndexRoute
 }
 export interface FileRoutesById {
@@ -66,22 +82,39 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/not-found': typeof NotFoundRoute
   '/_auth/': typeof AuthIndexRoute
+  '/_auth/chat/$room': typeof AuthChatRoomRoute
   '/_auth/medications/$id': typeof AuthMedicationsIdRoute
+  '/_auth/chat/': typeof AuthChatIndexRoute
   '/_auth/medications/': typeof AuthMedicationsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/login' | '/not-found' | '/medications/$id' | '/medications/'
+    | '/'
+    | '/login'
+    | '/not-found'
+    | '/chat/$room'
+    | '/medications/$id'
+    | '/chat/'
+    | '/medications/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/not-found' | '/' | '/medications/$id' | '/medications'
+  to:
+    | '/login'
+    | '/not-found'
+    | '/'
+    | '/chat/$room'
+    | '/medications/$id'
+    | '/chat'
+    | '/medications'
   id:
     | '__root__'
     | '/_auth'
     | '/login'
     | '/not-found'
     | '/_auth/'
+    | '/_auth/chat/$room'
     | '/_auth/medications/$id'
+    | '/_auth/chat/'
     | '/_auth/medications/'
   fileRoutesById: FileRoutesById
 }
@@ -121,6 +154,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthIndexRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/chat/': {
+      id: '/_auth/chat/'
+      path: '/chat'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof AuthChatIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/chat/$room': {
+      id: '/_auth/chat/$room'
+      path: '/chat/$room'
+      fullPath: '/chat/$room'
+      preLoaderRoute: typeof AuthChatRoomRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/medications/': {
       id: '/_auth/medications/'
       path: '/medications'
@@ -140,13 +187,17 @@ declare module '@tanstack/react-router' {
 
 interface AuthRouteChildren {
   AuthIndexRoute: typeof AuthIndexRoute
+  AuthChatRoomRoute: typeof AuthChatRoomRoute
   AuthMedicationsIdRoute: typeof AuthMedicationsIdRoute
+  AuthChatIndexRoute: typeof AuthChatIndexRoute
   AuthMedicationsIndexRoute: typeof AuthMedicationsIndexRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthIndexRoute: AuthIndexRoute,
+  AuthChatRoomRoute: AuthChatRoomRoute,
   AuthMedicationsIdRoute: AuthMedicationsIdRoute,
+  AuthChatIndexRoute: AuthChatIndexRoute,
   AuthMedicationsIndexRoute: AuthMedicationsIndexRoute,
 }
 

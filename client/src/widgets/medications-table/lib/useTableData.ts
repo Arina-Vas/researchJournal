@@ -51,8 +51,6 @@ export const useTableData = (
     endDate,
   };
 
-  console.log(queryFilters);
-
   const { data, isLoading, isFetching, isError, error } = useMedications(queryFilters);
 
   const { data: medication, pagination } = data || {};

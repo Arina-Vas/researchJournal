@@ -1,5 +1,6 @@
 import HomeIcon from '@/shared/assets/images/Home.svg';
 import GridIcon from '@/shared/assets/images/Grid.svg';
+import ChatIcon from '@/shared/assets/images/Chat.svg';
 import s from './Header.module.css';
 import Light from '@/shared/assets/images/Light.svg';
 import Dark from '@/shared/assets/images/Dark.svg';
@@ -29,9 +30,16 @@ export const Header = () => {
         <NavButton title={'Home'}>
           <HomeIcon />
         </NavButton>
-        <NavButton title={'Tables'} link={'/medications'}>
-          <GridIcon />
-        </NavButton>
+        {isAuthenticated && (
+          <>
+            <NavButton title={'Tables'} link={'/medications'}>
+              <GridIcon />
+            </NavButton>
+            <NavButton title={'Chat'} link={'/chat'}>
+              <ChatIcon />
+            </NavButton>
+          </>
+        )}
       </div>
       <div className={s.settings}>
         <Button onClick={toggleTheme} variant={'outline'}>

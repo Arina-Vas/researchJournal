@@ -1,8 +1,10 @@
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import type { User } from '../../../entities/user/lib/type';
 import { AuthContext } from './use-auth';
-import { tokenStorage } from '../../../shared/api/tokenStorage';
+import { isTokenExpired, tokenStorage } from '../../../shared/api/tokenStorage';
 import { loginApi } from '../../../features/login/api/loginApi';
+import { refreshAccessToken } from '../../../shared/api/instance';
+import { router } from '../../router/router';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -21,6 +23,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const handleUnauthorized = () => {
       logout();
+      router.invalidate();
     };
     window.addEventListener('auth:unauthorized', handleUnauthorized);
     return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
@@ -31,12 +34,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         const existingToken = tokenStorage.get();
 
-        if (existingToken) {
+        if (existingToken && !isTokenExpired(existingToken)) {
           const { user } = await loginApi.me();
           setUser(user);
         } else {
-          const { accessToken } = await loginApi.refresh();
-          tokenStorage.set(accessToken);
+          await refreshAccessToken();
           const { user } = await loginApi.me();
           setUser(user);
         }

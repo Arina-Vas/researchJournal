@@ -3,7 +3,6 @@ import { loginApi } from '../api/loginApi';
 import { useAuth } from '../../../app/providers/auth-provider/use-auth';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import type { AuthDTO } from '../../../entities/user/lib/type';
-import type { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
 
 export const useSignUpMutation = (onSuccessFn?: () => void) => {
@@ -46,7 +45,6 @@ export const useSignOutMutation = () => {
   const { logout } = useAuth();
   const router = useRouter();
   const navigate = useNavigate();
-
 
   return useMutation({
     mutationKey: ['auth', 'signOut'],
