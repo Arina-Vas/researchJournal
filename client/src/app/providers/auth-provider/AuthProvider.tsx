@@ -4,7 +4,7 @@ import { AuthContext } from './use-auth';
 import { isTokenExpired, tokenStorage } from '../../../shared/api/tokenStorage';
 import { loginApi } from '../../../features/login/api/loginApi';
 import { refreshAccessToken } from '../../../shared/api/instance';
-import { router } from '../../router/router';
+import { queryClient } from '../query-provider/QueryProvider';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const logout = useCallback(() => {
+    queryClient.clear();
     tokenStorage.clear();
     setUser(null);
   }, []);
@@ -23,7 +24,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const handleUnauthorized = () => {
       logout();
-      router.invalidate();
     };
     window.addEventListener('auth:unauthorized', handleUnauthorized);
     return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);

@@ -3,6 +3,7 @@ import s from './LoginForm.module.css';
 import { Input } from '../../../shared/ui/input/Input';
 import { Button } from '../../../shared/ui/button/Button';
 import { useSignInMutation, useSignUpMutation } from '../lib/useLogin';
+import { getReadableErrorMessage } from '../../../shared/utils/getReadableErrorMessage';
 
 export const LoginForm = () => {
   const [isAccount, setIsAccount] = useState(true);
@@ -31,7 +32,7 @@ export const LoginForm = () => {
   } = useSignUpMutation(resetForm);
 
   const serverError = isSignUpError ? signUpError : isSignInError ? signInError : null;
-  const error = serverError ? serverError.message : errorLocale ? errorLocale : '';
+  const error = serverError ? getReadableErrorMessage(serverError) : errorLocale ? errorLocale : '';
 
   const isPending = isSignUpPending || isSignInPending;
 

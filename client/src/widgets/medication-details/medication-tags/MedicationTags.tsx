@@ -6,7 +6,6 @@ type Props = {
   location: string;
 };
 export const MedicationTags = ({ location }: Props) => {
-  // const { data: medications } = useMedications();
   const { data: medications } = useMedications({ location, pageSize: 6 });
 
   return (

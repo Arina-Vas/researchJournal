@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import { ToastContainer } from 'react-toastify';
@@ -12,6 +12,10 @@ import { Spinner } from './shared/ui/spinner/Spinner';
 
 const App = () => {
   const auth = useAuth();
+
+  useEffect(() => {
+    if (!auth.isLoading) router.invalidate();
+  }, [auth.isAuthenticated, auth.isLoading]);
 
   if (auth.isLoading) {
     return <Spinner />;

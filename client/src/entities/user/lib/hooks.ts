@@ -14,5 +14,6 @@ export const useGetUserById = (userId: string) => {
     queryKey: ['user', userId],
     queryFn: () => fetchUserById(userId),
     staleTime: 1000 * 60 * 5,
+    enabled: Boolean(userId && typeof userId === 'string' && userId.trim() !== ''),
   });
 };

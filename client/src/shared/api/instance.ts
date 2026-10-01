@@ -1,6 +1,5 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios';
 import { tokenStorage } from './tokenStorage';
-import { toast } from 'react-toastify';
 import { isSessionExpiredError } from './isSessionExpiredError';
 
 export const instance = axios.create({
@@ -62,15 +61,6 @@ instance.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-
-    if (originalRequest?.url?.includes('auth/refresh')) {
-      return Promise.reject(error);
-    }
-
-    const serverMessage: string =
-      error.response?.data?.message || error.response?.data?.error || 'Network error, please try again';
-
-    toast.error(serverMessage);
 
     return Promise.reject(error);
   },

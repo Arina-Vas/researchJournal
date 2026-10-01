@@ -30,18 +30,18 @@ export interface Medication {
 }
 
 export interface MedicationFilters {
-  name: string | null;
-  location: string | null;
-  startDate: string | null;
-  endDate: string | null;
-  successReaction: boolean | null;
+  name?: string | null;
+  location?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  successReaction?: boolean | null;
 }
 
 export interface SortAndPaginationParams {
-  sortBy: 'name' | 'location' | 'startDate' | 'endDate' | 'successReaction' | null;
-  sortDirection: 'asc' | 'desc' | null;
-  pageSize: number | null;
-  page: number | null;
+  sortBy?: 'name' | 'location' | 'startDate' | 'endDate' | 'successReaction' | null;
+  sortDirection?: 'asc' | 'desc' | null;
+  pageSize?: number | null;
+  page?: number | null;
 }
 
 export type MedicationParams = MedicationFilters & SortAndPaginationParams;
