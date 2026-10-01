@@ -1,6 +1,7 @@
 import type { AuthRequest } from '../types/user.js';
 import type { NextFunction, Response } from 'express';
 import { verifyAccessToken } from '../utils/tokens.js';
+import jwt from 'jsonwebtoken';
 
 export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
@@ -16,7 +17,9 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
     req.user = verifyAccessToken(token);
     next();
   } catch (error) {
-    console.log(error);
+    if (!(error instanceof jwt.TokenExpiredError)) {
+      console.error(error);
+    }
     res.status(401).json({ message: 'Access token is invalid or expired' });
   }
 };

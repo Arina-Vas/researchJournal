@@ -1,8 +1,16 @@
 import { type Request, type Response } from 'express';
 import { User } from '../models/User.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { generateToken, verifyRefreshToken } from '../utils/tokens.js';
-import { type AuthDTO, type AuthResponse, type AuthRequest, type MeResponse, type UserDTO } from '../types/user.js';
+import {
+  type AuthDTO,
+  type AuthResponse,
+  type AuthRequest,
+  type JWTPayload,
+  type MeResponse,
+  type UserDTO,
+} from '../types/user.js';
 
 const MAX_SESSIONS = 5;
 const SALT_ROUNDS = 10;
@@ -143,12 +151,6 @@ export const logoutUser = async (
         { 'refreshTokens.refreshToken': refreshToken },
         { $pull: { refreshTokens: { refreshToken } } },
       );
-
-      // const userWhoLoggedOut = await User.findOneAndUpdate(
-      //   { 'refreshTokens.refreshToken': refreshToken },
-      //   { $pull: { refreshTokens: { refreshToken } } },
-      //   { new: false },
-      // );
     }
 
     res.clearCookie('refreshToken', COOKIE_OPTIONS);
@@ -168,9 +170,21 @@ export const refreshToken = async (req: Request, res: Response): Promise<void> =
       return;
     }
 
-    const payload = verifyRefreshToken(refreshToken);
+    let payload: JWTPayload;
+    try {
+      payload = verifyRefreshToken(refreshToken);
+    } catch (error) {
+      if (error instanceof jwt.JsonWebTokenError) {
+        res.clearCookie('refreshToken', COOKIE_OPTIONS);
+        res.status(401).json({ message: 'Refresh token is invalid or expired' });
+        return;
+      }
+      res.status(500).json({ message: 'Server error during token refresh' });
+      return;
+    }
 
-    if (!payload || !payload.userId) {
+    if (!payload.userId) {
+      res.clearCookie('refreshToken', COOKIE_OPTIONS);
       res.status(401).json({ message: 'Refresh token is invalid or expired' });
       return;
     }
@@ -246,5 +260,23 @@ export const getUsers = async (req: AuthRequest, res: Response<UserDTO[] | { mes
     res.json(users.map(user => ({ id: user.id.toString(), email: user.email })));
   } catch (error) {
     res.status(500).json({ message: 'Server error retrieving users' });
+  }
+};
+
+export const getUserById = async (
+  req: Request<{ userId: string }>,
+  res: Response<UserDTO | { message: string }>,
+): Promise<void> => {
+  try {
+    const user = await User.findById(req.params.userId, 'email').lean();
+
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    res.json({ id: user._id.toString(), email: user.email });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error retrieving user' });
   }
 };
