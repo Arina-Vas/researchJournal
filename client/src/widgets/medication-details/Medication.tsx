@@ -58,7 +58,7 @@ export const Medication = ({ id }: Props) => {
         </div>
         <div className={s.section}>
           <span className={s.title}>Tags</span>
-          <MedicationTags location={location?._id || ''} />
+          {location?._id && <MedicationTags currentId={data?._id} location={location?._id || ''} />}
         </div>
       </div>
     </div>

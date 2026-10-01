@@ -3,6 +3,7 @@ import type { Location } from '../models/Location.js';
 import { type Document, type PopulatedDoc, Types } from 'mongoose';
 
 export interface MedicationsDTO {
+  excludeId?: string;
   name?: string;
   location?: string;
   startDate?: string;

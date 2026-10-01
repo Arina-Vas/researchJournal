@@ -6,9 +6,10 @@ const MEDICATIONS_LIMIT = 6;
 
 type Props = {
   location: string;
+  currentId?: string;
 };
-export const MedicationTags = ({ location }: Props) => {
-  const { data: medications } = useMedications({ location, pageSize: MEDICATIONS_LIMIT });
+export const MedicationTags = ({ location, currentId }: Props) => {
+  const { data: medications } = useMedications({ location, pageSize: MEDICATIONS_LIMIT, excludeId: currentId });
 
   return (
     <ul className={s.tagList}>

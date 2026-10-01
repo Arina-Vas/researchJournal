@@ -1,9 +1,23 @@
 import type { MedicationsDTO } from '../types/medication.js';
+import { Types } from 'mongoose';
 
 export const buildFilters = (filters: MedicationsDTO = {}) => {
-  const { name, startDate, endDate, successReaction, sortBy = '_id', sortDirection = 'asc', location } = filters;
+  const {
+    name,
+    startDate,
+    endDate,
+    successReaction,
+    excludeId,
+    sortBy = '_id',
+    sortDirection = 'asc',
+    location,
+  } = filters;
 
   const readyFilters: Record<string, any> = {};
+
+  if (excludeId && Types.ObjectId.isValid(excludeId)) {
+    readyFilters._id = { $ne: new Types.ObjectId(excludeId) };
+  }
 
   if (name && name.trim().length >= 3) {
     const escapedName = name.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

@@ -35,6 +35,7 @@ export interface MedicationFilters {
   startDate?: string | null;
   endDate?: string | null;
   successReaction?: boolean | null;
+  excludeId?: string;
 }
 
 export interface SortAndPaginationParams {
