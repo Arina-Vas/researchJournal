@@ -1,12 +1,13 @@
 import type { MedicationsDTO } from '../types/medication.js';
 
 export const buildFilters = (filters: MedicationsDTO = {}) => {
-  const { name, startDate, endDate, successReaction, pageSize = 6, sortBy, sortDirection = 'asc', location } = filters;
+  const { name, startDate, endDate, successReaction, sortBy, sortDirection = 'asc', location } = filters;
 
   const readyFilters: Record<string, any> = {};
 
   if (name && name.trim().length >= 3) {
-    readyFilters.name = { $regex: name.trim(), $options: 'i' };
+    const escapedName = name.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    readyFilters.name = { $regex: escapedName, $options: 'i' };
   }
 
   if (successReaction !== undefined) {
@@ -25,10 +26,13 @@ export const buildFilters = (filters: MedicationsDTO = {}) => {
     readyFilters.endDate = { $lte: new Date(endDate).toISOString() };
   }
 
-  const sortOrder = sortDirection === 'asc' ? 1 : -1;
-  const sortOptions: Record<string, 1 | -1> = {
-    [sortBy as string]: sortOrder,
-  };
+  let sortOptions: Record<string, 1 | -1> | null = null;
+  if (sortBy) {
+    const sortOrder = sortDirection === 'asc' ? 1 : -1;
+    sortOptions = {
+      [sortBy]: sortOrder,
+    };
+  }
 
   return { readyFilters, sortOptions };
 };

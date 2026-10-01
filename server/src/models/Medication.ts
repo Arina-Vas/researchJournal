@@ -35,7 +35,7 @@ const medicationSchema = new Schema<Medication>({
   name: { type: String, required: true },
   type: { type: String, enum: ['medicine', 'vaccine'], required: true },
   description: { type: String, required: true },
-  status: { type: String, enum: ['draft', 'published', 'archived'], default: 'draft' },
+  status: { type: String, enum: ['draft', 'in_progress', 'completed', 'cancelled'], default: 'draft' },
   subStatus: { type: String, enum: ['awaiting_results', 'on_hold', 'out_of_stock', 'active'], required: true },
   phase: { type: String, enum: ['preclinical', 'clinical_trials', 'regulatory_approval'], required: true },
   endDate: { type: String, required: true },

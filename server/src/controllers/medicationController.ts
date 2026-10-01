@@ -18,7 +18,7 @@ export const getMedications = async (
     const { page = 1, pageSize = 6 } = req.query;
 
     const pageNum = Math.max(1, page || 1);
-    const limitNum = Math.max(1, pageSize || 10);
+    const limitNum = Math.max(1, pageSize || 6);
     const skip = (pageNum - 1) * limitNum;
 
     const [[documents, totalFilteredItems], totalItems] = await Promise.all([

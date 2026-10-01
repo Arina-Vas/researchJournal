@@ -22,7 +22,7 @@ const rejectUpgrade = (socket: Duplex, status: number, reason: string) => {
 };
 
 export const initWebSocketServer = (server: Server) => {
-  const wss = new WebSocketServer({ noServer: true });
+  const wss = new WebSocketServer({ noServer: true, maxPayload: 16 * 1024 });
   const rooms = new Map<string, Set<AuthedSocket>>();
 
   const joinRoom = (ws: AuthedSocket, room: string) => {

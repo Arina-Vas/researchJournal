@@ -11,6 +11,7 @@ import {
   type MeResponse,
   type UserDTO,
 } from '../types/user.js';
+import { Types } from 'mongoose';
 
 const MAX_SESSIONS = 5;
 const SALT_ROUNDS = 10;
@@ -30,6 +31,11 @@ export const registerUser = async (
 
     if (!email || !password) {
       res.status(400).json({ message: 'Email and password are required' });
+      return;
+    }
+
+    if (password.length < 8) {
+      res.status(400).json({ message: 'Minimal password length is 8' });
       return;
     }
 
@@ -213,16 +219,17 @@ export const refreshToken = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-export const deleteUser = async (req: Request, res: Response): Promise<void> => {
+export const deleteUser = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { id } = req.query;
+    const userId = req.user?.userId;
 
-    if (!id) {
-      res.status(400).json({ message: 'Incorrect id of user' });
+    if (!userId) {
+      res.status(401).json({ message: 'Unauthorized' });
       return;
     }
 
-    await User.findByIdAndDelete(id);
+    await User.findByIdAndDelete(userId);
+    res.clearCookie('refreshToken', COOKIE_OPTIONS);
     res.json({ message: 'User successfully deleted' });
   } catch (err) {
     res.status(500).json({ message: 'Server error during deleting user' });
@@ -268,6 +275,13 @@ export const getUserById = async (
   res: Response<UserDTO | { message: string }>,
 ): Promise<void> => {
   try {
+    const isValid = Types.ObjectId.isValid(req.params.userId);
+
+    if (!isValid) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
     const user = await User.findById(req.params.userId, 'email').lean();
 
     if (!user) {
