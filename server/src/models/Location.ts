@@ -11,7 +11,7 @@ export interface Location {
   id: string;
   clinicName: string;
   address: LocationAddress;
-  coordinates: { lat: string; lng: string };
+  coordinate: { lat: number; lng: number };
 }
 
 const locationSchema = new Schema<Location>({
@@ -23,9 +23,9 @@ const locationSchema = new Schema<Location>({
     street: { type: String, required: true },
     building: { type: String, required: true },
   },
-  coordinates: {
-    lat: { type: String, required: true },
-    lng: { type: String, required: true },
+  coordinate: {
+    lat: { type: Number, required: true },
+    lng: { type: Number, required: true },
   },
 });
 

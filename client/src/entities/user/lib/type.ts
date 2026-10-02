@@ -1,3 +1,5 @@
+import { Token } from '../../../shared/api/tokenStorage';
+
 export interface User {
   id: string;
   email: string;
@@ -10,12 +12,12 @@ export interface AuthDTO {
 
 export interface AuthResponse {
   message: string;
-  accessToken: string;
+  accessToken: Token;
   user: User;
 }
 
 export interface RefreshResponse {
-  accessToken: string;
+  accessToken: Token;
 }
 
 export interface MeResponse {

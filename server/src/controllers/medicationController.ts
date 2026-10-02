@@ -2,6 +2,7 @@ import { type Request, type Response } from 'express';
 import { Medication } from '../models/Medication.js';
 import type {
   ErrorResponse,
+  GetMedicationByIdResponse,
   GetMedicationsResponse,
   MedicationResponseDTO,
   MedicationsDTO,
@@ -59,13 +60,18 @@ export const getMedications = async (
 
 export const getMedicationById = async (
   req: Request<{ id: string }>,
-  res: Response<MedicationResponseDTO | ErrorResponse>,
+  res: Response<GetMedicationByIdResponse | ErrorResponse>,
 ) => {
   try {
-    const medication = await Medication.findById<MedicationResponseDTO>(req.params.id);
+    if (!req.params.id) {
+      res.status(404).json({ message: 'Medication not found' });
+      return;
+    }
+    const medication = await Medication.findById<GetMedicationByIdResponse>(req.params.id);
 
     if (!medication) {
-      return res.status(404).json({ message: 'Medication not found' });
+      res.status(404).json({ message: 'Medication not found' });
+      return;
     }
 
     res.json(medication);

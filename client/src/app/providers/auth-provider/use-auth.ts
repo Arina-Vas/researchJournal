@@ -1,11 +1,12 @@
 import { createContext, useContext } from 'react';
 import type { User } from '../../../entities/user/lib/type';
+import { Token } from '../../../shared/api/tokenStorage';
 
 export interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  setAuth: (user: User, token: string) => void;
+  setAuth: (user: User, token: Token) => void;
   logout: () => void;
 }
 

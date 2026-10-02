@@ -1,7 +1,8 @@
 import { Schema, model, Document } from 'mongoose';
+import type { Token } from '../types/user.js';
 
 interface Session {
-  refreshToken: string;
+  refreshToken: Token;
   userAgent?: string;
   ip?: string;
   createdAt: Date;

@@ -8,11 +8,11 @@ export interface MedicationsDTO {
   location?: string;
   startDate?: string;
   endDate?: string;
-  page?: number;
-  pageSize?: number;
+  page?: string;
+  pageSize?: string;
   sortBy?: 'name' | 'location' | 'startDate' | 'endDate' | 'successReaction';
   sortDirection?: 'asc' | 'desc';
-  successReaction?: boolean;
+  successReaction?: 'true' | 'false';
 }
 
 export interface MedicationResponseDTO {
@@ -47,6 +47,8 @@ export interface GetMedicationsResponse {
   data: MedicationResponseDTO[];
   pagination: Pagination;
 }
+
+export type GetMedicationByIdResponse = Omit<MedicationResponseDTO, 'location'> & { location: string };
 
 export interface ErrorResponse {
   message: string;

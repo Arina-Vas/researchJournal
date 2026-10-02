@@ -1,5 +1,12 @@
 import type { Request } from 'express';
 
+// Keep in sync with client/src/shared/api/tokenStorage.ts
+export type Token = `${string}.${string}.${string}`;
+
+const TOKEN_REGEX = /^[\w-]+\.[\w-]+\.[\w-]+$/; // base64url header.payload.signature
+
+export const isToken = (value: unknown): value is Token => typeof value === 'string' && TOKEN_REGEX.test(value);
+
 export interface JWTPayload {
   userId: string;
 }
@@ -25,8 +32,12 @@ export interface UserDTO {
 
 export interface AuthResponse {
   message: string;
-  accessToken: string;
+  accessToken: Token;
   user: UserDTO;
+}
+
+export interface RefreshResponse {
+  accessToken: Token;
 }
 
 export interface MeResponse {

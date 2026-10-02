@@ -4,7 +4,7 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { verifyAccessToken } from '../utils/tokens.js';
 import { createMessage, getRoomHistory, isRoomMember, parseClientEvent } from '../utils/chat.js';
 import type { AuthedSocket, ServerEvent } from '../types/chat.js';
-import type { VerifiedJWTPayload } from '../types/user.js';
+import { isToken, type VerifiedJWTPayload } from '../types/user.js';
 
 const WS_PATH = '/ws';
 const HEARTBEAT_INTERVAL = 30_000;
@@ -58,7 +58,12 @@ export const initWebSocketServer = (server: Server) => {
 
     let payload: VerifiedJWTPayload;
     try {
-      payload = verifyAccessToken(url.searchParams.get('token') ?? '');
+      const token = url.searchParams.get('token');
+      if (!isToken(token)) {
+        rejectUpgrade(socket, 401, 'Unauthorized');
+        return;
+      }
+      payload = verifyAccessToken(token);
     } catch {
       rejectUpgrade(socket, 401, 'Unauthorized');
       return;

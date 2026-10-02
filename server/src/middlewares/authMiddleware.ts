@@ -1,4 +1,4 @@
-import type { AuthRequest } from '../types/user.js';
+import { type AuthRequest, isToken } from '../types/user.js';
 import type { NextFunction, Response } from 'express';
 import { verifyAccessToken } from '../utils/tokens.js';
 import jwt from 'jsonwebtoken';
@@ -12,6 +12,11 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
   }
 
   const token = authHeader.split(' ')[1] || '';
+
+  if (!isToken(token)) {
+    res.status(401).json({ message: 'Access token is invalid or expired' });
+    return;
+  }
 
   try {
     req.user = verifyAccessToken(token);

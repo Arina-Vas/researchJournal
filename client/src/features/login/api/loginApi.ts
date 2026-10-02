@@ -1,5 +1,5 @@
 import { instance } from '../../../shared/api/instance';
-import type { AuthDTO, AuthResponse, MeResponse, RefreshResponse } from '../../../entities/user/lib/type';
+import type { AuthDTO, AuthResponse, MeResponse } from '../../../entities/user/lib/type';
 
 export const loginApi = {
   signUp: async (credentials: AuthDTO): Promise<AuthResponse> => {
@@ -10,9 +10,6 @@ export const loginApi = {
   },
   logOut: async (): Promise<{ message: string }> => {
     return await instance.post<{ message: string }>('/auth/logout').then(res => res.data);
-  },
-  refresh: async (): Promise<RefreshResponse> => {
-    return await instance.post<RefreshResponse>('/auth/refresh').then(res => res.data);
   },
   me: async (): Promise<MeResponse> => {
     return await instance.get<MeResponse>('/auth/me').then(res => res.data);

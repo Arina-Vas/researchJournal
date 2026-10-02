@@ -1,6 +1,7 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios';
-import { tokenStorage } from './tokenStorage';
+import { Token, tokenStorage } from './tokenStorage';
 import { isSessionExpiredError } from './isSessionExpiredError';
+import { RefreshResponse } from '../../entities/user/lib/type';
 
 export const instance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -19,12 +20,12 @@ instance.interceptors.request.use(config => {
   return config;
 });
 
-let refreshPromise: Promise<string> | null = null;
+let refreshPromise: Promise<Token> | null = null;
 
-export const refreshAccessToken = (): Promise<string> => {
+export const refreshAccessToken = (): Promise<Token> => {
   if (refreshPromise === null) {
     refreshPromise = instance
-      .post<{ accessToken: string }>('auth/refresh')
+      .post<RefreshResponse>('auth/refresh')
       .then(({ data }) => {
         tokenStorage.set(data.accessToken);
         return data.accessToken;

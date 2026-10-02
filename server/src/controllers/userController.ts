@@ -10,6 +10,8 @@ import {
   type JWTPayload,
   type MeResponse,
   type UserDTO,
+  isToken,
+  type RefreshResponse,
 } from '../types/user.js';
 import { Types } from 'mongoose';
 
@@ -146,18 +148,21 @@ export const loginUser = async (
   }
 };
 
-export const logoutUser = async (
-  req: Request<{}, {}, { refreshToken: string }>,
-  res: Response<{ message: string }>,
-): Promise<void> => {
+export const logoutUser = async (req: Request, res: Response<{ message: string }>): Promise<void> => {
   try {
-    const refreshToken = req.cookies?.refreshToken;
-    if (refreshToken) {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (isToken(refreshToken)) {
       await User.updateOne(
         { 'refreshTokens.refreshToken': refreshToken },
         { $pull: { refreshTokens: { refreshToken } } },
       );
     }
+
+    await User.updateOne(
+      { 'refreshTokens.refreshToken': refreshToken },
+      { $pull: { refreshTokens: { refreshToken } } },
+    );
 
     res.clearCookie('refreshToken', COOKIE_OPTIONS);
     res.json({ message: 'User successfully logged out' });
@@ -167,14 +172,17 @@ export const logoutUser = async (
   }
 };
 
-export const refreshToken = async (req: Request, res: Response): Promise<void> => {
+export const refreshToken = async (
+  req: Request,
+  res: Response<RefreshResponse | { message: string }>,
+): Promise<void> => {
   try {
-    const refreshToken = req.cookies?.refreshToken;
-
-    if (!refreshToken) {
-      res.status(401).json({ message: 'Refresh token not provided' });
+    if (!isToken(req.cookies.refreshToken)) {
+      res.status(401).json({ message: 'Refresh token is invalid or expired' });
       return;
     }
+
+    const refreshToken = req.cookies.refreshToken;
 
     let payload: JWTPayload;
     try {

@@ -1,7 +1,7 @@
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import type { User } from '../../../entities/user/lib/type';
 import { AuthContext } from './use-auth';
-import { isTokenExpired, tokenStorage } from '../../../shared/api/tokenStorage';
+import { isTokenExpired, Token, tokenStorage } from '../../../shared/api/tokenStorage';
 import { loginApi } from '../../../features/login/api/loginApi';
 import { refreshAccessToken } from '../../../shared/api/instance';
 import { queryClient } from '../query-provider/QueryProvider';
@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const setAuth = useCallback((user: User, token: string) => {
+  const setAuth = useCallback((user: User, token: Token) => {
     tokenStorage.set(token);
     setUser(user);
   }, []);
