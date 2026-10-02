@@ -1,4 +1,4 @@
-import {
+import type {
   MedicationFilters,
   MedicationItem,
   MedicationParams,
@@ -65,14 +65,14 @@ export const useTableData = (
 
   return {
     columns: MEDICATIONS_COLUMNS,
-    totalItems: totalFilteredItems || 0,
+    totalItems: totalFilteredItems,
     rows: rowData,
     page,
     pageSize,
     showAll,
     startItem,
     endItem,
-    hasNextPage: hasNextPage || false,
+    hasNextPage,
     onPageSizeChange,
     resetPage,
     onShowAll,

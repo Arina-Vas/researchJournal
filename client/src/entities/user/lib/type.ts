@@ -1,4 +1,4 @@
-import { Token } from '../../../shared/api/tokenStorage';
+import type { Token } from '../../../shared/api/tokenStorage';
 
 export interface User {
   id: string;

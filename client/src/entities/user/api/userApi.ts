@@ -1,5 +1,5 @@
 import { instance } from '../../../shared/api/instance';
-import { User } from '../lib/type';
+import type { User } from '../lib/type';
 
 export const fetchUsers = async (): Promise<User[]> => {
   return await instance.get<User[]>('/users').then(res => res.data);

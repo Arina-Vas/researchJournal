@@ -2,7 +2,7 @@ import { AdvancedMarker, Map, Pin } from '@vis.gl/react-google-maps';
 import s from './Map.module.css';
 import { memo } from 'react';
 import { useTheme } from '../../../app/providers/theme-provider/useTheme';
-import { Location } from '../../../entities/location/lib/type';
+import type { Location } from '../../../entities/location/lib/type';
 
 type Props = {
   coordinate: Location['coordinate'] | null;

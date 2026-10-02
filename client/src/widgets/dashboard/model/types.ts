@@ -1,4 +1,4 @@
-import { MedicationItem } from '../../../entities/medications/lib/type';
+import type { MedicationItem } from '../../../entities/medications/lib/type';
 
 export interface TotalTestsDataItem {
   current: number;

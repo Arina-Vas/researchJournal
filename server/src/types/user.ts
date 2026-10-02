@@ -1,4 +1,6 @@
 import type { Request } from 'express';
+import type { ParamsDictionary } from 'express-serve-static-core';
+import type { ParsedQs } from 'qs';
 
 // Keep in sync with client/src/shared/api/tokenStorage.ts
 export type Token = `${string}.${string}.${string}`;
@@ -16,7 +18,12 @@ export interface VerifiedJWTPayload extends JWTPayload {
   exp: number;
 }
 
-export interface AuthRequest extends Request {
+export interface AuthRequest<P = ParamsDictionary, ResB = unknown, ReqB = unknown, Q = ParsedQs> extends Request<
+  P,
+  ResB,
+  ReqB,
+  Q
+> {
   user?: JWTPayload;
 }
 

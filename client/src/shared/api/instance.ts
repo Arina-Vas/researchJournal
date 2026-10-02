@@ -1,7 +1,7 @@
-import axios, { type InternalAxiosRequestConfig } from 'axios';
-import { Token, tokenStorage } from './tokenStorage';
+import axios, { type InternalAxiosRequestConfig, isAxiosError } from 'axios';
+import { type Token, tokenStorage } from './tokenStorage';
 import { isSessionExpiredError } from './isSessionExpiredError';
-import { RefreshResponse } from '../../entities/user/lib/type';
+import type { RefreshResponse } from '../../entities/user/lib/type';
 
 export const instance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -41,14 +41,17 @@ export const refreshAccessToken = (): Promise<Token> => {
 instance.interceptors.response.use(
   response => response,
   async error => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    if (!isAxiosError(error)) return Promise.reject(error);
+
+    const originalRequest: (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined = error.config;
+    if (!originalRequest) return Promise.reject(error);
 
     const isAuthUrl =
-      originalRequest?.url?.includes('auth/login') ||
-      originalRequest?.url?.includes('auth/register') ||
-      originalRequest?.url?.includes('auth/refresh');
+      originalRequest.url?.includes('auth/login') ||
+      originalRequest.url?.includes('auth/register') ||
+      originalRequest.url?.includes('auth/refresh');
 
-    if (error.response?.status === 401 && !originalRequest?._retry && !isAuthUrl) {
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthUrl) {
       originalRequest._retry = true;
       try {
         const token = await refreshAccessToken(); // все параллельные 401 ждут один запрос

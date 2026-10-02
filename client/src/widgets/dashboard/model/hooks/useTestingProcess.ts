@@ -1,4 +1,4 @@
-import { DashboardData, TestingProcessDataItem } from '../types';
+import type { DashboardData, TestingProcessDataItem } from '../types';
 import { useMedications } from '../../../../entities/medications/lib/hooks';
 import { useMemo } from 'react';
 import { selectTestingProcessByPhase } from '../../lib/dashbord-data-selectors';

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import s from './FiltersBlock.module.css';
-import { MedicationFilters } from '../../entities/medications/lib/type';
+import type { MedicationFilters } from '../../entities/medications/lib/type';
 import { useFetchLocations } from '../../entities/location/lib/hooks';
 import { useDebounce } from '../../shared/hooks/useDebounce';
 import { Input } from '../../shared/ui/input/Input';

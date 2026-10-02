@@ -1,13 +1,14 @@
 import { type Request, type Response } from 'express';
 import { Medication } from '../models/Medication.js';
+import type { Location } from '../models/Location.js';
 import type {
   ErrorResponse,
   GetMedicationByIdResponse,
   GetMedicationsResponse,
-  MedicationResponseDTO,
   MedicationsDTO,
 } from '../types/medication.js';
 import { buildFilters } from '../utils/buildFilters.js';
+import { Types } from 'mongoose';
 
 // Keep in sync with client/src/entities/medications/lib/constants.ts
 const MAX_PAGE_SIZE = 100;
@@ -27,21 +28,21 @@ export const getMedications = async (
     const limitNum = Math.min(MAX_PAGE_SIZE, Math.max(1, Number(pageSize) || DEFAULT_PAGE_SIZE));
     const skip = (pageNum - 1) * limitNum;
 
-    const [[documents, totalFilteredItems], totalItems] = await Promise.all([
-      Medication.findAndCount(readyFilters, null, {
-        sort: sortOptions,
-        populate: { path: 'location' },
-        skip,
-        limit: limitNum,
-        lean: true,
-      }),
+    const [documents, totalFilteredItems, totalItems] = await Promise.all([
+      Medication.find(readyFilters)
+        .sort(sortOptions)
+        .skip(skip)
+        .limit(limitNum)
+        .populate<{ location: Location }>('location')
+        .lean(),
+      Medication.countDocuments(readyFilters),
       Medication.countDocuments(),
     ]);
 
     const totalPages = Math.ceil(totalFilteredItems / limitNum);
 
     res.status(200).json({
-      data: documents as unknown as MedicationResponseDTO[],
+      data: documents,
       pagination: {
         page: pageNum,
         pageSize: limitNum,
@@ -63,11 +64,14 @@ export const getMedicationById = async (
   res: Response<GetMedicationByIdResponse | ErrorResponse>,
 ) => {
   try {
-    if (!req.params.id) {
+    const { id } = req.params;
+
+    if (!Types.ObjectId.isValid(id)) {
       res.status(404).json({ message: 'Medication not found' });
       return;
     }
-    const medication = await Medication.findById<GetMedicationByIdResponse>(req.params.id);
+
+    const medication = await Medication.findById(id).lean<GetMedicationByIdResponse>();
 
     if (!medication) {
       res.status(404).json({ message: 'Medication not found' });

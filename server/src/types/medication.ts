@@ -1,6 +1,6 @@
 import type { Participants, Process } from '../models/Medication.js';
 import type { Location } from '../models/Location.js';
-import { type Document, type PopulatedDoc, Types } from 'mongoose';
+import { Types } from 'mongoose';
 
 export interface MedicationsDTO {
   excludeId?: string;
@@ -28,7 +28,7 @@ export interface MedicationResponseDTO {
   startDate: string | Date;
   successReaction: boolean;
   approvalRate: number;
-  location: PopulatedDoc<Location & Document>;
+  location: Location;
   process: Process;
   participants: Participants;
 }

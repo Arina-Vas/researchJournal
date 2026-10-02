@@ -1,5 +1,6 @@
 import type { MedicationsDTO } from '../types/medication.js';
-import { Types } from 'mongoose';
+import { Types, type QueryFilter } from 'mongoose';
+import type { Medication } from '../models/Medication.js';
 
 export const buildFilters = (filters: MedicationsDTO = {}) => {
   const {
@@ -13,7 +14,7 @@ export const buildFilters = (filters: MedicationsDTO = {}) => {
     location,
   } = filters;
 
-  const readyFilters: Record<string, any> = {};
+  const readyFilters: QueryFilter<Medication> = {};
 
   if (excludeId && Types.ObjectId.isValid(excludeId)) {
     readyFilters._id = { $ne: new Types.ObjectId(excludeId) };
@@ -25,7 +26,7 @@ export const buildFilters = (filters: MedicationsDTO = {}) => {
   }
 
   if (successReaction !== undefined) {
-    readyFilters.successReaction = String(successReaction) === 'true';
+    readyFilters.successReaction = successReaction === 'true';
   }
 
   if (location) {

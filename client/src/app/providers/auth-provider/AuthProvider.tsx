@@ -1,7 +1,7 @@
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import type { User } from '../../../entities/user/lib/type';
 import { AuthContext } from './use-auth';
-import { isTokenExpired, Token, tokenStorage } from '../../../shared/api/tokenStorage';
+import { isTokenExpired, type Token, tokenStorage } from '../../../shared/api/tokenStorage';
 import { loginApi } from '../../../features/login/api/loginApi';
 import { refreshAccessToken } from '../../../shared/api/instance';
 import { queryClient } from '../query-provider/QueryProvider';

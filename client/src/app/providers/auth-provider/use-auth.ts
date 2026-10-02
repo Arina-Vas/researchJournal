@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 import type { User } from '../../../entities/user/lib/type';
-import { Token } from '../../../shared/api/tokenStorage';
+import type { Token } from '../../../shared/api/tokenStorage';
 
 export interface AuthContextType {
   user: User | null;

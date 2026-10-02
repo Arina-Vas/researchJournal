@@ -1,4 +1,4 @@
-import { DashboardData, StatusDataItem } from '../types';
+import type { DashboardData, StatusDataItem } from '../types';
 import { useMedications } from '../../../../entities/medications/lib/hooks';
 import { useMemo } from 'react';
 import { selectStatusByDate } from '../../lib/dashbord-data-selectors';

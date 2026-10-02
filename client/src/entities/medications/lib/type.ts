@@ -1,4 +1,4 @@
-import { Location } from '../../location/lib/type';
+import type { Location } from '../../location/lib/type';
 
 export interface Process {
   current: number;

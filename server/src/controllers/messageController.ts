@@ -4,7 +4,7 @@ import type { ChatMessageDTO } from '../types/chat.js';
 import { getRoomHistory, isRoomMember } from '../utils/chat.js';
 
 export const getMessagesHistory = async (
-  req: AuthRequest & { params: { room: string } },
+  req: AuthRequest<{ room: string }>,
   res: Response<ChatMessageDTO[] | { message: string }>,
 ) => {
   try {

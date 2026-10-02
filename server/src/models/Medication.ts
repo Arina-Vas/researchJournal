@@ -1,4 +1,4 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 export interface Process {
   current: number;
@@ -11,7 +11,7 @@ export interface Participants {
   total: number;
 }
 
-export interface Medication extends Document {
+export interface Medication {
   id: string;
   code: string;
   name: string;

@@ -70,6 +70,7 @@ export const initWebSocketServer = (server: Server) => {
     }
 
     wss.handleUpgrade(req, socket, head, ws => {
+      //TODO
       const authed = ws as AuthedSocket;
       authed.userId = payload.userId;
       authed.rooms = new Set();
@@ -135,6 +136,7 @@ export const initWebSocketServer = (server: Server) => {
 
   const heartbeat = setInterval(() => {
     wss.clients.forEach(client => {
+      //TODO
       const ws = client as AuthedSocket;
       if (!ws.isAlive) {
         ws.terminate();

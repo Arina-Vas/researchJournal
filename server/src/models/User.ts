@@ -1,4 +1,4 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import type { Token } from '../types/user.js';
 
 interface Session {
@@ -8,7 +8,7 @@ interface Session {
   createdAt: Date;
 }
 
-export interface User extends Document {
+export interface User {
   email: string;
   passwordHash: string;
   refreshTokens: Session[];

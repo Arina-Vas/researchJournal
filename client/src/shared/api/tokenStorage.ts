@@ -9,8 +9,13 @@ let inMemoryToken: Token | null = null;
 
 export const isTokenExpired = (token: Token): boolean => {
   try {
-    const { exp } = JSON.parse(atob(token.split('.')[1] ?? '')) as { exp?: number };
-    return !exp || exp * 1000 <= Date.now();
+    const payload = JSON.parse(atob(token.split('.')[1] ?? ''));
+
+    if (typeof payload !== 'object' || payload === null || !('exp' in payload) || typeof payload.exp !== 'number') {
+      return true;
+    }
+
+    return payload.exp * 1000 <= Date.now();
   } catch {
     return true;
   }

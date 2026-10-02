@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
 
 export interface LocationAddress {
   country: string;
@@ -8,6 +8,7 @@ export interface LocationAddress {
 }
 
 export interface Location {
+  _id: Types.ObjectId;
   id: string;
   clinicName: string;
   address: LocationAddress;

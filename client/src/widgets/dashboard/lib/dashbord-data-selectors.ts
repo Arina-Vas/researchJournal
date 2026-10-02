@@ -1,4 +1,4 @@
-import { MedicationItem } from '../../../entities/medications/lib/type';
+import type { MedicationItem } from '../../../entities/medications/lib/type';
 
 export const DASHBOARD_COLORS = ['#3874ff', '#0080c7', '#adc5ff'];
 

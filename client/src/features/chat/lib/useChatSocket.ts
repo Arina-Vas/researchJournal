@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { isTokenExpired, tokenStorage } from '../../../shared/api/tokenStorage';
-import { ChatMessageDTO, ClientEvent, SocketStatus, ServerEvent } from '../../../entities/message/lib/type';
+import type { ChatMessageDTO, ClientEvent, SocketStatus } from '../../../entities/message/lib/type';
 import { createWebSocket } from './utils/createWebSocket';
 import { toast } from 'react-toastify';
 import { refreshAccessToken } from '../../../shared/api/instance';
 import { isSessionExpiredError } from '../../../shared/api/isSessionExpiredError';
+import { parseServerEvent } from './utils/parseServerEvent';
 
 const WS_URL = import.meta.env.VITE_WS_URL as string;
 const WS_CLOSE_TOKEN_EXPIRED = 4001;
@@ -79,28 +80,31 @@ export const useChatSocket = (room: string): UseChatSocketReturnType => {
       };
 
       ws.onmessage = e => {
-        try {
-          const res = JSON.parse(e.data) as ServerEvent;
-          switch (res.type) {
-            case 'ROOM_HISTORY': {
-              setHistory({ room, messages: res.payload.messages });
-              break;
-            }
-            case 'NEW_MESSAGE': {
-              setHistory(p => (p.room === room ? { ...p, messages: [...p.messages, res.payload] } : p));
-              break;
-            }
-            case 'ERROR': {
-              toast.error(res.payload.message);
-              break;
-            }
-            default: {
-              const exhaustive: never = res;
-              return exhaustive;
-            }
+        const res = parseServerEvent(e.data);
+        if (!res) {
+          console.error('Unknown WS event', e.data);
+          return;
+        }
+
+        switch (res.type) {
+          case 'ROOM_HISTORY': {
+            if (res.payload.room !== room) return;
+            setHistory({ room, messages: res.payload.messages });
+            break;
           }
-        } catch (err) {
-          console.error(err);
+          case 'NEW_MESSAGE': {
+            if (res.payload.room !== room) return;
+            setHistory(p => (p.room === room ? { ...p, messages: [...p.messages, res.payload] } : p));
+            break;
+          }
+          case 'ERROR': {
+            toast.error(res.payload.message);
+            break;
+          }
+          default: {
+            const exhaustive: never = res;
+            return exhaustive;
+          }
         }
       };
 

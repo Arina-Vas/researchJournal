@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { fetchMedicationById, fetchMedications } from '../api/medicationApi';
-import { AllMedications, Medication, MedicationParams } from './type';
+import type { AllMedications, Medication, MedicationParams } from './type';
 
 export const useMedications = (filters: MedicationParams) => {
   return useQuery<AllMedications>({

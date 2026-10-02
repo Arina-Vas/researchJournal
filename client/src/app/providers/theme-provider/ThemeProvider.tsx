@@ -1,11 +1,13 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Theme } from './model/types';
+import type { Theme } from './model/types';
 import { ThemeContext } from './useTheme';
+
+const isTheme = (v: unknown): v is Theme => v === 'LIGHT' || v === 'DARK';
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem('app-theme') as Theme | null;
-    if (savedTheme) return savedTheme;
+    const savedTheme = localStorage.getItem('app-theme');
+    if (isTheme(savedTheme)) return savedTheme;
     return window.matchMedia('(prefers-color-scheme: DARK)').matches ? 'DARK' : 'LIGHT';
   });
 

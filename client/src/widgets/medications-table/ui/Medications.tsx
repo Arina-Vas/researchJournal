@@ -1,6 +1,6 @@
 import s from './Medications.module.css';
 import Arrow from '@/shared/assets/images/Arrow.svg';
-import { MedicationFilters, SortAndPaginationParams } from '../../../entities/medications/lib/type';
+import type { MedicationFilters, SortAndPaginationParams } from '../../../entities/medications/lib/type';
 import { useState } from 'react';
 import { useTableData } from '../lib/useTableData';
 import { FiltersBlock } from '../../../features/filter-medications/FiltersBlock';
