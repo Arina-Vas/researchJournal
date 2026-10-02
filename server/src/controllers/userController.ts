@@ -4,16 +4,11 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { generateToken, verifyRefreshToken } from '../utils/tokens.js';
 import {
-  type AuthDTO,
-  type AuthResponse,
   type AuthRequest,
   type JWTPayload,
-  type MeResponse,
-  type UserDTO,
-  isToken,
-  type RefreshResponse,
 } from '../types/user.js';
 import { Types } from 'mongoose';
+import { type AuthDTO, type AuthResponse, isToken, type RefreshResponse, type UserDTO, type MeResponse } from '@research/shared';
 
 const MAX_SESSIONS = 5;
 const SALT_ROUNDS = 10;

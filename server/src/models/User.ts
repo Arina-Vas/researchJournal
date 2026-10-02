@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import type { Token } from '../types/user.js';
+import type { Token } from '@research/shared';
 
 interface Session {
   refreshToken: Token;

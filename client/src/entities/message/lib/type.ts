@@ -1,13 +1,10 @@
-export interface ChatUserDTO {
-  id: string;
-  email: string;
-}
+import type { UserDTO } from '@research/shared';
 
 export interface ChatMessageDTO {
   id: string;
   room: string;
   text: string;
-  sender: ChatUserDTO;
+  sender: UserDTO;
   createdAt: string;
 }
 

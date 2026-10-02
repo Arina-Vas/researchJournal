@@ -1,8 +1,9 @@
-import type { ChatMessageDTO, ChatUserDTO, ServerEvent } from '../../../../entities/message/lib/type';
+import type { ChatMessageDTO, ServerEvent } from '../../../../entities/message/lib/type';
+import type { UserDTO } from '@research/shared';
 
 const isObject = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null;
 
-const isChatUser = (value: unknown): value is ChatUserDTO =>
+const isChatUser = (value: unknown): value is UserDTO =>
   isObject(value) && typeof value.id === 'string' && typeof value.email === 'string';
 
 const isChatMessage = (value: unknown): value is ChatMessageDTO =>

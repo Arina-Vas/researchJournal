@@ -1,5 +1,5 @@
 import { instance } from '../../../shared/api/instance';
-import type { AuthDTO, AuthResponse, MeResponse } from '../../../entities/user/lib/type';
+import type { AuthDTO, AuthResponse, MeResponse } from '@research/shared';
 
 export const loginApi = {
   signUp: async (credentials: AuthDTO): Promise<AuthResponse> => {

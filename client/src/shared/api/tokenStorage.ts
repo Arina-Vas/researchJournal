@@ -1,9 +1,4 @@
-// Keep in sync with server/src/types/user.ts
-export type Token = `${string}.${string}.${string}`;
-
-const TOKEN_REGEX = /^[\w-]+\.[\w-]+\.[\w-]+$/; // base64url header.payload.signature
-
-export const isToken = (value: unknown): value is Token => typeof value === 'string' && TOKEN_REGEX.test(value);
+import  { isToken, type Token } from '@research/shared';
 
 let inMemoryToken: Token | null = null;
 

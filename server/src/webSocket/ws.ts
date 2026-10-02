@@ -4,7 +4,8 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { verifyAccessToken } from '../utils/tokens.js';
 import { createMessage, getRoomHistory, isRoomMember, parseClientEvent } from '../utils/chat.js';
 import type { AuthedSocket, ServerEvent } from '../types/chat.js';
-import { isToken, type VerifiedJWTPayload } from '../types/user.js';
+import { type VerifiedJWTPayload } from '../types/user.js';
+import { isToken } from '@research/shared';
 
 const WS_PATH = '/ws';
 const HEARTBEAT_INTERVAL = 30_000;

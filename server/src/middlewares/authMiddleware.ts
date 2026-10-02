@@ -1,7 +1,8 @@
-import { type AuthRequest, isToken } from '../types/user.js';
+import { type AuthRequest } from '../types/user.js';
 import type { NextFunction, Response } from 'express';
 import { verifyAccessToken } from '../utils/tokens.js';
 import jwt from 'jsonwebtoken';
+import { isToken } from '@research/shared';
 
 export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;

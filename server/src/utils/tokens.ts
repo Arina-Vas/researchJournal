@@ -1,5 +1,6 @@
-import { isToken, type JWTPayload, type Token, type VerifiedJWTPayload } from '../types/user.js';
+import type { JWTPayload, VerifiedJWTPayload } from '../types/user.js';
 import jwt, { type SignOptions } from 'jsonwebtoken';
+import  { isToken, type Token } from '@research/shared';
 
 interface Tokens {
   accessToken: Token;

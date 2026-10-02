@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { loginApi } from '../api/loginApi';
 import { useAuth } from '../../../app/providers/auth-provider/use-auth';
-import type { AuthDTO } from '../../../entities/user/lib/type';
 import { toast } from 'react-toastify';
+import type { AuthDTO } from '@research/shared';
 
 export const useSignUpMutation = (onSuccessFn?: () => void) => {
   const { setAuth } = useAuth();

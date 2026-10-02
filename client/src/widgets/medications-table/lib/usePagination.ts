@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from '../../../entities/medications/lib/constants';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from '@research/shared';
 
 export const usePagination = () => {
   const [page, setPage] = useState<number>(DEFAULT_PAGE);

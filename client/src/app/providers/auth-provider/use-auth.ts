@@ -1,12 +1,11 @@
 import { createContext, useContext } from 'react';
-import type { User } from '../../../entities/user/lib/type';
-import type { Token } from '../../../shared/api/tokenStorage';
+import type { Token, UserDTO } from '@research/shared';
 
 export interface AuthContextType {
-  user: User | null;
+  user: UserDTO | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  setAuth: (user: User, token: Token) => void;
+  setAuth: (user: UserDTO, token: Token) => void;
   logout: () => void;
 }
 

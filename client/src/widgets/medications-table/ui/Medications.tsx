@@ -8,7 +8,7 @@ import { Spinner } from '../../../shared/ui/spinner/Spinner';
 import { Button } from '../../../shared/ui/button/Button';
 import { MedicationRow } from './medication-row/MedicationRow';
 import { Pagination } from '../../../shared/ui/pagination/Pagination';
-import { PAGE_SIZE_OPTIONS } from '../../../entities/medications/lib/constants';
+import { PAGE_SIZE_OPTIONS } from '@research/shared';
 
 export const Medications = () => {
   const [filters, setFilters] = useState<MedicationFilters | null>(null);

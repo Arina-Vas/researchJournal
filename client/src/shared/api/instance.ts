@@ -1,7 +1,7 @@
 import axios, { type InternalAxiosRequestConfig, isAxiosError } from 'axios';
-import { type Token, tokenStorage } from './tokenStorage';
+import { tokenStorage } from './tokenStorage';
 import { isSessionExpiredError } from './isSessionExpiredError';
-import type { RefreshResponse } from '../../entities/user/lib/type';
+import type { RefreshResponse, Token } from '@research/shared';
 
 export const instance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,

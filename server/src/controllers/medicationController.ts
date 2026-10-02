@@ -9,11 +9,7 @@ import type {
 } from '../types/medication.js';
 import { buildFilters } from '../utils/buildFilters.js';
 import { Types } from 'mongoose';
-
-// Keep in sync with client/src/entities/medications/lib/constants.ts
-const MAX_PAGE_SIZE = 100;
-const DEFAULT_PAGE_SIZE = 6;
-const DEFAULT_PAGE = 1;
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from '@research/shared';
 
 export const getMedications = async (
   req: Request<{}, {}, {}, MedicationsDTO>,
