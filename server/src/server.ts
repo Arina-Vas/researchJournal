@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-import express, { type Express, type Request, type Response } from 'express';
+import express, { type Express, type NextFunction, type Request, type Response } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { connectDB } from './db.js';
@@ -35,6 +35,14 @@ app.use('/api/locations', locationRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/users', userRoutes);
+
+app.use((err: unknown, _req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof SyntaxError && 'body' in err) {
+    res.status(400).json({ message: 'Invalid JSON' });
+    return;
+  }
+  next(err);
+});
 
 const server = http.createServer(app);
 const startServer = async () => {

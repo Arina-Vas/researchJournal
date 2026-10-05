@@ -1,11 +1,11 @@
 import { instance } from '../../../shared/api/instance';
-import type { AuthDTO, AuthResponse, MeResponse } from '@research/shared';
+import type { AuthResponse, LoginDTO, MeResponse, RegisterDTO } from '@research/shared';
 
 export const loginApi = {
-  signUp: async (credentials: AuthDTO): Promise<AuthResponse> => {
+  signUp: async (credentials: RegisterDTO): Promise<AuthResponse> => {
     return await instance.post<AuthResponse>('/auth/register', credentials).then(res => res.data);
   },
-  signIn: async (credentials: AuthDTO): Promise<AuthResponse> => {
+  signIn: async (credentials: LoginDTO): Promise<AuthResponse> => {
     return await instance.post<AuthResponse>('/auth/login', credentials).then(res => res.data);
   },
   logOut: async (): Promise<{ message: string }> => {

@@ -3,12 +3,18 @@ import { User } from '../models/User.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { generateToken, verifyRefreshToken } from '../utils/tokens.js';
-import {
-  type AuthRequest,
-  type JWTPayload,
-} from '../types/user.js';
+import { type AuthRequest, type JWTPayload } from '../types/user.js';
 import { Types } from 'mongoose';
-import { type AuthDTO, type AuthResponse, isToken, type RefreshResponse, type UserDTO, type MeResponse } from '@research/shared';
+import {
+  type AuthResponse,
+  isToken,
+  type RefreshResponse,
+  type UserDTO,
+  type MeResponse,
+  RegisterSchema,
+  getIssueMessage,
+  LoginSchema,
+} from '@research/shared';
 
 const MAX_SESSIONS = 5;
 const SALT_ROUNDS = 10;
@@ -20,23 +26,21 @@ const COOKIE_OPTIONS = {
 };
 
 export const registerUser = async (
-  req: Request<{}, {}, AuthDTO>,
+  req: Request<{}, {}, unknown>,
   res: Response<AuthResponse | { message: string }>,
 ): Promise<void> => {
   try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      res.status(400).json({ message: 'Email and password are required' });
+    const parsedBody = RegisterSchema.safeParse(req.body);
+    if (!parsedBody.success) {
+      res.status(400).json({ message: getIssueMessage(parsedBody.error) });
       return;
     }
 
-    if (password.length < 8) {
-      res.status(400).json({ message: 'Minimal password length is 8' });
-      return;
-    }
+    const { email, password } = parsedBody.data;
 
-    const user = await User.findOne({ email }).select('+passwordHash');
+    const user = await User.findOne({ email });
+
+    // const user = await User.findOne({ email }).select('+passwordHash');
     if (user) {
       res.status(400).json({ message: 'User already exists' });
       return;
@@ -76,16 +80,17 @@ export const registerUser = async (
 };
 
 export const loginUser = async (
-  req: Request<{}, {}, AuthDTO>,
+  req: Request<{}, {}, unknown>,
   res: Response<AuthResponse | { message: string }>,
 ): Promise<void> => {
   try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      res.status(400).json({ message: 'Email and password are required' });
+    const parsedBody = LoginSchema.safeParse(req.body);
+    if (!parsedBody.success) {
+      res.status(400).json({ message: getIssueMessage(parsedBody.error) });
       return;
     }
+
+    const { email, password } = parsedBody.data;
 
     const user = await User.findOne({ email }).select('+passwordHash');
 

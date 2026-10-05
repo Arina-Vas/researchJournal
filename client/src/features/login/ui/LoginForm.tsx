@@ -4,6 +4,7 @@ import { Input } from '../../../shared/ui/input/Input';
 import { Button } from '../../../shared/ui/button/Button';
 import { useSignInMutation, useSignUpMutation } from '../lib/useLogin';
 import { getReadableErrorMessage } from '../../../shared/utils/getReadableErrorMessage';
+import { getIssueMessage, LoginSchema, RegisterSchema } from '@research/shared';
 
 export const LoginForm = () => {
   const [isAccount, setIsAccount] = useState(true);
@@ -19,12 +20,14 @@ export const LoginForm = () => {
   };
 
   const {
+    reset: resetSignIn,
     mutate: signIn,
     error: signInError,
     isError: isSignInError,
     isPending: isSignInPending,
   } = useSignInMutation(resetForm);
   const {
+    reset: resetSignUp,
     mutate: signUp,
     error: signUpError,
     isError: isSignUpError,
@@ -36,42 +39,36 @@ export const LoginForm = () => {
 
   const isPending = isSignUpPending || isSignInPending;
 
-  const isFormValid = () => {
-    if (!email.trim() && !password.trim()) {
-      setErrorLocale('Please enter valid data');
-      return false;
-    }
-    if (!email.trim()) {
-      setErrorLocale('Please enter a valid email');
-      return false;
-    }
-    if (!password.trim()) {
-      setErrorLocale('Please enter a password');
-      return false;
-    }
-    return true;
-  };
-
   const onSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrorLocale('');
-    if (!isFormValid()) return;
+    const schema = isAccount ? LoginSchema : RegisterSchema;
+    const parsed = schema.safeParse({ email, password });
+    if (!parsed.success) {
+      setErrorLocale(getIssueMessage(parsed.error));
+      return;
+    }
 
-    if (isAccount) {
-      signIn({ email, password });
-    } else signUp({ email, password });
+    if (isAccount) signIn(parsed.data);
+    else signUp(parsed.data);
   };
 
   const toggleAccountMode = () => {
+    resetSignUp();
+    resetSignIn();
+    setErrorLocale('');
     setIsAccount(prev => !prev);
   };
 
   const onEmailInput = (value: string) => {
+    resetSignUp();
+    resetSignIn();
     setErrorLocale('');
     setEmail(value);
   };
 
   const onPasswordInput = (value: string) => {
+    resetSignUp();
+    resetSignIn();
     setErrorLocale('');
     setPassword(value);
   };
