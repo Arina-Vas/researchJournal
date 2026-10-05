@@ -6,6 +6,10 @@ const TOKEN_REGEX = /^[\w-]+\.[\w-]+\.[\w-]+$/; // base64url header.payload.sign
 
 export const isToken = (value: unknown): value is Token => typeof value === 'string' && TOKEN_REGEX.test(value);
 
+export const JwtPayloadSchema = z.object({ userId: z.string().min(1), iat: z.number(), exp: z.number() });
+
+export type JwtPayload = z.infer<typeof JwtPayloadSchema>;
+
 export const PASSWORD_MIN_LENGTH = 8;
 export const PASSWORD_MAX_LENGTH = 72;
 

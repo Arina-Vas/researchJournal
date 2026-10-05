@@ -1,13 +1,13 @@
 import { Schema, model } from 'mongoose';
 import {
   MedicationPhaseSchema,
-  type MedicationResponse,
+  type MedicationDTO,
   MedicationStatusSchema,
   MedicationSubStatusSchema,
   MedicationTypeSchema,
 } from '@research/shared';
 
-export type MedicationDoc = Omit<MedicationResponse, '_id'>;
+export type MedicationDoc = Omit<MedicationDTO, '_id'>;
 
 const medicationSchema = new Schema<MedicationDoc>({
   id: { type: String, required: true },

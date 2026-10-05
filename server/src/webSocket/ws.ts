@@ -4,8 +4,7 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { verifyAccessToken } from '../utils/tokens.js';
 import { createMessage, getRoomHistory, isRoomMember } from '../utils/chat.js';
 import type { AuthedSocket } from '../types/chat.js';
-import { type VerifiedJWTPayload } from '../types/user.js';
-import { isToken, parseClientEvent, type ServerEvent, WS_CLOSE_TOKEN_EXPIRED } from '@research/shared';
+import { isToken, type JwtPayload, parseClientEvent, type ServerEvent, WS_CLOSE_TOKEN_EXPIRED } from '@research/shared';
 
 const WS_PATH = '/ws';
 const HEARTBEAT_INTERVAL = 30_000;
@@ -56,7 +55,7 @@ export const initWebSocketServer = (server: Server) => {
       return;
     }
 
-    let payload: VerifiedJWTPayload;
+    let payload: JwtPayload;
     try {
       const token = url.searchParams.get('token');
       if (!isToken(token)) {

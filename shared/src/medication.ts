@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ObjectIdSchema } from './common.js';
 
 export const MAX_PAGE_SIZE = 100;
 export const PAGE_SIZE_OPTIONS = [6, 12] as const;
@@ -77,7 +78,7 @@ export const MedicationSchema = z.object({
 export const MedicationWithLocationSchema = MedicationSchema.extend({ location: LocationSchema });
 export type MedicationWithLocation = z.infer<typeof MedicationWithLocationSchema>;
 
-export type MedicationResponse = z.infer<typeof MedicationSchema>;
+export type MedicationDTO = z.infer<typeof MedicationSchema>;
 // request
 // filters
 export const GetMedicationsResponseSchema = z.object({
@@ -89,11 +90,11 @@ export type GetMedicationsResponse = z.infer<typeof GetMedicationsResponseSchema
 
 export const MedicationsFiltersSchema = z.object({
   name: z.string().optional(),
-  location: z.string().optional(),
+  location: ObjectIdSchema.optional(),
   startDate: z.iso.date().optional(),
   endDate: z.iso.date().optional(),
   successReaction: z.stringbool({ truthy: ['true'], falsy: ['false'] }).optional(),
-  excludeId: z.string().optional(),
+  excludeId: ObjectIdSchema.optional(),
 });
 export type MedicationsFilters = z.infer<typeof MedicationsFiltersSchema>;
 

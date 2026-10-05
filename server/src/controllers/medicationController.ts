@@ -6,16 +6,17 @@ import { Types } from 'mongoose';
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
-  type ErrorResponse,
+  type MessageResponse,
   getIssueMessage,
   type GetMedicationsResponse,
   MAX_PAGE_SIZE,
-  type MedicationResponse,
+  type MedicationDTO,
   MedicationsQuerySchema,
+  ObjectIdSchema,
 } from '@research/shared';
 import { type LocationDoc } from '../models/Location.js';
 
-export const getMedications = async (req: Request, res: Response<GetMedicationsResponse | ErrorResponse>) => {
+export const getMedications = async (req: Request, res: Response<GetMedicationsResponse | MessageResponse>) => {
   try {
     const parsedQuery = MedicationsQuerySchema.safeParse(req.query);
     if (!parsedQuery.success) {
@@ -64,12 +65,12 @@ export const getMedications = async (req: Request, res: Response<GetMedicationsR
 
 export const getMedicationById = async (
   req: Request<{ id: string }>,
-  res: Response<MedicationResponse | ErrorResponse>,
+  res: Response<MedicationDTO | MessageResponse>,
 ) => {
   try {
     const { id } = req.params;
 
-    if (!Types.ObjectId.isValid(id)) {
+    if (!ObjectIdSchema.safeParse(id).success) {
       res.status(404).json({ message: 'Medication not found' });
       return;
     }

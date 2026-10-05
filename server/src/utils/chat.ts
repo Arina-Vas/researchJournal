@@ -1,12 +1,12 @@
 import { Types } from 'mongoose';
 import { Message } from '../models/Message.js';
-import type { ChatMessageDTO } from '@research/shared';
+import { type ChatMessageDTO, ObjectIdSchema } from '@research/shared';
 
 export const HISTORY_LIMIT = 50;
 
 export const isRoomMember = (room: string, userId: string): boolean => {
   const ids = room.split('_');
-  return ids.length === 2 && ids.every(id => Types.ObjectId.isValid(id)) && ids.includes(userId);
+  return ids.length === 2 && ids.every(id => ObjectIdSchema.safeParse(id).success) && ids.includes(userId);
 };
 
 interface PopulatedMessage {

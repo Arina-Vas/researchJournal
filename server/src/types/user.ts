@@ -1,15 +1,7 @@
 import type { Request } from 'express';
 import type { ParamsDictionary } from 'express-serve-static-core';
 import type { ParsedQs } from 'qs';
-
-export interface JWTPayload {
-  userId: string;
-}
-
-export interface VerifiedJWTPayload extends JWTPayload {
-  iat: number;
-  exp: number;
-}
+import type { JwtPayload } from '@research/shared';
 
 export interface AuthRequest<P = ParamsDictionary, ResB = unknown, ReqB = unknown, Q = ParsedQs> extends Request<
   P,
@@ -17,5 +9,5 @@ export interface AuthRequest<P = ParamsDictionary, ResB = unknown, ReqB = unknow
   ReqB,
   Q
 > {
-  user?: JWTPayload;
+  user?: JwtPayload;
 }

@@ -3,8 +3,7 @@ import { User } from '../models/User.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { generateToken, verifyRefreshToken } from '../utils/tokens.js';
-import { type AuthRequest, type JWTPayload } from '../types/user.js';
-import { Types } from 'mongoose';
+import { type AuthRequest } from '../types/user.js';
 import {
   type AuthResponse,
   isToken,
@@ -14,7 +13,9 @@ import {
   RegisterSchema,
   getIssueMessage,
   LoginSchema,
-  type ErrorResponse,
+  type MessageResponse,
+  type JwtPayload,
+  ObjectIdSchema,
 } from '@research/shared';
 
 const MAX_SESSIONS = 5;
@@ -28,7 +29,7 @@ const COOKIE_OPTIONS = {
 
 export const registerUser = async (
   req: Request<{}, {}, unknown>,
-  res: Response<AuthResponse | ErrorResponse>,
+  res: Response<AuthResponse | MessageResponse>,
 ): Promise<void> => {
   try {
     const parsedBody = RegisterSchema.safeParse(req.body);
@@ -81,7 +82,7 @@ export const registerUser = async (
 
 export const loginUser = async (
   req: Request<{}, {}, unknown>,
-  res: Response<AuthResponse | ErrorResponse>,
+  res: Response<AuthResponse | MessageResponse>,
 ): Promise<void> => {
   try {
     const parsedBody = LoginSchema.safeParse(req.body);
@@ -148,7 +149,7 @@ export const loginUser = async (
   }
 };
 
-export const logoutUser = async (req: Request, res: Response<{ message: string }>): Promise<void> => {
+export const logoutUser = async (req: Request, res: Response<MessageResponse>): Promise<void> => {
   try {
     const refreshToken = req.cookies.refreshToken;
 
@@ -172,7 +173,7 @@ export const logoutUser = async (req: Request, res: Response<{ message: string }
   }
 };
 
-export const refreshToken = async (req: Request, res: Response<RefreshResponse | ErrorResponse>): Promise<void> => {
+export const refreshToken = async (req: Request, res: Response<RefreshResponse | MessageResponse>): Promise<void> => {
   try {
     if (!isToken(req.cookies.refreshToken)) {
       res.status(401).json({ message: 'Refresh token is invalid or expired' });
@@ -181,7 +182,7 @@ export const refreshToken = async (req: Request, res: Response<RefreshResponse |
 
     const refreshToken = req.cookies.refreshToken;
 
-    let payload: JWTPayload;
+    let payload: JwtPayload;
     try {
       payload = verifyRefreshToken(refreshToken);
     } catch (error) {
@@ -191,12 +192,6 @@ export const refreshToken = async (req: Request, res: Response<RefreshResponse |
         return;
       }
       res.status(500).json({ message: 'Server error during token refresh' });
-      return;
-    }
-
-    if (!payload.userId) {
-      res.clearCookie('refreshToken', COOKIE_OPTIONS);
-      res.status(401).json({ message: 'Refresh token is invalid or expired' });
       return;
     }
 
@@ -224,7 +219,7 @@ export const refreshToken = async (req: Request, res: Response<RefreshResponse |
   }
 };
 
-export const deleteUser = async (req: AuthRequest, res: Response): Promise<void> => {
+export const deleteUser = async (req: AuthRequest, res: Response<MessageResponse>): Promise<void> => {
   try {
     const userId = req.user?.userId;
 
@@ -241,7 +236,7 @@ export const deleteUser = async (req: AuthRequest, res: Response): Promise<void>
   }
 };
 
-export const getMe = async (req: AuthRequest, res: Response<MeResponse | ErrorResponse>): Promise<void> => {
+export const getMe = async (req: AuthRequest, res: Response<MeResponse | MessageResponse>): Promise<void> => {
   try {
     if (!req.user?.userId) {
       res.status(401).json({ message: 'Unauthorized' });
@@ -265,7 +260,7 @@ export const getMe = async (req: AuthRequest, res: Response<MeResponse | ErrorRe
   }
 };
 
-export const getUsers = async (req: AuthRequest, res: Response<UserDTO[] | ErrorResponse>): Promise<void> => {
+export const getUsers = async (req: AuthRequest, res: Response<UserDTO[] | MessageResponse>): Promise<void> => {
   try {
     const users = await User.find({ _id: { $ne: req.user?.userId } }, 'email').sort({ email: 1 });
 
@@ -277,10 +272,10 @@ export const getUsers = async (req: AuthRequest, res: Response<UserDTO[] | Error
 
 export const getUserById = async (
   req: Request<{ userId: string }>,
-  res: Response<UserDTO | ErrorResponse>,
+  res: Response<UserDTO | MessageResponse>,
 ): Promise<void> => {
   try {
-    const isValid = Types.ObjectId.isValid(req.params.userId);
+    const isValid = ObjectIdSchema.safeParse(req.params.userId).success;
 
     if (!isValid) {
       res.status(404).json({ message: 'User not found' });

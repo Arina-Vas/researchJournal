@@ -1,10 +1,10 @@
 import { type Request, type Response } from 'express';
 import { Location } from '../models/Location.js';
 import { Types } from 'mongoose';
-import type { ErrorResponse, LocationDTO } from '@research/shared';
+import { type MessageResponse, type LocationDTO, ObjectIdSchema } from '@research/shared';
 import { toDTO } from '../utils/toDTO.js';
 
-export const getLocations = async (req: Request, res: Response<LocationDTO[] | ErrorResponse>) => {
+export const getLocations = async (req: Request, res: Response<LocationDTO[] | MessageResponse>) => {
   try {
     const locations = await Location.find().lean();
 
@@ -16,12 +16,12 @@ export const getLocations = async (req: Request, res: Response<LocationDTO[] | E
 
 export const getLocationById = async (
   req: Request<{ locationId: string }>,
-  res: Response<LocationDTO | ErrorResponse>,
+  res: Response<LocationDTO | MessageResponse>,
 ) => {
   try {
     const { locationId } = req.params;
 
-    if (!Types.ObjectId.isValid(locationId)) {
+    if (!ObjectIdSchema.safeParse(locationId).success) {
       res.status(404).json({ message: 'Location not found' });
       return;
     }

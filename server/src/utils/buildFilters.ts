@@ -1,6 +1,6 @@
 import { Types, type QueryFilter } from 'mongoose';
 import type { MedicationDoc } from '../models/Medication.js';
-import type { MedicationsDTO } from '@research/shared';
+import { type MedicationsDTO, ObjectIdSchema } from '@research/shared';
 
 export const buildFilters = (filters: MedicationsDTO = {}) => {
   const {
@@ -16,7 +16,7 @@ export const buildFilters = (filters: MedicationsDTO = {}) => {
 
   const readyFilters: QueryFilter<MedicationDoc> = {};
 
-  if (excludeId && Types.ObjectId.isValid(excludeId)) {
+  if (excludeId && ObjectIdSchema.safeParse(excludeId).success) {
     readyFilters._id = { $ne: new Types.ObjectId(excludeId) };
   }
 

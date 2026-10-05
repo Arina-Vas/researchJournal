@@ -1,19 +1,20 @@
-import { isToken, type Token } from '@research/shared';
+import { isToken, type JwtPayload, JwtPayloadSchema, type Token } from '@research/shared';
 
 let inMemoryToken: Token | null = null;
 
-export const isTokenExpired = (token: Token): boolean => {
+export const decodeJwtPayload = (token: Token): JwtPayload | null => {
   try {
-    const payload = JSON.parse(atob(token.split('.')[1] ?? ''));
-
-    if (typeof payload !== 'object' || payload === null || !('exp' in payload) || typeof payload.exp !== 'number') {
-      return true;
-    }
-
-    return payload.exp * 1000 <= Date.now();
+    const base64 = (token.split('.')[1] ?? '').replace(/-/g, '+').replace(/_/g, '/');
+    const result = JwtPayloadSchema.safeParse(JSON.parse(atob(base64)));
+    return result.success ? result.data : null;
   } catch {
-    return true;
+    return null;
   }
+};
+
+export const isTokenExpired = (token: Token): boolean => {
+  const payload = decodeJwtPayload(token);
+  return !payload || payload.exp * 1000 <= Date.now();
 };
 
 export const tokenStorage = {
