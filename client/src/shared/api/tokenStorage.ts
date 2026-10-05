@@ -1,4 +1,4 @@
-import  { isToken, type Token } from '@research/shared';
+import { isToken, type Token } from '@research/shared';
 
 let inMemoryToken: Token | null = null;
 

@@ -1,12 +1,8 @@
-import type { RawData } from 'ws';
 import { Types } from 'mongoose';
 import { Message } from '../models/Message.js';
-import type { ChatMessageDTO, ClientEvent } from '../types/chat.js';
+import type { ChatMessageDTO } from '@research/shared';
 
-export const MAX_MESSAGE_LENGTH = 1000;
 export const HISTORY_LIMIT = 50;
-
-export const getRoomId = (a: string, b: string): string => [a, b].sort().join('_');
 
 export const isRoomMember = (room: string, userId: string): boolean => {
   const ids = room.split('_');
@@ -50,35 +46,4 @@ export const createMessage = async (room: string, senderId: string, text: string
     createdAt: populated.createdAt,
     sender: populated.sender,
   });
-};
-
-const isObject = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null;
-
-export const parseClientEvent = (raw: RawData): ClientEvent | null => {
-  let data: unknown;
-  try {
-    data = JSON.parse(raw.toString());
-  } catch {
-    return null;
-  }
-
-  if (!isObject(data) || !isObject(data.payload) || typeof data.payload.room !== 'string') {
-    return null;
-  }
-
-  const room = data.payload.room;
-
-  switch (data.type) {
-    case 'JOIN_ROOM':
-    case 'LEAVE_ROOM':
-      return { type: data.type, payload: { room } };
-    case 'SEND_MESSAGE': {
-      if (typeof data.payload.text !== 'string') return null;
-      const text = data.payload.text.trim();
-      if (!text || text.length > MAX_MESSAGE_LENGTH) return null;
-      return { type: 'SEND_MESSAGE', payload: { room, text } };
-    }
-    default:
-      return null;
-  }
 };

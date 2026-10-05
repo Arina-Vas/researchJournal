@@ -10,6 +10,7 @@ import type { SocketStatus } from '../../entities/message/lib/type';
 import { useChatSocket } from './lib/useChatSocket';
 import { formatTime } from '../../shared/utils/formatTime';
 import { Spinner } from '../../shared/ui/spinner/Spinner';
+import { MAX_MESSAGE_LENGTH } from '@research/shared';
 
 const STATUS_LABEL: Record<SocketStatus, string> = {
   connecting: 'Connecting…',
@@ -80,7 +81,7 @@ export const ChatRoom = ({ room }: Props) => {
 
       <form className={s.form} onSubmit={onSubmit}>
         <div className={s.input}>
-          <Input value={text} onChange={setText} placeholder="Type a message…" maxLength={1000} />
+          <Input value={text} onChange={setText} placeholder="Type a message…" maxLength={MAX_MESSAGE_LENGTH} />
         </div>
         <Button type="submit" disabled={status !== 'open' || !text.trim()}>
           Send

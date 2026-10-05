@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export type Token = `${string}.${string}.${string}`;
 
 const TOKEN_REGEX = /^[\w-]+\.[\w-]+\.[\w-]+$/; // base64url header.payload.signature
@@ -9,10 +11,11 @@ export interface AuthDTO {
   password: string;
 }
 
-export interface UserDTO {
-  id: string;
-  email: string;
-}
+export const UserDTOSchema = z.object({
+  id: z.string(),
+  email: z.email(),
+});
+export type UserDTO = z.infer<typeof UserDTOSchema>;
 
 export interface AuthResponse {
   message: string;

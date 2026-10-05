@@ -1,4 +1,5 @@
 import { model, Schema, Types } from 'mongoose';
+import { MAX_MESSAGE_LENGTH } from '@research/shared';
 
 export interface MessageItem {
   sender: Types.ObjectId;
@@ -11,7 +12,7 @@ export interface MessageItem {
 const MessageSchema = new Schema<MessageItem>(
   {
     sender: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    text: { type: String, required: true, trim: true, maxlength: 1000 },
+    text: { type: String, required: true, trim: true, maxlength: MAX_MESSAGE_LENGTH },
     room: { type: String, required: true },
   },
   { timestamps: true },

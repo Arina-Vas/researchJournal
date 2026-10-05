@@ -2,14 +2,13 @@ import type { IncomingMessage, Server } from 'http';
 import type { Duplex } from 'stream';
 import { WebSocketServer, WebSocket } from 'ws';
 import { verifyAccessToken } from '../utils/tokens.js';
-import { createMessage, getRoomHistory, isRoomMember, parseClientEvent } from '../utils/chat.js';
-import type { AuthedSocket, ServerEvent } from '../types/chat.js';
+import { createMessage, getRoomHistory, isRoomMember } from '../utils/chat.js';
+import type { AuthedSocket } from '../types/chat.js';
 import { type VerifiedJWTPayload } from '../types/user.js';
-import { isToken } from '@research/shared';
+import { isToken, parseClientEvent, type ServerEvent, WS_CLOSE_TOKEN_EXPIRED } from '@research/shared';
 
 const WS_PATH = '/ws';
 const HEARTBEAT_INTERVAL = 30_000;
-const WS_CLOSE_TOKEN_EXPIRED = 4001;
 
 const send = (ws: WebSocket, event: ServerEvent) => {
   if (ws.readyState === WebSocket.OPEN) {
@@ -89,7 +88,7 @@ export const initWebSocketServer = (server: Server) => {
     });
 
     ws.on('message', async raw => {
-      const event = parseClientEvent(raw);
+      const event = parseClientEvent(raw.toString());
       if (!event) {
         sendError(ws, 'Invalid message');
         return;

@@ -1,7 +1,7 @@
 import type { Response } from 'express';
 import type { AuthRequest } from '../types/user.js';
-import type { ChatMessageDTO } from '../types/chat.js';
 import { getRoomHistory, isRoomMember } from '../utils/chat.js';
+import type { ChatMessageDTO } from '@research/shared';
 
 export const getMessagesHistory = async (
   req: AuthRequest<{ room: string }>,

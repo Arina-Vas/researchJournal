@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { isTokenExpired, tokenStorage } from '../../../shared/api/tokenStorage';
-import type { ChatMessageDTO, ClientEvent, SocketStatus } from '../../../entities/message/lib/type';
+import type { SocketStatus } from '../../../entities/message/lib/type';
 import { createWebSocket } from './utils/createWebSocket';
 import { toast } from 'react-toastify';
 import { refreshAccessToken } from '../../../shared/api/instance';
 import { isSessionExpiredError } from '../../../shared/api/isSessionExpiredError';
-import { parseServerEvent } from './utils/parseServerEvent';
+import { type ChatMessageDTO, type ClientEvent, parseServerEvent, WS_CLOSE_TOKEN_EXPIRED } from '@research/shared';
 
 const WS_URL = import.meta.env.VITE_WS_URL as string;
-const WS_CLOSE_TOKEN_EXPIRED = 4001;
 const RECONNECT_BASE_DELAY = 1000;
 const RECONNECT_MAX_DELAY = 10_000;
 
