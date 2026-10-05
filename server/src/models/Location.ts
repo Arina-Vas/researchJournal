@@ -1,21 +1,9 @@
-import { model, Schema, Types } from 'mongoose';
+import { model, Schema } from 'mongoose';
+import type { LocationDTO } from '@research/shared';
 
-export interface LocationAddress {
-  country: string;
-  city: string;
-  street: string;
-  building: string;
-}
+export type LocationDoc = Omit<LocationDTO, '_id'>;
 
-export interface Location {
-  _id: Types.ObjectId;
-  id: string;
-  clinicName: string;
-  address: LocationAddress;
-  coordinate: { lat: number; lng: number };
-}
-
-const locationSchema = new Schema<Location>({
+const locationSchema = new Schema<LocationDoc>({
   id: String,
   clinicName: { type: String, required: true },
   address: {
@@ -30,4 +18,4 @@ const locationSchema = new Schema<Location>({
   },
 });
 
-export const Location = model<Location>('Location', locationSchema);
+export const Location = model<LocationDoc>('Location', locationSchema);

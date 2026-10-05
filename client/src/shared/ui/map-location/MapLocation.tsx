@@ -2,10 +2,10 @@ import { AdvancedMarker, Map, Pin } from '@vis.gl/react-google-maps';
 import s from './Map.module.css';
 import { memo } from 'react';
 import { useTheme } from '../../../app/providers/theme-provider/useTheme';
-import type { Location } from '../../../entities/location/lib/type';
+import type { LocationDTO } from '@research/shared';
 
 type Props = {
-  coordinate: Location['coordinate'] | null;
+  coordinate: LocationDTO['coordinate'] | null;
   mapId: string;
 };
 export const MapLocation = memo(({ coordinate, mapId }: Props) => {

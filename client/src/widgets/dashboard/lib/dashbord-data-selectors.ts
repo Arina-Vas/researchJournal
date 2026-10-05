@@ -1,4 +1,4 @@
-import type { MedicationItem } from '../../../entities/medications/lib/type';
+import type { MedicationPhase, MedicationWithLocation } from '@research/shared';
 
 export const DASHBOARD_COLORS = ['#3874ff', '#0080c7', '#adc5ff'];
 
@@ -28,7 +28,7 @@ const createYearMonthsMap = <T>(initialValueFactory: () => T): Map<number, T> =>
 
 // --- Selectors ---
 
-export const selectTotalTestsByMonth = (items: MedicationItem[]) => {
+export const selectTotalTestsByMonth = (items: MedicationWithLocation[]) => {
   const currentYear = new Date().getFullYear();
   const prevYear = currentYear - 1;
 
@@ -54,9 +54,9 @@ export const selectTotalTestsByMonth = (items: MedicationItem[]) => {
   }));
 };
 
-export const selectTestingProcessByPhase = (items: MedicationItem[]) => {
+export const selectTestingProcessByPhase = (items: MedicationWithLocation[]) => {
   const currentYear = new Date().getFullYear();
-  const map = new Map<string, { name: MedicationItem['phase']; value: number }>();
+  const map = new Map<string, { name: MedicationPhase; value: number }>();
 
   items.forEach(item => {
     const itemDate = parseEndDate(item.endDate);
@@ -69,7 +69,7 @@ export const selectTestingProcessByPhase = (items: MedicationItem[]) => {
   return Array.from(map.values()).map(attachDashboardColor);
 };
 
-export const selectTestedPeopleLastYear = (items: MedicationItem[]) => {
+export const selectTestedPeopleLastYear = (items: MedicationWithLocation[]) => {
   const now = new Date();
   const oneYearAgo = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 365);
 
@@ -94,7 +94,7 @@ export const selectTestedPeopleLastYear = (items: MedicationItem[]) => {
   return result.map(attachDashboardColor);
 };
 
-export const selectApprovalRateByMonth = (items: MedicationItem[]) => {
+export const selectApprovalRateByMonth = (items: MedicationWithLocation[]) => {
   if (!items.length) return [];
 
   const currentYear = new Date().getFullYear();
@@ -134,7 +134,7 @@ export const selectApprovalRateByMonth = (items: MedicationItem[]) => {
   }));
 };
 
-export const selectStatusByDate = (items: MedicationItem[]) => {
+export const selectStatusByDate = (items: MedicationWithLocation[]) => {
   const map = new Map<string, { completed: number; awaiting: number; originalDate: Date }>();
   const currentYear = new Date().getFullYear();
 

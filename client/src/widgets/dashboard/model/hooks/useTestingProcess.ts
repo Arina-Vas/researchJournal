@@ -2,9 +2,10 @@ import type { DashboardData, TestingProcessDataItem } from '../types';
 import { useMedications } from '../../../../entities/medications/lib/hooks';
 import { useMemo } from 'react';
 import { selectTestingProcessByPhase } from '../../lib/dashbord-data-selectors';
+import { MAX_PAGE_SIZE } from '@research/shared';
 
 export const useTestingProcess = (): DashboardData<TestingProcessDataItem> => {
-  const { data, isLoading } = useMedications({ pageSize: 100 });
+  const { data, isLoading } = useMedications({ pageSize: MAX_PAGE_SIZE });
 
   const testingProcessData = useMemo(() => {
     return selectTestingProcessByPhase(data?.data || []);

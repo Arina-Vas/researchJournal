@@ -1,13 +1,13 @@
 import s from './MedicationRow.module.css';
 import Success from '@/shared/assets/images/Success.svg';
 import Error from '@/shared/assets/images/Error.svg';
-import type { MedicationItem } from '../../../../entities/medications/lib/type';
 import { useNavigate } from '@tanstack/react-router';
 import { formatDate } from '../../../../shared/utils/formatDate';
+import type { MedicationWithLocation } from '@research/shared';
 
 const processPercent = (current: number, total: number) => Math.round((current / total) * 100);
 
-export const MedicationRow = ({ item }: { item: MedicationItem }) => {
+export const MedicationRow = ({ item }: { item: MedicationWithLocation }) => {
   const navigate = useNavigate();
   return (
     <tr className={s.row} onClick={() => navigate({ to: `/medications/${item._id}` })}>

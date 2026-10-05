@@ -1,4 +1,4 @@
-import type { MedicationItem } from '../../../entities/medications/lib/type';
+import type { MedicationPhase } from '@research/shared';
 
 export interface TotalTestsDataItem {
   current: number;
@@ -7,7 +7,7 @@ export interface TotalTestsDataItem {
 }
 
 export interface TestingProcessDataItem {
-  name: MedicationItem['phase'];
+  name: MedicationPhase;
   value: number;
   fill: string;
 }

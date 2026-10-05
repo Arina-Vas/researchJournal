@@ -1,24 +1,31 @@
 import { type Request, type Response } from 'express';
 import { Medication } from '../models/Medication.js';
-import type { Location } from '../models/Location.js';
-import type {
-  ErrorResponse,
-  GetMedicationByIdResponse,
-  GetMedicationsResponse,
-  MedicationsDTO,
-} from '../types/medication.js';
 import { buildFilters } from '../utils/buildFilters.js';
+import { toDTO } from '../utils/toDTO.js';
 import { Types } from 'mongoose';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from '@research/shared';
+import {
+  DEFAULT_PAGE,
+  DEFAULT_PAGE_SIZE,
+  type ErrorResponse,
+  getIssueMessage,
+  type GetMedicationsResponse,
+  MAX_PAGE_SIZE,
+  type MedicationResponse,
+  MedicationsQuerySchema,
+} from '@research/shared';
+import { type LocationDoc } from '../models/Location.js';
 
-export const getMedications = async (
-  req: Request<{}, {}, {}, MedicationsDTO>,
-  res: Response<GetMedicationsResponse | ErrorResponse>,
-) => {
+export const getMedications = async (req: Request, res: Response<GetMedicationsResponse | ErrorResponse>) => {
   try {
-    const { readyFilters, sortOptions } = buildFilters(req.query || {});
+    const parsedQuery = MedicationsQuerySchema.safeParse(req.query);
+    if (!parsedQuery.success) {
+      res.status(400).json({ message: getIssueMessage(parsedQuery.error) });
+      return;
+    }
 
-    const { page = DEFAULT_PAGE, pageSize = DEFAULT_PAGE_SIZE } = req.query;
+    const { readyFilters, sortOptions } = buildFilters(parsedQuery.data);
+
+    const { page = DEFAULT_PAGE, pageSize = DEFAULT_PAGE_SIZE } = parsedQuery.data;
 
     const pageNum = Math.max(1, Number(page) || DEFAULT_PAGE);
     const limitNum = Math.min(MAX_PAGE_SIZE, Math.max(1, Number(pageSize) || DEFAULT_PAGE_SIZE));
@@ -29,7 +36,7 @@ export const getMedications = async (
         .sort(sortOptions)
         .skip(skip)
         .limit(limitNum)
-        .populate<{ location: Location }>('location')
+        .populate<{ location: LocationDoc & { _id: Types.ObjectId } }>('location')
         .lean(),
       Medication.countDocuments(readyFilters),
       Medication.countDocuments(),
@@ -38,7 +45,7 @@ export const getMedications = async (
     const totalPages = Math.ceil(totalFilteredItems / limitNum);
 
     res.status(200).json({
-      data: documents,
+      data: documents.map(doc => toDTO({ ...doc, location: toDTO(doc.location) })),
       pagination: {
         page: pageNum,
         pageSize: limitNum,
@@ -57,7 +64,7 @@ export const getMedications = async (
 
 export const getMedicationById = async (
   req: Request<{ id: string }>,
-  res: Response<GetMedicationByIdResponse | ErrorResponse>,
+  res: Response<MedicationResponse | ErrorResponse>,
 ) => {
   try {
     const { id } = req.params;
@@ -67,14 +74,14 @@ export const getMedicationById = async (
       return;
     }
 
-    const medication = await Medication.findById(id).lean<GetMedicationByIdResponse>();
+    const medication = await Medication.findById(id).lean();
 
     if (!medication) {
       res.status(404).json({ message: 'Medication not found' });
       return;
     }
 
-    res.json(medication);
+    res.json(toDTO(medication));
   } catch (error) {
     res.status(500).json({ message: 'Ошибка сервера при получении данных' });
   }

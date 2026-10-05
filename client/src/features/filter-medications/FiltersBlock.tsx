@@ -1,38 +1,31 @@
 import { useEffect, useState } from 'react';
 import s from './FiltersBlock.module.css';
-import type { MedicationFilters } from '../../entities/medications/lib/type';
 import { useFetchLocations } from '../../entities/location/lib/hooks';
 import { useDebounce } from '../../shared/hooks/useDebounce';
 import { Input } from '../../shared/ui/input/Input';
 import { Button } from '../../shared/ui/button/Button';
 import { Dropdown } from '../../shared/ui/dropdown/Dropdown';
+import type { MedicationsFilters } from '@research/shared';
 
 type Props = {
-  onChange: (filters: MedicationFilters | null) => void;
+  onChange: (filters: MedicationsFilters) => void;
 };
 export const FiltersBlock = ({ onChange }: Props) => {
   const { data: locations } = useFetchLocations();
-  const [location, setLocation] = useState<string | null>(null);
-  const [successReaction, setSuccessReaction] = useState<boolean | null>(null);
-  const [searchName, setSearchName] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState<string | null>(null);
-  const [endDate, setEndDate] = useState<string | null>(null);
-  const debouncedSearch = useDebounce(searchName, 500);
+  const [location, setLocation] = useState<string | undefined>(undefined);
+  const [successReaction, setSuccessReaction] = useState<boolean | undefined>(undefined);
+  const [searchName, setSearchName] = useState<string | undefined>(undefined);
+  const [startDate, setStartDate] = useState<string | undefined>(undefined);
+  const [endDate, setEndDate] = useState<string | undefined>(undefined);
+  const debouncedSearch = useDebounce(searchName || '', 500);
 
-  const isValidValue = debouncedSearch?.length > 2 || (debouncedSearch?.length === 0 && searchName !== null);
+  const isValidValue = debouncedSearch.length > 2 || (debouncedSearch.length === 0 && searchName !== undefined);
 
   const [showFilters, setShowFilters] = useState(false);
 
   const applyFilters = () => {
-    let nameValue: string | null = null;
-    if (debouncedSearch.length > 2) {
-      nameValue = debouncedSearch;
-    } else if (debouncedSearch.length === 0 && searchName !== null) {
-      nameValue = '';
-    }
-
     onChange({
-      name: nameValue,
+      name: debouncedSearch.length > 2 ? debouncedSearch : undefined,
       location,
       successReaction,
       startDate,
@@ -50,12 +43,12 @@ export const FiltersBlock = ({ onChange }: Props) => {
   };
 
   const onReset = () => {
-    onChange(null);
-    setLocation(null);
-    setSuccessReaction(null);
-    setSearchName(null);
-    setStartDate(null);
-    setEndDate(null);
+    onChange({});
+    setLocation(undefined);
+    setSuccessReaction(undefined);
+    setSearchName(undefined);
+    setStartDate(undefined);
+    setEndDate(undefined);
     setShowFilters(false);
   };
 

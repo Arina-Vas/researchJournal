@@ -1,6 +1,6 @@
-import type { MedicationsDTO } from '../types/medication.js';
 import { Types, type QueryFilter } from 'mongoose';
-import type { Medication } from '../models/Medication.js';
+import type { MedicationDoc } from '../models/Medication.js';
+import type { MedicationsDTO } from '@research/shared';
 
 export const buildFilters = (filters: MedicationsDTO = {}) => {
   const {
@@ -14,7 +14,7 @@ export const buildFilters = (filters: MedicationsDTO = {}) => {
     location,
   } = filters;
 
-  const readyFilters: QueryFilter<Medication> = {};
+  const readyFilters: QueryFilter<MedicationDoc> = {};
 
   if (excludeId && Types.ObjectId.isValid(excludeId)) {
     readyFilters._id = { $ne: new Types.ObjectId(excludeId) };
@@ -26,7 +26,7 @@ export const buildFilters = (filters: MedicationsDTO = {}) => {
   }
 
   if (successReaction !== undefined) {
-    readyFilters.successReaction = successReaction === 'true';
+    readyFilters.successReaction = successReaction;
   }
 
   if (location) {

@@ -1,57 +1,37 @@
 import { Schema, model } from 'mongoose';
+import {
+  MedicationPhaseSchema,
+  type MedicationResponse,
+  MedicationStatusSchema,
+  MedicationSubStatusSchema,
+  MedicationTypeSchema,
+} from '@research/shared';
 
-export interface Process {
-  current: number;
-  total: number;
-}
+export type MedicationDoc = Omit<MedicationResponse, '_id'>;
 
-export interface Participants {
-  tested: number;
-  nonTested: number;
-  total: number;
-}
-
-export interface Medication {
-  id: string;
-  code: string;
-  name: string;
-  description: string;
-  type: 'medicine' | 'vaccine';
-  status: 'draft' | 'in_progress' | 'completed' | 'cancelled';
-  subStatus: 'awaiting_results' | 'on_hold' | 'out_of_stock' | 'active';
-  phase: 'preclinical' | 'clinical_trials' | 'regulatory_approval';
-  endDate: string;
-  startDate: string;
-  successReaction: boolean;
-  approvalRate: number;
-  location: string;
-  process: Process;
-  participants: Participants;
-}
-
-const medicationSchema = new Schema<Medication>({
+const medicationSchema = new Schema<MedicationDoc>({
   id: { type: String, required: true },
   code: { type: String, required: true, unique: true },
   name: { type: String, required: true },
-  type: { type: String, enum: ['medicine', 'vaccine'], required: true },
   description: { type: String, required: true },
-  status: { type: String, enum: ['draft', 'in_progress', 'completed', 'cancelled'], default: 'draft' },
-  subStatus: { type: String, enum: ['awaiting_results', 'on_hold', 'out_of_stock', 'active'], required: true },
-  phase: { type: String, enum: ['preclinical', 'clinical_trials', 'regulatory_approval'], required: true },
+  type: { type: String, enum: MedicationTypeSchema.options, required: true },
+  status: { type: String, enum: MedicationStatusSchema.options, default: 'draft' },
+  subStatus: { type: String, enum: MedicationSubStatusSchema.options, required: true },
+  phase: { type: String, enum: MedicationPhaseSchema.options, required: true },
   endDate: { type: String, required: true },
   startDate: { type: String, required: true },
-  successReaction: Boolean,
-  approvalRate: Number,
+  successReaction: { type: Boolean, required: true },
+  approvalRate: { type: Number, required: true },
   location: { type: String, ref: 'Location', required: true },
   process: {
-    current: Number,
-    total: Number,
+    current: { type: Number, required: true },
+    total: { type: Number, required: true },
   },
   participants: {
-    tested: Number,
-    nonTested: Number,
-    total: Number,
+    tested: { type: Number, required: true },
+    nonTested: { type: Number, required: true },
+    total: { type: Number, required: true },
   },
 });
 
-export const Medication = model<Medication>('Medication', medicationSchema);
+export const Medication = model<MedicationDoc>('Medication', medicationSchema);

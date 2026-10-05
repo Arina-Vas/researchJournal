@@ -1,17 +1,18 @@
-import type {
-  MedicationFilters,
-  MedicationItem,
-  MedicationParams,
-  SortAndPaginationParams,
-} from '../../../entities/medications/lib/type';
 import { usePagination } from './usePagination';
 import { useMedications } from '../../../entities/medications/lib/hooks';
 import { MEDICATIONS_COLUMNS } from './config';
+import type {
+  MedicationsDTO,
+  MedicationsFilters,
+  MedicationWithLocation,
+  SortBy,
+  SortDirection,
+} from '@research/shared';
 
 type UseTableDataResult = {
   columns: typeof MEDICATIONS_COLUMNS;
   totalItems: number;
-  rows: MedicationItem[];
+  rows: MedicationWithLocation[];
   page: number;
   pageSize: number;
   showAll: boolean;
@@ -30,26 +31,14 @@ type UseTableDataResult = {
 };
 
 export const useTableData = (
-  filters: MedicationFilters | null,
-  sortBy: SortAndPaginationParams['sortBy'],
-  sortDirection: SortAndPaginationParams['sortDirection'],
+  filters: MedicationsFilters,
+  sortBy?: SortBy,
+  sortDirection?: SortDirection,
 ): UseTableDataResult => {
-  const { name = null, successReaction = null, location = null, startDate = null, endDate = null } = filters || {};
-
   const { page, pageSize, showAll, resetPage, onNextPage, onPreviousPage, onPageSizeChange, onShowAll } =
     usePagination();
 
-  const queryFilters: MedicationParams = {
-    name,
-    successReaction,
-    location,
-    sortBy,
-    sortDirection,
-    page,
-    pageSize,
-    startDate,
-    endDate,
-  };
+  const queryFilters: MedicationsDTO = { ...filters, sortBy, sortDirection, page, pageSize };
 
   const { data, isLoading, isFetching, isError, error } = useMedications(queryFilters);
 

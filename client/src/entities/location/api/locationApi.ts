@@ -1,10 +1,10 @@
 import { instance } from '../../../shared/api/instance';
-import type { Location } from '../lib/type';
+import type { LocationDTO } from '@research/shared';
 
-export const fetchLocations = async (): Promise<Location[]> => {
-  return await instance.get<Location[]>('/locations').then(res => res.data);
+export const fetchLocations = async (): Promise<LocationDTO[]> => {
+  return await instance.get<LocationDTO[]>('/locations').then(res => res.data);
 };
 
-export const fetchLocationById = async (id: string): Promise<Location> => {
-  return await instance.get<Location>(`/locations/${id}`).then(res => res.data);
+export const fetchLocationById = async (id: string): Promise<LocationDTO> => {
+  return await instance.get<LocationDTO>(`/locations/${id}`).then(res => res.data);
 };

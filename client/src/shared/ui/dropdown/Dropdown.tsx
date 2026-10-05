@@ -1,10 +1,10 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { Location } from '../../../entities/location/lib/type.ts';
 import s from './LocationsDropdown.module.css';
+import type { LocationDTO } from '@research/shared';
 
 type Props = {
-  options: Location[];
-  onChange: Dispatch<SetStateAction<string | null>>;
+  options: LocationDTO[];
+  onChange: Dispatch<SetStateAction<string | undefined>>;
   currentOption: string;
   label: string;
 };

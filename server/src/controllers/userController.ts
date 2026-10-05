@@ -14,6 +14,7 @@ import {
   RegisterSchema,
   getIssueMessage,
   LoginSchema,
+  type ErrorResponse,
 } from '@research/shared';
 
 const MAX_SESSIONS = 5;
@@ -27,7 +28,7 @@ const COOKIE_OPTIONS = {
 
 export const registerUser = async (
   req: Request<{}, {}, unknown>,
-  res: Response<AuthResponse | { message: string }>,
+  res: Response<AuthResponse | ErrorResponse>,
 ): Promise<void> => {
   try {
     const parsedBody = RegisterSchema.safeParse(req.body);
@@ -40,7 +41,6 @@ export const registerUser = async (
 
     const user = await User.findOne({ email });
 
-    // const user = await User.findOne({ email }).select('+passwordHash');
     if (user) {
       res.status(400).json({ message: 'User already exists' });
       return;
@@ -81,7 +81,7 @@ export const registerUser = async (
 
 export const loginUser = async (
   req: Request<{}, {}, unknown>,
-  res: Response<AuthResponse | { message: string }>,
+  res: Response<AuthResponse | ErrorResponse>,
 ): Promise<void> => {
   try {
     const parsedBody = LoginSchema.safeParse(req.body);
@@ -172,10 +172,7 @@ export const logoutUser = async (req: Request, res: Response<{ message: string }
   }
 };
 
-export const refreshToken = async (
-  req: Request,
-  res: Response<RefreshResponse | { message: string }>,
-): Promise<void> => {
+export const refreshToken = async (req: Request, res: Response<RefreshResponse | ErrorResponse>): Promise<void> => {
   try {
     if (!isToken(req.cookies.refreshToken)) {
       res.status(401).json({ message: 'Refresh token is invalid or expired' });
@@ -244,7 +241,7 @@ export const deleteUser = async (req: AuthRequest, res: Response): Promise<void>
   }
 };
 
-export const getMe = async (req: AuthRequest, res: Response<MeResponse | { message: string }>): Promise<void> => {
+export const getMe = async (req: AuthRequest, res: Response<MeResponse | ErrorResponse>): Promise<void> => {
   try {
     if (!req.user?.userId) {
       res.status(401).json({ message: 'Unauthorized' });
@@ -268,7 +265,7 @@ export const getMe = async (req: AuthRequest, res: Response<MeResponse | { messa
   }
 };
 
-export const getUsers = async (req: AuthRequest, res: Response<UserDTO[] | { message: string }>): Promise<void> => {
+export const getUsers = async (req: AuthRequest, res: Response<UserDTO[] | ErrorResponse>): Promise<void> => {
   try {
     const users = await User.find({ _id: { $ne: req.user?.userId } }, 'email').sort({ email: 1 });
 
@@ -280,7 +277,7 @@ export const getUsers = async (req: AuthRequest, res: Response<UserDTO[] | { mes
 
 export const getUserById = async (
   req: Request<{ userId: string }>,
-  res: Response<UserDTO | { message: string }>,
+  res: Response<UserDTO | ErrorResponse>,
 ): Promise<void> => {
   try {
     const isValid = Types.ObjectId.isValid(req.params.userId);
