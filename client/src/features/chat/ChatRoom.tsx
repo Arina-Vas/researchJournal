@@ -81,7 +81,12 @@ export const ChatRoom = ({ room }: Props) => {
 
       <form className={s.form} onSubmit={onSubmit}>
         <div className={s.input}>
-          <Input value={text} onChange={setText} placeholder="Type a message…" maxLength={MAX_MESSAGE_LENGTH} />
+          <Input
+            value={text}
+            onChange={setText}
+            placeholder="Type a message…"
+            maxLength={MAX_MESSAGE_LENGTH}
+          />
         </div>
         <Button type="submit" disabled={status !== 'open' || !text.trim()}>
           Send

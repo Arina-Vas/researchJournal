@@ -4,7 +4,10 @@ import { Types } from 'mongoose';
 import { type MessageResponse, type LocationDTO, ObjectIdSchema } from '@research/shared';
 import { toDTO } from '../utils/toDTO.js';
 
-export const getLocations = async (req: Request, res: Response<LocationDTO[] | MessageResponse>) => {
+export const getLocations = async (
+  req: Request,
+  res: Response<LocationDTO[] | MessageResponse>,
+) => {
   try {
     const locations = await Location.find().lean();
 

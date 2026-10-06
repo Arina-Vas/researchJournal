@@ -57,6 +57,8 @@ const parseEvent = <T>(schema: z.ZodType<T>, raw: unknown): T | null => {
   return result.success ? result.data : null;
 };
 
-export const parseClientEvent = (raw: unknown): ClientEvent | null => parseEvent(ClientEventSchema, raw);
+export const parseClientEvent = (raw: unknown): ClientEvent | null =>
+  parseEvent(ClientEventSchema, raw);
 
-export const parseServerEvent = (raw: unknown): ServerEvent | null => parseEvent(ServerEventSchema, raw);
+export const parseServerEvent = (raw: unknown): ServerEvent | null =>
+  parseEvent(ServerEventSchema, raw);

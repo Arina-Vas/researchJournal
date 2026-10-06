@@ -11,7 +11,16 @@ type InputProps = {
   type?: 'search' | 'input' | 'password' | 'date';
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'>;
 
-export const Input = ({ value, onChange, placeholder, isError, label, type, id, ...rest }: InputProps) => {
+export const Input = ({
+  value,
+  onChange,
+  placeholder,
+  isError,
+  label,
+  type,
+  id,
+  ...rest
+}: InputProps) => {
   return (
     <div className={s.inputWrapper}>
       {label && <label htmlFor={id}>{label}</label>}

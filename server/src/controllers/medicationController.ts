@@ -16,7 +16,10 @@ import {
 } from '@research/shared';
 import { type LocationDoc } from '../models/Location.js';
 
-export const getMedications = async (req: Request, res: Response<GetMedicationsResponse | MessageResponse>) => {
+export const getMedications = async (
+  req: Request,
+  res: Response<GetMedicationsResponse | MessageResponse>,
+) => {
   try {
     const parsedQuery = MedicationsQuerySchema.safeParse(req.query);
     if (!parsedQuery.success) {

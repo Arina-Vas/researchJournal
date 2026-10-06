@@ -4,7 +4,13 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { verifyAccessToken } from '../utils/tokens.js';
 import { createMessage, getRoomHistory, isRoomMember } from '../utils/chat.js';
 import type { AuthedSocket } from '../types/chat.js';
-import { isToken, type JwtPayload, parseClientEvent, type ServerEvent, WS_CLOSE_TOKEN_EXPIRED } from '@research/shared';
+import {
+  isToken,
+  type JwtPayload,
+  parseClientEvent,
+  type ServerEvent,
+  WS_CLOSE_TOKEN_EXPIRED,
+} from '@research/shared';
 
 const WS_PATH = '/ws';
 const HEARTBEAT_INTERVAL = 30_000;
@@ -15,7 +21,8 @@ const send = (ws: WebSocket, event: ServerEvent) => {
   }
 };
 
-const sendError = (ws: WebSocket, message: string) => send(ws, { type: 'ERROR', payload: { message } });
+const sendError = (ws: WebSocket, message: string) =>
+  send(ws, { type: 'ERROR', payload: { message } });
 
 const rejectUpgrade = (socket: Duplex, status: number, reason: string) => {
   socket.write(`HTTP/1.1 ${status} ${reason}\r\nConnection: close\r\n\r\n`);
@@ -75,7 +82,10 @@ export const initWebSocketServer = (server: Server) => {
       authed.rooms = new Set();
       authed.isAlive = true;
       const ttl = payload.exp * 1000 - Date.now();
-      const expiryTimer = setTimeout(() => authed.close(WS_CLOSE_TOKEN_EXPIRED, 'Token expired'), ttl);
+      const expiryTimer = setTimeout(
+        () => authed.close(WS_CLOSE_TOKEN_EXPIRED, 'Token expired'),
+        ttl,
+      );
       authed.once('close', () => clearTimeout(expiryTimer));
       wss.emit('connection', authed, req);
     });

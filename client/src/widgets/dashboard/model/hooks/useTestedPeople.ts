@@ -7,7 +7,10 @@ import { MAX_PAGE_SIZE } from '@research/shared';
 export const useTestedPeople = (): DashboardData<TestedPeopleDataItem> => {
   const { data, isLoading } = useMedications({ pageSize: MAX_PAGE_SIZE });
 
-  const testedPeopleData = useMemo(() => selectTestedPeopleLastYear(data?.data || []), [data?.data]);
+  const testedPeopleData = useMemo(
+    () => selectTestedPeopleLastYear(data?.data || []),
+    [data?.data],
+  );
 
   return { data: testedPeopleData, isLoading };
 };

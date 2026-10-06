@@ -22,10 +22,19 @@ export type MedicationType = z.infer<typeof MedicationTypeSchema>;
 export const MedicationStatusSchema = z.enum(['draft', 'in_progress', 'completed', 'cancelled']);
 export type MedicationStatus = z.infer<typeof MedicationStatusSchema>;
 
-export const MedicationSubStatusSchema = z.enum(['awaiting_results', 'on_hold', 'out_of_stock', 'active']);
+export const MedicationSubStatusSchema = z.enum([
+  'awaiting_results',
+  'on_hold',
+  'out_of_stock',
+  'active',
+]);
 export type MedicationSubStatus = z.infer<typeof MedicationSubStatusSchema>;
 
-export const MedicationPhaseSchema = z.enum(['preclinical', 'clinical_trials', 'regulatory_approval']);
+export const MedicationPhaseSchema = z.enum([
+  'preclinical',
+  'clinical_trials',
+  'regulatory_approval',
+]);
 export type MedicationPhase = z.infer<typeof MedicationPhaseSchema>;
 
 export const SortBySchema = z.enum(['name', 'location', 'startDate', 'endDate', 'successReaction']);
@@ -51,7 +60,12 @@ export const LocationSchema = z.object({
   _id: z.string(),
   id: z.string(),
   clinicName: z.string(),
-  address: z.object({ country: z.string(), city: z.string(), street: z.string(), building: z.string() }),
+  address: z.object({
+    country: z.string(),
+    city: z.string(),
+    street: z.string(),
+    building: z.string(),
+  }),
   coordinate: z.object({ lat: z.number(), lng: z.number() }),
 });
 export type LocationDTO = z.infer<typeof LocationSchema>;
@@ -74,13 +88,11 @@ export const MedicationSchema = z.object({
   process: ProcessSchema,
   participants: ParticipantsSchema,
 });
-
 export const MedicationWithLocationSchema = MedicationSchema.extend({ location: LocationSchema });
-export type MedicationWithLocation = z.infer<typeof MedicationWithLocationSchema>;
 
+export type MedicationWithLocation = z.infer<typeof MedicationWithLocationSchema>;
 export type MedicationDTO = z.infer<typeof MedicationSchema>;
-// request
-// filters
+
 export const GetMedicationsResponseSchema = z.object({
   data: z.array(MedicationWithLocationSchema),
   pagination: PaginationSchema,
@@ -108,6 +120,8 @@ export const SortAndPaginationParamsSchema = z.object({
 export type SortAndPagination = z.infer<typeof SortAndPaginationParamsSchema>;
 export type MedicationsDTO = MedicationsFilters & SortAndPagination;
 
-export const MedicationsQuerySchema = MedicationsFiltersSchema.extend(SortAndPaginationParamsSchema.shape);
+export const MedicationsQuerySchema = MedicationsFiltersSchema.extend(
+  SortAndPaginationParamsSchema.shape,
+);
 
 // common

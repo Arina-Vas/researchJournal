@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@research/shared": "*",
     "@tanstack/react-query": "^5.103.2",
     "@tanstack/react-router": "^1.170.39",
     "@tanstack/react-router-devtools": "^1.167.2",
@@ -20,7 +21,7 @@
     "react-dom": "^19.2.8",
     "react-toastify": "^11.1.0",
     "recharts": "^3.10.1",
-    "@research/shared": "*"
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

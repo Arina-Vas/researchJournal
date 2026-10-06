@@ -19,7 +19,8 @@ export const FiltersBlock = ({ onChange }: Props) => {
   const [endDate, setEndDate] = useState<string | undefined>(undefined);
   const debouncedSearch = useDebounce(searchName || '', 500);
 
-  const isValidValue = debouncedSearch.length > 2 || (debouncedSearch.length === 0 && searchName !== undefined);
+  const isValidValue =
+    debouncedSearch.length > 2 || (debouncedSearch.length === 0 && searchName !== undefined);
 
   const [showFilters, setShowFilters] = useState(false);
 
@@ -56,8 +57,17 @@ export const FiltersBlock = ({ onChange }: Props) => {
     <div className={s.filtersContainer}>
       <div>
         <div className={s.searchRow}>
-          <Input value={searchName || ''} onChange={setSearchName} placeholder={'Search by name...'} type="search" />
-          <Button variant={'outline'} onClick={() => setShowFilters(p => !p)} className={s.filterTriggerBtn}>
+          <Input
+            value={searchName || ''}
+            onChange={setSearchName}
+            placeholder={'Search by name...'}
+            type="search"
+          />
+          <Button
+            variant={'outline'}
+            onClick={() => setShowFilters(p => !p)}
+            className={s.filterTriggerBtn}
+          >
             Filters
           </Button>
         </div>
@@ -94,7 +104,12 @@ export const FiltersBlock = ({ onChange }: Props) => {
             </div>
             <div className={s.filterGroup}>
               <span className={s.filterTitle}>Dates</span>
-              <Input label={'Start Date'} type={'date'} value={startDate || ''} onChange={setStartDate} />
+              <Input
+                label={'Start Date'}
+                type={'date'}
+                value={startDate || ''}
+                onChange={setStartDate}
+              />
               <Input label={'End Date'} type={'date'} value={endDate || ''} onChange={setEndDate} />
             </div>
             <div className={s.actions}>

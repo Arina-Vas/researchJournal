@@ -8,7 +8,10 @@ export const Route = createFileRoute('/login')({
   }),
   beforeLoad: ({ context, search }) => {
     if (context.auth.isAuthenticated) {
-      const target = search.redirect?.startsWith('/') && !search.redirect.startsWith('//') ? search.redirect : '/';
+      const target =
+        search.redirect?.startsWith('/') && !search.redirect.startsWith('//')
+          ? search.redirect
+          : '/';
       throw redirect({ href: target });
     }
   },

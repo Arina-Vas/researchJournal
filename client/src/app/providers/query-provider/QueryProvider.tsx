@@ -12,7 +12,8 @@ export const queryClient = new QueryClient({
   }),
   defaultOptions: {
     queries: {
-      retry: (count, error) => count < 1 && (!isAxiosError(error) || (error.response?.status ?? 500) >= 500),
+      retry: (count, error) =>
+        count < 1 && (!isAxiosError(error) || (error.response?.status ?? 500) >= 500),
       refetchOnWindowFocus: false,
     },
   },

@@ -35,8 +35,16 @@ export const useTableData = (
   sortBy?: SortBy,
   sortDirection?: SortDirection,
 ): UseTableDataResult => {
-  const { page, pageSize, showAll, resetPage, onNextPage, onPreviousPage, onPageSizeChange, onShowAll } =
-    usePagination();
+  const {
+    page,
+    pageSize,
+    showAll,
+    resetPage,
+    onNextPage,
+    onPreviousPage,
+    onPageSizeChange,
+    onShowAll,
+  } = usePagination();
 
   const queryFilters: MedicationsDTO = { ...filters, sortBy, sortDirection, page, pageSize };
 

@@ -1,14 +1,23 @@
 import { instance } from '../../../shared/api/instance';
-import type { GetMedicationsResponse, MedicationDTO, MedicationsDTO } from '@research/shared';
+import {
+  type GetMedicationsResponse,
+  GetMedicationsResponseSchema,
+  type MedicationDTO,
+  MedicationSchema,
+  type MedicationsDTO,
+} from '@research/shared';
+import { parseResponse } from '../../../shared/api/parseResponse';
 
 export const fetchMedications = async (params: MedicationsDTO): Promise<GetMedicationsResponse> => {
   return await instance
-    .get<GetMedicationsResponse>('/medications', {
+    .get('/medications', {
       params,
     })
-    .then(res => res.data);
+    .then(res => parseResponse(GetMedicationsResponseSchema, res.data));
 };
 
 export const fetchMedicationById = async (id: string): Promise<MedicationDTO> => {
-  return await instance.get<MedicationDTO>(`/medications/${id}`).then(res => res.data);
+  return await instance
+    .get(`/medications/${id}`)
+    .then(res => parseResponse(MedicationSchema, res.data));
 };

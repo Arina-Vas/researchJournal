@@ -5,7 +5,12 @@ import { createWebSocket } from './utils/createWebSocket';
 import { toast } from 'react-toastify';
 import { refreshAccessToken } from '../../../shared/api/instance';
 import { isSessionExpiredError } from '../../../shared/api/isSessionExpiredError';
-import { type ChatMessageDTO, type ClientEvent, parseServerEvent, WS_CLOSE_TOKEN_EXPIRED } from '@research/shared';
+import {
+  type ChatMessageDTO,
+  type ClientEvent,
+  parseServerEvent,
+  WS_CLOSE_TOKEN_EXPIRED,
+} from '@research/shared';
 
 const WS_URL = import.meta.env.VITE_WS_URL as string;
 const RECONNECT_BASE_DELAY = 1000;
@@ -19,7 +24,10 @@ interface UseChatSocketReturnType {
 }
 
 export const useChatSocket = (room: string): UseChatSocketReturnType => {
-  const [history, setHistory] = useState<{ room: string; messages: ChatMessageDTO[] }>({ room: '', messages: [] });
+  const [history, setHistory] = useState<{ room: string; messages: ChatMessageDTO[] }>({
+    room: '',
+    messages: [],
+  });
   const [connection, setConnection] = useState<{ room: string; status: SocketStatus }>({
     room,
     status: 'connecting',
@@ -29,7 +37,10 @@ export const useChatSocket = (room: string): UseChatSocketReturnType => {
   const sendMessage = (message: string) => {
     if (socketRef.current?.readyState === WebSocket.OPEN) {
       socketRef.current?.send(
-        JSON.stringify({ type: 'SEND_MESSAGE', payload: { room, text: message } } satisfies ClientEvent),
+        JSON.stringify({
+          type: 'SEND_MESSAGE',
+          payload: { room, text: message },
+        } satisfies ClientEvent),
       );
     }
   };
@@ -65,7 +76,10 @@ export const useChatSocket = (room: string): UseChatSocketReturnType => {
 
     const connect = () => {
       if (signal.aborted) return;
-      const ws = createWebSocket(`${WS_URL}?token=${encodeURIComponent(tokenStorage.get() ?? '')}`, controller.signal);
+      const ws = createWebSocket(
+        `${WS_URL}?token=${encodeURIComponent(tokenStorage.get() ?? '')}`,
+        controller.signal,
+      );
       socketRef.current = ws;
 
       let wasOpened = false;
@@ -93,7 +107,9 @@ export const useChatSocket = (room: string): UseChatSocketReturnType => {
           }
           case 'NEW_MESSAGE': {
             if (res.payload.room !== room) return;
-            setHistory(p => (p.room === room ? { ...p, messages: [...p.messages, res.payload] } : p));
+            setHistory(p =>
+              p.room === room ? { ...p, messages: [...p.messages, res.payload] } : p,
+            );
             break;
           }
           case 'ERROR': {

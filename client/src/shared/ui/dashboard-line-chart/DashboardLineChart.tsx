@@ -55,7 +55,13 @@ export const DashboardLineChart = memo(
               strokeDasharray={`${dashed ? '3 3' : undefined}`}
               dot={false}
             />
-            <Line dataKey={dataKeyFirstLine} isAnimationActive={false} stroke="#3874ff" strokeWidth={2} dot={false} />
+            <Line
+              dataKey={dataKeyFirstLine}
+              isAnimationActive={false}
+              stroke="#3874ff"
+              strokeWidth={2}
+              dot={false}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>

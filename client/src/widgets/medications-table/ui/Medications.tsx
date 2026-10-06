@@ -7,7 +7,12 @@ import { Spinner } from '../../../shared/ui/spinner/Spinner';
 import { Button } from '../../../shared/ui/button/Button';
 import { MedicationRow } from './medication-row/MedicationRow';
 import { Pagination } from '../../../shared/ui/pagination/Pagination';
-import { type MedicationsFilters, PAGE_SIZE_OPTIONS, type SortBy, type SortDirection } from '@research/shared';
+import {
+  type MedicationsFilters,
+  PAGE_SIZE_OPTIONS,
+  type SortBy,
+  type SortDirection,
+} from '@research/shared';
 
 export const Medications = () => {
   const [filters, setFilters] = useState<MedicationsFilters>({});

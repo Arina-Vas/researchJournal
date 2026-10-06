@@ -9,7 +9,8 @@ type Props = {
   label: string;
 };
 export const Dropdown = ({ options, label, onChange, currentOption }: Props) => {
-  const onChangeHandler = (e: ChangeEvent<HTMLSelectElement>) => onChange(e.target.value || undefined);
+  const onChangeHandler = (e: ChangeEvent<HTMLSelectElement>) =>
+    onChange(e.target.value || undefined);
 
   return (
     <select id="location" className={s.select} value={currentOption} onChange={onChangeHandler}>

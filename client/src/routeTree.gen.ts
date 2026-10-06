@@ -8,104 +8,91 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthRouteImport } from './routes/_auth'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as NotFoundRouteImport } from './routes/not-found'
-import { Route as AuthIndexRouteImport } from './routes/_auth/index'
-import { Route as AuthChatIndexRouteImport } from './routes/_auth/chat/index'
-import { Route as AuthChatRoomRouteImport } from './routes/_auth/chat/$room'
-import { Route as AuthMedicationsIndexRouteImport } from './routes/_auth/medications/index'
-import { Route as AuthMedicationsIdRouteImport } from './routes/_auth/medications/$id'
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as AuthRouteImport } from './routes/_auth';
+import { Route as LoginRouteImport } from './routes/login';
+import { Route as NotFoundRouteImport } from './routes/not-found';
+import { Route as AuthIndexRouteImport } from './routes/_auth/index';
+import { Route as AuthChatIndexRouteImport } from './routes/_auth/chat/index';
+import { Route as AuthChatRoomRouteImport } from './routes/_auth/chat/$room';
+import { Route as AuthMedicationsIndexRouteImport } from './routes/_auth/medications/index';
+import { Route as AuthMedicationsIdRouteImport } from './routes/_auth/medications/$id';
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const NotFoundRoute = NotFoundRouteImport.update({
   id: '/not-found',
   path: '/not-found',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AuthIndexRoute = AuthIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthRoute,
-} as any)
+} as any);
 const AuthChatIndexRoute = AuthChatIndexRouteImport.update({
   id: '/chat/',
   path: '/chat/',
   getParentRoute: () => AuthRoute,
-} as any)
+} as any);
 const AuthChatRoomRoute = AuthChatRoomRouteImport.update({
   id: '/chat/$room',
   path: '/chat/$room',
   getParentRoute: () => AuthRoute,
-} as any)
+} as any);
 const AuthMedicationsIndexRoute = AuthMedicationsIndexRouteImport.update({
   id: '/medications/',
   path: '/medications/',
   getParentRoute: () => AuthRoute,
-} as any)
+} as any);
 const AuthMedicationsIdRoute = AuthMedicationsIdRouteImport.update({
   id: '/medications/$id',
   path: '/medications/$id',
   getParentRoute: () => AuthRoute,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthIndexRoute
-  '/login': typeof LoginRoute
-  '/not-found': typeof NotFoundRoute
-  '/chat/$room': typeof AuthChatRoomRoute
-  '/medications/$id': typeof AuthMedicationsIdRoute
-  '/chat/': typeof AuthChatIndexRoute
-  '/medications/': typeof AuthMedicationsIndexRoute
+  '/': typeof AuthIndexRoute;
+  '/login': typeof LoginRoute;
+  '/not-found': typeof NotFoundRoute;
+  '/chat/$room': typeof AuthChatRoomRoute;
+  '/medications/$id': typeof AuthMedicationsIdRoute;
+  '/chat/': typeof AuthChatIndexRoute;
+  '/medications/': typeof AuthMedicationsIndexRoute;
 }
 export interface FileRoutesByTo {
-  '/login': typeof LoginRoute
-  '/not-found': typeof NotFoundRoute
-  '/': typeof AuthIndexRoute
-  '/chat/$room': typeof AuthChatRoomRoute
-  '/medications/$id': typeof AuthMedicationsIdRoute
-  '/chat': typeof AuthChatIndexRoute
-  '/medications': typeof AuthMedicationsIndexRoute
+  '/login': typeof LoginRoute;
+  '/not-found': typeof NotFoundRoute;
+  '/': typeof AuthIndexRoute;
+  '/chat/$room': typeof AuthChatRoomRoute;
+  '/medications/$id': typeof AuthMedicationsIdRoute;
+  '/chat': typeof AuthChatIndexRoute;
+  '/medications': typeof AuthMedicationsIndexRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/_auth': typeof AuthRouteWithChildren
-  '/login': typeof LoginRoute
-  '/not-found': typeof NotFoundRoute
-  '/_auth/': typeof AuthIndexRoute
-  '/_auth/chat/$room': typeof AuthChatRoomRoute
-  '/_auth/medications/$id': typeof AuthMedicationsIdRoute
-  '/_auth/chat/': typeof AuthChatIndexRoute
-  '/_auth/medications/': typeof AuthMedicationsIndexRoute
+  __root__: typeof rootRouteImport;
+  '/_auth': typeof AuthRouteWithChildren;
+  '/login': typeof LoginRoute;
+  '/not-found': typeof NotFoundRoute;
+  '/_auth/': typeof AuthIndexRoute;
+  '/_auth/chat/$room': typeof AuthChatRoomRoute;
+  '/_auth/medications/$id': typeof AuthMedicationsIdRoute;
+  '/_auth/chat/': typeof AuthChatIndexRoute;
+  '/_auth/medications/': typeof AuthMedicationsIndexRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/'
-    | '/login'
-    | '/not-found'
-    | '/chat/$room'
-    | '/medications/$id'
-    | '/chat/'
-    | '/medications/'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/login'
-    | '/not-found'
-    | '/'
-    | '/chat/$room'
-    | '/medications/$id'
-    | '/chat'
-    | '/medications'
+    '/' | '/login' | '/not-found' | '/chat/$room' | '/medications/$id' | '/chat/' | '/medications/';
+  fileRoutesByTo: FileRoutesByTo;
+  to: '/login' | '/not-found' | '/' | '/chat/$room' | '/medications/$id' | '/chat' | '/medications';
   id:
     | '__root__'
     | '/_auth'
@@ -115,82 +102,82 @@ export interface FileRouteTypes {
     | '/_auth/chat/$room'
     | '/_auth/medications/$id'
     | '/_auth/chat/'
-    | '/_auth/medications/'
-  fileRoutesById: FileRoutesById
+    | '/_auth/medications/';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  AuthRoute: typeof AuthRouteWithChildren
-  LoginRoute: typeof LoginRoute
-  NotFoundRoute: typeof NotFoundRoute
+  AuthRoute: typeof AuthRouteWithChildren;
+  LoginRoute: typeof LoginRoute;
+  NotFoundRoute: typeof NotFoundRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/_auth': {
-      id: '/_auth'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/_auth';
+      path: '';
+      fullPath: '/';
+      preLoaderRoute: typeof AuthRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/login';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof LoginRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/not-found': {
-      id: '/not-found'
-      path: '/not-found'
-      fullPath: '/not-found'
-      preLoaderRoute: typeof NotFoundRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/not-found';
+      path: '/not-found';
+      fullPath: '/not-found';
+      preLoaderRoute: typeof NotFoundRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/_auth/': {
-      id: '/_auth/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof AuthIndexRouteImport
-      parentRoute: typeof AuthRoute
-    }
+      id: '/_auth/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof AuthIndexRouteImport;
+      parentRoute: typeof AuthRoute;
+    };
     '/_auth/chat/': {
-      id: '/_auth/chat/'
-      path: '/chat'
-      fullPath: '/chat/'
-      preLoaderRoute: typeof AuthChatIndexRouteImport
-      parentRoute: typeof AuthRoute
-    }
+      id: '/_auth/chat/';
+      path: '/chat';
+      fullPath: '/chat/';
+      preLoaderRoute: typeof AuthChatIndexRouteImport;
+      parentRoute: typeof AuthRoute;
+    };
     '/_auth/chat/$room': {
-      id: '/_auth/chat/$room'
-      path: '/chat/$room'
-      fullPath: '/chat/$room'
-      preLoaderRoute: typeof AuthChatRoomRouteImport
-      parentRoute: typeof AuthRoute
-    }
+      id: '/_auth/chat/$room';
+      path: '/chat/$room';
+      fullPath: '/chat/$room';
+      preLoaderRoute: typeof AuthChatRoomRouteImport;
+      parentRoute: typeof AuthRoute;
+    };
     '/_auth/medications/': {
-      id: '/_auth/medications/'
-      path: '/medications'
-      fullPath: '/medications/'
-      preLoaderRoute: typeof AuthMedicationsIndexRouteImport
-      parentRoute: typeof AuthRoute
-    }
+      id: '/_auth/medications/';
+      path: '/medications';
+      fullPath: '/medications/';
+      preLoaderRoute: typeof AuthMedicationsIndexRouteImport;
+      parentRoute: typeof AuthRoute;
+    };
     '/_auth/medications/$id': {
-      id: '/_auth/medications/$id'
-      path: '/medications/$id'
-      fullPath: '/medications/$id'
-      preLoaderRoute: typeof AuthMedicationsIdRouteImport
-      parentRoute: typeof AuthRoute
-    }
+      id: '/_auth/medications/$id';
+      path: '/medications/$id';
+      fullPath: '/medications/$id';
+      preLoaderRoute: typeof AuthMedicationsIdRouteImport;
+      parentRoute: typeof AuthRoute;
+    };
   }
 }
 
 interface AuthRouteChildren {
-  AuthIndexRoute: typeof AuthIndexRoute
-  AuthChatRoomRoute: typeof AuthChatRoomRoute
-  AuthMedicationsIdRoute: typeof AuthMedicationsIdRoute
-  AuthChatIndexRoute: typeof AuthChatIndexRoute
-  AuthMedicationsIndexRoute: typeof AuthMedicationsIndexRoute
+  AuthIndexRoute: typeof AuthIndexRoute;
+  AuthChatRoomRoute: typeof AuthChatRoomRoute;
+  AuthMedicationsIdRoute: typeof AuthMedicationsIdRoute;
+  AuthChatIndexRoute: typeof AuthChatIndexRoute;
+  AuthMedicationsIndexRoute: typeof AuthMedicationsIndexRoute;
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
@@ -199,15 +186,15 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthMedicationsIdRoute: AuthMedicationsIdRoute,
   AuthChatIndexRoute: AuthChatIndexRoute,
   AuthMedicationsIndexRoute: AuthMedicationsIndexRoute,
-}
+};
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   LoginRoute: LoginRoute,
   NotFoundRoute: NotFoundRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

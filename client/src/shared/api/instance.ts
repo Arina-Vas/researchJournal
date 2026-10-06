@@ -1,7 +1,8 @@
 import axios, { type InternalAxiosRequestConfig, isAxiosError } from 'axios';
 import { tokenStorage } from './tokenStorage';
 import { isSessionExpiredError } from './isSessionExpiredError';
-import type { RefreshResponse, Token } from '@research/shared';
+import { RefreshResponseSchema, type Token } from '@research/shared';
+import { parseResponse } from './parseResponse';
 
 export const instance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -25,10 +26,11 @@ let refreshPromise: Promise<Token> | null = null;
 export const refreshAccessToken = (): Promise<Token> => {
   if (refreshPromise === null) {
     refreshPromise = instance
-      .post<RefreshResponse>('auth/refresh')
-      .then(({ data }) => {
-        tokenStorage.set(data.accessToken);
-        return data.accessToken;
+      .post('auth/refresh')
+      .then(res => parseResponse(RefreshResponseSchema, res.data))
+      .then(({ accessToken }) => {
+        tokenStorage.set(accessToken);
+        return accessToken;
       })
       .finally(() => {
         refreshPromise = null;
@@ -43,7 +45,8 @@ instance.interceptors.response.use(
   async error => {
     if (!isAxiosError(error)) return Promise.reject(error);
 
-    const originalRequest: (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined = error.config;
+    const originalRequest: (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined =
+      error.config;
     if (!originalRequest) return Promise.reject(error);
 
     const isAuthUrl =

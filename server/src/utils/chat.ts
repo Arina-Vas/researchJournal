@@ -6,7 +6,11 @@ export const HISTORY_LIMIT = 50;
 
 export const isRoomMember = (room: string, userId: string): boolean => {
   const ids = room.split('_');
-  return ids.length === 2 && ids.every(id => ObjectIdSchema.safeParse(id).success) && ids.includes(userId);
+  return (
+    ids.length === 2 &&
+    ids.every(id => ObjectIdSchema.safeParse(id).success) &&
+    ids.includes(userId)
+  );
 };
 
 interface PopulatedMessage {
@@ -35,9 +39,16 @@ export const getRoomHistory = async (room: string): Promise<ChatMessageDTO[]> =>
   return messages.reverse().map(toMessageDTO);
 };
 
-export const createMessage = async (room: string, senderId: string, text: string): Promise<ChatMessageDTO> => {
+export const createMessage = async (
+  room: string,
+  senderId: string,
+  text: string,
+): Promise<ChatMessageDTO> => {
   const created = await Message.create({ room, sender: senderId, text });
-  const populated = await created.populate<{ sender: PopulatedMessage['sender'] }>('sender', 'email');
+  const populated = await created.populate<{ sender: PopulatedMessage['sender'] }>(
+    'sender',
+    'email',
+  );
 
   return toMessageDTO({
     _id: populated._id,

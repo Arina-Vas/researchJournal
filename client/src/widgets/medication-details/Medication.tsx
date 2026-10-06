@@ -16,7 +16,9 @@ type Props = {
 };
 export const Medication = ({ id }: Props) => {
   const { data, isLoading: isMedicationLoading } = useMedicationById(id);
-  const { data: location, isLoading: isLocationLoading } = useFetchLocationById(data?.location || '');
+  const { data: location, isLoading: isLocationLoading } = useFetchLocationById(
+    data?.location || '',
+  );
 
   const isLoading = isMedicationLoading || isLocationLoading;
 
@@ -52,7 +54,12 @@ export const Medication = ({ id }: Props) => {
           <span>
             {building} {street}, {city}, {country}
           </span>
-          <Button variant={'outline'} iconLeft={<DirectionIcon />} fullWidth onClick={handleGetDirection}>
+          <Button
+            variant={'outline'}
+            iconLeft={<DirectionIcon />}
+            fullWidth
+            onClick={handleGetDirection}
+          >
             Get direction
           </Button>
         </div>

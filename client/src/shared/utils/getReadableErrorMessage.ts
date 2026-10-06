@@ -37,7 +37,9 @@ export const getReadableErrorMessage = (error: unknown): string => {
 
     // 3. Response without a message — fall back to the HTTP status
     const { status } = error.response;
-    return STATUS_MESSAGES[status] ?? (status >= 500 ? SERVER_ERROR_MESSAGE : UNEXPECTED_ERROR_MESSAGE);
+    return (
+      STATUS_MESSAGES[status] ?? (status >= 500 ? SERVER_ERROR_MESSAGE : UNEXPECTED_ERROR_MESSAGE)
+    );
   }
 
   if (error instanceof Error && error.message) {

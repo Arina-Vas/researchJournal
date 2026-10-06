@@ -9,13 +9,21 @@ type Props = {
   currentId?: string;
 };
 export const MedicationTags = ({ location, currentId }: Props) => {
-  const { data: medications } = useMedications({ location, pageSize: MEDICATIONS_LIMIT, excludeId: currentId });
+  const { data: medications } = useMedications({
+    location,
+    pageSize: MEDICATIONS_LIMIT,
+    excludeId: currentId,
+  });
 
   return (
     <ul className={s.tagList}>
       {medications?.data.map(medication => (
         <li key={medication._id}>
-          <NavButton title={medication.name} className={s.tag} link={`/medications/${medication._id}`} />
+          <NavButton
+            title={medication.name}
+            className={s.tag}
+            link={`/medications/${medication._id}`}
+          />
         </li>
       ))}
     </ul>

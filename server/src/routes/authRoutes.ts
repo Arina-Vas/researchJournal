@@ -1,5 +1,12 @@
 import { Router } from 'express';
-import { loginUser, logoutUser, registerUser, refreshToken, deleteUser, getMe } from '../controllers/userController.js';
+import {
+  loginUser,
+  logoutUser,
+  registerUser,
+  refreshToken,
+  deleteUser,
+  getMe,
+} from '../controllers/userController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = Router();

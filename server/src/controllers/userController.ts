@@ -112,7 +112,9 @@ export const loginUser = async (
     const currentUserAgent = req.headers['user-agent'] || 'unknown';
     const currentIp = req.ip || 'unknown';
 
-    const sessionIndex = user.refreshTokens.findIndex(i => i.ip === currentIp && i.userAgent === currentUserAgent);
+    const sessionIndex = user.refreshTokens.findIndex(
+      i => i.ip === currentIp && i.userAgent === currentUserAgent,
+    );
 
     if (sessionIndex !== -1) {
       user.refreshTokens[sessionIndex] = {
@@ -173,7 +175,10 @@ export const logoutUser = async (req: Request, res: Response<MessageResponse>): 
   }
 };
 
-export const refreshToken = async (req: Request, res: Response<RefreshResponse | MessageResponse>): Promise<void> => {
+export const refreshToken = async (
+  req: Request,
+  res: Response<RefreshResponse | MessageResponse>,
+): Promise<void> => {
   try {
     if (!isToken(req.cookies.refreshToken)) {
       res.status(401).json({ message: 'Refresh token is invalid or expired' });
@@ -195,7 +200,10 @@ export const refreshToken = async (req: Request, res: Response<RefreshResponse |
       return;
     }
 
-    const user = await User.findOne({ _id: payload.userId, 'refreshTokens.refreshToken': refreshToken });
+    const user = await User.findOne({
+      _id: payload.userId,
+      'refreshTokens.refreshToken': refreshToken,
+    });
 
     if (!user) {
       res.status(403).json({ message: 'Invalid refresh token' });
@@ -219,7 +227,10 @@ export const refreshToken = async (req: Request, res: Response<RefreshResponse |
   }
 };
 
-export const deleteUser = async (req: AuthRequest, res: Response<MessageResponse>): Promise<void> => {
+export const deleteUser = async (
+  req: AuthRequest,
+  res: Response<MessageResponse>,
+): Promise<void> => {
   try {
     const userId = req.user?.userId;
 
@@ -236,7 +247,10 @@ export const deleteUser = async (req: AuthRequest, res: Response<MessageResponse
   }
 };
 
-export const getMe = async (req: AuthRequest, res: Response<MeResponse | MessageResponse>): Promise<void> => {
+export const getMe = async (
+  req: AuthRequest,
+  res: Response<MeResponse | MessageResponse>,
+): Promise<void> => {
   try {
     if (!req.user?.userId) {
       res.status(401).json({ message: 'Unauthorized' });
@@ -260,7 +274,10 @@ export const getMe = async (req: AuthRequest, res: Response<MeResponse | Message
   }
 };
 
-export const getUsers = async (req: AuthRequest, res: Response<UserDTO[] | MessageResponse>): Promise<void> => {
+export const getUsers = async (
+  req: AuthRequest,
+  res: Response<UserDTO[] | MessageResponse>,
+): Promise<void> => {
   try {
     const users = await User.find({ _id: { $ne: req.user?.userId } }, 'email').sort({ email: 1 });
 

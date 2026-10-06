@@ -15,7 +15,11 @@ const requireEnv = (name: string): string => {
 const JWT_ACCESS_SECRET = requireEnv('JWT_ACCESS_SECRET');
 const JWT_REFRESH_SECRET = requireEnv('JWT_REFRESH_SECRET');
 
-const signToken = (payload: Pick<JwtPayload, 'userId'>, secret: string, expiresIn: SignOptions['expiresIn']): Token => {
+const signToken = (
+  payload: Pick<JwtPayload, 'userId'>,
+  secret: string,
+  expiresIn: SignOptions['expiresIn'],
+): Token => {
   const token = jwt.sign(payload, secret, { expiresIn });
   if (!isToken(token)) throw new Error('jwt.sign returned malformed token');
   return token;
