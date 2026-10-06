@@ -10,6 +10,7 @@ import {
   type ClientEvent,
   parseServerEvent,
   WS_CLOSE_TOKEN_EXPIRED,
+  WS_CLOSE_USER_DELETED,
 } from '@research/shared';
 
 const WS_URL = import.meta.env.VITE_WS_URL as string;
@@ -125,11 +126,17 @@ export const useChatSocket = (room: string): UseChatSocketReturnType => {
 
       ws.onclose = e => {
         if (signal.aborted) return;
-        if (socketRef.current === ws) {
-          socketRef.current = null;
-          setConnection({ room, status: 'closed' });
-          reconnect(wasOpened && e.code !== WS_CLOSE_TOKEN_EXPIRED);
+        if (socketRef.current !== ws) return;
+
+        socketRef.current = null;
+        setConnection({ room, status: 'closed' });
+
+        if (e.code === WS_CLOSE_USER_DELETED) {
+          window.dispatchEvent(new Event('auth:unauthorized'));
+          return;
         }
+
+        reconnect(wasOpened && e.code !== WS_CLOSE_TOKEN_EXPIRED);
       };
     };
 

@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { UserDTOSchema } from './auth.js';
 
 export const WS_CLOSE_TOKEN_EXPIRED = 4001;
+export const WS_CLOSE_USER_DELETED = 4003;
 export const MAX_MESSAGE_LENGTH = 1000;
 
 export const ChatMessageSchema = z.object({

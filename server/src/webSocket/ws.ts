@@ -10,6 +10,7 @@ import {
   parseClientEvent,
   type ServerEvent,
   WS_CLOSE_TOKEN_EXPIRED,
+  WS_CLOSE_USER_DELETED,
 } from '@research/shared';
 
 const WS_PATH = '/ws';
@@ -123,8 +124,7 @@ export const initWebSocketServer = (server: Server) => {
           case 'SEND_MESSAGE': {
             const message = await createMessage(room, ws.userId, event.payload.text);
             if (!message) {
-              sendError(ws, 'User not found');
-              ws.close();
+              ws.close(WS_CLOSE_USER_DELETED, 'User not found');
               break;
             }
             broadcast(room, { type: 'NEW_MESSAGE', payload: message });
