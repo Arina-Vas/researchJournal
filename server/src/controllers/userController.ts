@@ -163,15 +163,10 @@ export const logoutUser = async (req: Request, res: Response<MessageResponse>): 
       );
     }
 
-    await User.updateOne(
-      { 'refreshTokens.refreshToken': refreshToken },
-      { $pull: { refreshTokens: { refreshToken } } },
-    );
-
     res.clearCookie('refreshToken', COOKIE_OPTIONS);
     res.json({ message: 'User successfully logged out' });
   } catch (error) {
-    console.error('Login error details:', error);
+    console.error('Logout error details:', error);
     res.status(500).json({ message: 'Server error during logout' });
   }
 };
@@ -237,6 +232,13 @@ export const deleteUser = async (
 
     if (!userId) {
       res.status(401).json({ message: 'Unauthorized' });
+      return;
+    }
+
+    const exists = await User.exists({ _id: userId });
+    if (!exists) {
+      res.clearCookie('refreshToken', COOKIE_OPTIONS);
+      res.status(404).json({ message: 'User not found' });
       return;
     }
 

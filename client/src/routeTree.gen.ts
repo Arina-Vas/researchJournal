@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as AuthIndexRouteImport } from './routes/_auth/index'
 import { Route as AuthChatIndexRouteImport } from './routes/_auth/chat/index'
 import { Route as AuthChatRoomRouteImport } from './routes/_auth/chat/$room'
@@ -25,11 +24,6 @@ const AuthRoute = AuthRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotFoundRoute = NotFoundRouteImport.update({
-  id: '/not-found',
-  path: '/not-found',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthIndexRoute = AuthIndexRouteImport.update({
@@ -61,7 +55,6 @@ const AuthMedicationsIdRoute = AuthMedicationsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof AuthIndexRoute
   '/login': typeof LoginRoute
-  '/not-found': typeof NotFoundRoute
   '/chat/$room': typeof AuthChatRoomRoute
   '/medications/$id': typeof AuthMedicationsIdRoute
   '/chat/': typeof AuthChatIndexRoute
@@ -69,7 +62,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
-  '/not-found': typeof NotFoundRoute
   '/': typeof AuthIndexRoute
   '/chat/$room': typeof AuthChatRoomRoute
   '/medications/$id': typeof AuthMedicationsIdRoute
@@ -80,7 +72,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
-  '/not-found': typeof NotFoundRoute
   '/_auth/': typeof AuthIndexRoute
   '/_auth/chat/$room': typeof AuthChatRoomRoute
   '/_auth/medications/$id': typeof AuthMedicationsIdRoute
@@ -92,7 +83,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
-    | '/not-found'
     | '/chat/$room'
     | '/medications/$id'
     | '/chat/'
@@ -100,7 +90,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
-    | '/not-found'
     | '/'
     | '/chat/$room'
     | '/medications/$id'
@@ -110,7 +99,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_auth'
     | '/login'
-    | '/not-found'
     | '/_auth/'
     | '/_auth/chat/$room'
     | '/_auth/medications/$id'
@@ -121,7 +109,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   LoginRoute: typeof LoginRoute
-  NotFoundRoute: typeof NotFoundRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -138,13 +125,6 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/not-found': {
-      id: '/not-found'
-      path: '/not-found'
-      fullPath: '/not-found'
-      preLoaderRoute: typeof NotFoundRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/': {
@@ -206,7 +186,6 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   LoginRoute: LoginRoute,
-  NotFoundRoute: NotFoundRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
