@@ -14,6 +14,9 @@ import {
   type SortDirection,
 } from '@research/shared';
 
+const isSameFilters = (a: MedicationsFilters, b: MedicationsFilters) =>
+  (Object.keys({ ...a, ...b }) as (keyof MedicationsFilters)[]).every(key => a[key] === b[key]);
+
 export const Medications = () => {
   const [filters, setFilters] = useState<MedicationsFilters>({});
 
@@ -45,8 +48,11 @@ export const Medications = () => {
     resetPage();
   };
 
-  const onFiltersChange = (filters: MedicationsFilters) => {
-    setFilters(filters);
+  const onFiltersChange = (update: Partial<MedicationsFilters> | null) => {
+    const next = update === null ? {} : { ...filters, ...update };
+    if (isSameFilters(filters, next)) return;
+
+    setFilters(next);
     resetPage();
   };
 

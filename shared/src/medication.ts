@@ -5,6 +5,7 @@ export const MAX_PAGE_SIZE = 100;
 export const PAGE_SIZE_OPTIONS = [6, 12] as const;
 export const DEFAULT_PAGE_SIZE = PAGE_SIZE_OPTIONS[0];
 export const DEFAULT_PAGE = 1;
+export const MIN_SEARCH_LENGTH = 3;
 
 export const PaginationSchema = z.object({
   page: z.number(),
@@ -80,8 +81,8 @@ export const MedicationSchema = z.object({
   status: MedicationStatusSchema,
   subStatus: MedicationSubStatusSchema,
   phase: MedicationPhaseSchema,
-  endDate: z.string(),
-  startDate: z.string(),
+  endDate: z.iso.datetime(),
+  startDate: z.iso.datetime(),
   successReaction: z.boolean(),
   approvalRate: z.number(),
   location: z.string(),
@@ -100,14 +101,22 @@ export const GetMedicationsResponseSchema = z.object({
 
 export type GetMedicationsResponse = z.infer<typeof GetMedicationsResponseSchema>;
 
-export const MedicationsFiltersSchema = z.object({
-  name: z.string().optional(),
-  location: ObjectIdSchema.optional(),
-  startDate: z.iso.date().optional(),
-  endDate: z.iso.date().optional(),
-  successReaction: z.stringbool({ truthy: ['true'], falsy: ['false'] }).optional(),
-  excludeId: ObjectIdSchema.optional(),
-});
+export const isValidDateRange = (start?: string, end?: string) => !start || !end || start <= end;
+
+export const MedicationsFiltersSchema = z
+  .object({
+    name: z.string().trim().min(MIN_SEARCH_LENGTH).max(100).optional(),
+    location: ObjectIdSchema.optional(),
+    startDate: z.iso.date().optional(),
+    endDate: z.iso.date().optional(),
+    successReaction: z.stringbool({ truthy: ['true'], falsy: ['false'] }).optional(),
+    excludeId: ObjectIdSchema.optional(),
+  })
+  .refine(d => isValidDateRange(d.startDate, d.endDate), {
+    error: 'Start date must be before end date',
+    path: ['endDate'],
+  });
+
 export type MedicationsFilters = z.infer<typeof MedicationsFiltersSchema>;
 
 export const SortAndPaginationParamsSchema = z.object({

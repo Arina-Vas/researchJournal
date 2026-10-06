@@ -20,7 +20,7 @@ export const buildFilters = (filters: MedicationsDTO = {}) => {
     readyFilters._id = { $ne: new Types.ObjectId(excludeId) };
   }
 
-  if (name && name.trim().length >= 3) {
+  if (name) {
     const escapedName = name.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     readyFilters.name = { $regex: escapedName, $options: 'i' };
   }

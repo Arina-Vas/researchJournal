@@ -5,10 +5,10 @@ import { useDebounce } from '../../shared/hooks/useDebounce';
 import { Input } from '../../shared/ui/input/Input';
 import { Button } from '../../shared/ui/button/Button';
 import { Dropdown } from '../../shared/ui/dropdown/Dropdown';
-import type { MedicationsFilters } from '@research/shared';
+import { isValidDateRange, type MedicationsFilters, MIN_SEARCH_LENGTH } from '@research/shared';
 
 type Props = {
-  onChange: (filters: MedicationsFilters) => void;
+  onChange: (update: Partial<MedicationsFilters> | null) => void;
 };
 export const FiltersBlock = ({ onChange }: Props) => {
   const { data: locations } = useFetchLocations();
@@ -17,34 +17,35 @@ export const FiltersBlock = ({ onChange }: Props) => {
   const [searchName, setSearchName] = useState<string | undefined>(undefined);
   const [startDate, setStartDate] = useState<string | undefined>(undefined);
   const [endDate, setEndDate] = useState<string | undefined>(undefined);
+  const [error, setError] = useState<string | null>(null);
   const debouncedSearch = useDebounce(searchName || '', 500);
 
-  const isValidValue =
-    debouncedSearch.length > 2 || (debouncedSearch.length === 0 && searchName !== undefined);
+  const trimmedValue = debouncedSearch.trim();
+
+  const isSearchTooShort = trimmedValue.length > 0 && trimmedValue.length < MIN_SEARCH_LENGTH;
 
   const [showFilters, setShowFilters] = useState(false);
 
-  const applyFilters = () => {
-    onChange({
-      name: debouncedSearch.length > 2 ? debouncedSearch : undefined,
-      location,
-      successReaction,
-      startDate,
-      endDate,
-    });
-  };
-
   useEffect(() => {
-    if (isValidValue) applyFilters();
+    if (searchName === undefined) return;
+
+    onChange({ name: trimmedValue.length >= MIN_SEARCH_LENGTH ? trimmedValue : undefined });
   }, [debouncedSearch]);
 
-  const onApply = () => {
+  const applyFilters = () => {
+    if (!isValidDateRange(startDate, endDate)) {
+      setError('Start date must be before end date');
+      return;
+    }
+
+    setError(null);
     setShowFilters(false);
-    applyFilters();
+    onChange({ location, successReaction, startDate, endDate });
   };
 
   const onReset = () => {
-    onChange({});
+    onChange(null);
+    setError(null);
     setLocation(undefined);
     setSuccessReaction(undefined);
     setSearchName(undefined);
@@ -62,6 +63,7 @@ export const FiltersBlock = ({ onChange }: Props) => {
             onChange={setSearchName}
             placeholder={'Search by name...'}
             type="search"
+            aria-describedby={isSearchTooShort ? 'search-hint' : undefined}
           />
           <Button
             variant={'outline'}
@@ -71,6 +73,11 @@ export const FiltersBlock = ({ onChange }: Props) => {
             Filters
           </Button>
         </div>
+        {isSearchTooShort && (
+          <span id={'search-hint'} className={s.hint}>
+            Enter at least {MIN_SEARCH_LENGTH} characters
+          </span>
+        )}
 
         {showFilters && (
           <div className={s.filterPopup}>
@@ -112,8 +119,9 @@ export const FiltersBlock = ({ onChange }: Props) => {
               />
               <Input label={'End Date'} type={'date'} value={endDate || ''} onChange={setEndDate} />
             </div>
+            <span className={s.hint}>{error}</span>
             <div className={s.actions}>
-              <Button variant={'primary'} className={s.applyBtn} onClick={onApply}>
+              <Button variant={'primary'} className={s.applyBtn} onClick={applyFilters}>
                 Apply
               </Button>
               <Button variant={'secondary'} className={s.resetBtn} onClick={onReset}>

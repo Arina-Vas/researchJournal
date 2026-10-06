@@ -1,11 +1,10 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { LoginForm } from '../features/login/ui/LoginForm';
+import { z } from 'zod';
 
 export const Route = createFileRoute('/login')({
   component: RouteComponent,
-  validateSearch: (search: Record<string, unknown>): { redirect?: string } => ({
-    redirect: typeof search.redirect === 'string' ? search.redirect : undefined,
-  }),
+  validateSearch: z.object({ redirect: z.string().optional().catch(undefined) }).parse,
   beforeLoad: ({ context, search }) => {
     if (context.auth.isAuthenticated) {
       const target =
