@@ -17,6 +17,7 @@ import {
   type JwtPayload,
   ObjectIdSchema,
 } from '@research/shared';
+import { deleteUserRooms } from '../utils/chat.js';
 
 const MAX_SESSIONS = 5;
 const SALT_ROUNDS = 10;
@@ -239,6 +240,7 @@ export const deleteUser = async (
       return;
     }
 
+    await deleteUserRooms(userId);
     await User.findByIdAndDelete(userId);
     res.clearCookie('refreshToken', COOKIE_OPTIONS);
     res.json({ message: 'User successfully deleted' });

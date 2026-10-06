@@ -122,6 +122,11 @@ export const initWebSocketServer = (server: Server) => {
             break;
           case 'SEND_MESSAGE': {
             const message = await createMessage(room, ws.userId, event.payload.text);
+            if (!message) {
+              sendError(ws, 'User not found');
+              ws.close();
+              break;
+            }
             broadcast(room, { type: 'NEW_MESSAGE', payload: message });
             break;
           }

@@ -1,8 +1,23 @@
 import { Types } from 'mongoose';
 import { Message } from '../models/Message.js';
 import { type ChatMessageDTO, ObjectIdSchema } from '@research/shared';
+import { User } from '../models/User.js';
 
 export const HISTORY_LIMIT = 50;
+
+interface PopulatedSender {
+  _id: Types.ObjectId;
+  email: string;
+}
+interface PopulatedMessage {
+  _id: Types.ObjectId;
+  room: string;
+  text: string;
+  createdAt: Date;
+  sender: PopulatedSender | null;
+}
+type PopulatedMessageWithSender = PopulatedMessage & { sender: PopulatedSender };
+const hasSender = (msg: PopulatedMessage): msg is PopulatedMessageWithSender => msg.sender !== null;
 
 export const isRoomMember = (room: string, userId: string): boolean => {
   const ids = room.split('_');
@@ -13,15 +28,7 @@ export const isRoomMember = (room: string, userId: string): boolean => {
   );
 };
 
-interface PopulatedMessage {
-  _id: Types.ObjectId;
-  room: string;
-  text: string;
-  createdAt: Date;
-  sender: { _id: Types.ObjectId; email: string };
-}
-
-export const toMessageDTO = (msg: PopulatedMessage): ChatMessageDTO => ({
+export const toMessageDTO = (msg: PopulatedMessageWithSender): ChatMessageDTO => ({
   id: msg._id.toString(),
   room: msg.room,
   text: msg.text,
@@ -36,19 +43,24 @@ export const getRoomHistory = async (room: string): Promise<ChatMessageDTO[]> =>
     .populate<{ sender: PopulatedMessage['sender'] }>('sender', 'email')
     .lean<PopulatedMessage[]>();
 
-  return messages.reverse().map(toMessageDTO);
+  return messages.reverse().filter(hasSender).map(toMessageDTO);
 };
 
 export const createMessage = async (
   room: string,
   senderId: string,
   text: string,
-): Promise<ChatMessageDTO> => {
+): Promise<ChatMessageDTO | null> => {
+  const isUser = await User.exists({ _id: senderId });
+
+  if (!isUser) {
+    return null;
+  }
+
   const created = await Message.create({ room, sender: senderId, text });
-  const populated = await created.populate<{ sender: PopulatedMessage['sender'] }>(
-    'sender',
-    'email',
-  );
+  const populated = await created.populate<{ sender: PopulatedSender | null }>('sender', 'email');
+
+  if (!populated.sender) return null;
 
   return toMessageDTO({
     _id: populated._id,
@@ -57,4 +69,8 @@ export const createMessage = async (
     createdAt: populated.createdAt,
     sender: populated.sender,
   });
+};
+
+export const deleteUserRooms = async (userId: string): Promise<void> => {
+  await Message.deleteMany({ room: { $regex: `(^|_)${userId}($|_)` } });
 };
