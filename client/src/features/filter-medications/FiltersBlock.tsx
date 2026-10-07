@@ -85,7 +85,7 @@ export const FiltersBlock = ({ onChange }: Props) => {
               <span className={s.filterTitle}>Location</span>
               <Dropdown
                 label={'Choose location'}
-                options={locations || []}
+                options={locations ?? []}
                 onChange={setLocation}
                 currentOption={location || ''}
               />
@@ -96,14 +96,20 @@ export const FiltersBlock = ({ onChange }: Props) => {
                 <Button
                   variant={'outline'}
                   isActive={successReaction === true}
-                  onClick={() => setSuccessReaction(true)}
+                  onClick={() =>
+                    successReaction ? setSuccessReaction(undefined) : setSuccessReaction(true)
+                  }
                 >
                   Successful
                 </Button>
                 <Button
                   variant={'outline'}
                   isActive={successReaction === false}
-                  onClick={() => setSuccessReaction(false)}
+                  onClick={() =>
+                    successReaction === false
+                      ? setSuccessReaction(undefined)
+                      : setSuccessReaction(false)
+                  }
                 >
                   Unsuccessful
                 </Button>
@@ -113,11 +119,18 @@ export const FiltersBlock = ({ onChange }: Props) => {
               <span className={s.filterTitle}>Dates</span>
               <Input
                 label={'Start Date'}
+                id={'start-date'}
                 type={'date'}
                 value={startDate || ''}
-                onChange={setStartDate}
+                onChange={value => setStartDate(value || undefined)}
               />
-              <Input label={'End Date'} type={'date'} value={endDate || ''} onChange={setEndDate} />
+              <Input
+                label={'End Date'}
+                id={'end-date'}
+                type={'date'}
+                value={endDate || ''}
+                onChange={value => setEndDate(value || undefined)}
+              />
             </div>
             <span className={s.hint}>{error}</span>
             <div className={s.actions}>

@@ -1,10 +1,10 @@
-import type { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import type { ChangeEvent } from 'react';
 import s from './LocationsDropdown.module.css';
 import type { LocationDTO } from '@research/shared';
 
 type Props = {
   options: LocationDTO[];
-  onChange: Dispatch<SetStateAction<string | undefined>>;
+  onChange: (value: string | undefined) => void;
   currentOption: string;
   label: string;
 };
@@ -13,8 +13,13 @@ export const Dropdown = ({ options, label, onChange, currentOption }: Props) => 
     onChange(e.target.value || undefined);
 
   return (
-    <select id="location" className={s.select} value={currentOption} onChange={onChangeHandler}>
-      {label && <option value="">{label}</option>}
+    <select
+      aria-label={label}
+      className={s.select}
+      value={currentOption}
+      onChange={onChangeHandler}
+    >
+      <option value="">{label}</option>
       {options.map(location => (
         <option key={location.id} value={location._id}>
           {location.clinicName}
