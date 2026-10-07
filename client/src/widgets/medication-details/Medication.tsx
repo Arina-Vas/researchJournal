@@ -21,7 +21,6 @@ export const Medication = ({ id }: Props) => {
   const { data: location, isLoading: isLocationLoading } = useFetchLocationById(
     data?.location ?? '',
   );
-  // const navigate = useNavigate();
 
   const handleGetDirection = useCallback(() => {
     if (!location) return;
@@ -45,7 +44,7 @@ export const Medication = ({ id }: Props) => {
         <h2 className={s.name}>{data.name}</h2>
         <div className={s.description}>
           <span>About this medicine</span>
-          <p>{data.description.repeat(5)}</p>
+          <p>{data.description}</p>
         </div>
       </div>
       <div className={s.location}>
