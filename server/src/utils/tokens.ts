@@ -1,5 +1,6 @@
 import jwt, { type SignOptions } from 'jsonwebtoken';
 import { isToken, type JwtPayload, JwtPayloadSchema, type Token } from '@research/shared';
+import { randomUUID } from 'node:crypto';
 
 interface Tokens {
   accessToken: Token;
@@ -20,7 +21,7 @@ const signToken = (
   secret: string,
   expiresIn: SignOptions['expiresIn'],
 ): Token => {
-  const token = jwt.sign(payload, secret, { expiresIn });
+  const token = jwt.sign(payload, secret, { expiresIn, jwtid: randomUUID() });
   if (!isToken(token)) throw new Error('jwt.sign returned malformed token');
   return token;
 };

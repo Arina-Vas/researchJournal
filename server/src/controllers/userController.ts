@@ -60,8 +60,8 @@ export const registerUser = async (
 
     newUser.refreshTokens.push({
       refreshToken,
-      userAgent: req.headers['user-agent'] || '',
-      ip: req.ip || '',
+      userAgent: req.headers['user-agent'] || 'unknown',
+      ip: req.ip || 'unknown',
       createdAt: new Date(),
     });
     await newUser.save();
@@ -113,16 +113,13 @@ export const loginUser = async (
     const currentUserAgent = req.headers['user-agent'] || 'unknown';
     const currentIp = req.ip || 'unknown';
 
-    const sessionIndex = user.refreshTokens.findIndex(
+    const session = user.refreshTokens.find(
       i => i.ip === currentIp && i.userAgent === currentUserAgent,
     );
 
-    if (sessionIndex !== -1) {
-      user.refreshTokens[sessionIndex] = {
-        ...user.refreshTokens[sessionIndex],
-        refreshToken,
-        createdAt: new Date(),
-      };
+    if (session) {
+      session.refreshToken = refreshToken;
+      session.createdAt = new Date();
     } else {
       if (user.refreshTokens.length >= MAX_SESSIONS) {
         user.refreshTokens.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
@@ -131,8 +128,8 @@ export const loginUser = async (
 
       user.refreshTokens.push({
         refreshToken,
-        userAgent: req.headers['user-agent'] || '',
-        ip: req.ip || '',
+        userAgent: currentUserAgent,
+        ip: currentIp,
         createdAt: new Date(),
       });
     }
@@ -196,25 +193,26 @@ export const refreshToken = async (
       return;
     }
 
-    const user = await User.findOne({
+    const tokens = generateToken({ userId: payload.userId });
+
+    const findFilter = {
       _id: payload.userId,
       'refreshTokens.refreshToken': refreshToken,
-    });
+    };
 
-    if (!user) {
+    const updateFields = {
+      $set: {
+        'refreshTokens.$.refreshToken': tokens.refreshToken,
+        'refreshTokens.$.createdAt': new Date(),
+      },
+    };
+
+    const updateResult = await User.updateOne(findFilter, updateFields);
+
+    if (updateResult.matchedCount === 0) {
       res.status(403).json({ message: 'Invalid refresh token' });
       return;
     }
-
-    const tokens = generateToken({ userId: payload.userId });
-
-    user.refreshTokens = user.refreshTokens.map(session =>
-      session.refreshToken === refreshToken
-        ? { ...session, refreshToken: tokens.refreshToken, createdAt: new Date() }
-        : session,
-    );
-
-    await user.save();
 
     res.cookie('refreshToken', tokens.refreshToken, COOKIE_OPTIONS);
     res.status(200).json({ accessToken: tokens.accessToken });
