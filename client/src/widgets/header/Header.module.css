@@ -24,8 +24,10 @@
   gap: 10px;
 }
 
-@media (max-width: 576px){
-  .headerWrapper, .navigation, .settings{
+@media (max-width: 576px) {
+  .headerWrapper,
+  .navigation,
+  .settings {
     gap: 5px;
   }
 }
