@@ -15,13 +15,14 @@ export const buildFilters = (filters: MedicationsDTO = {}) => {
   } = filters;
 
   const readyFilters: QueryFilter<MedicationDoc> = {};
+  const isSortByLocation = sortBy === 'location';
 
   if (excludeId) {
     readyFilters._id = { $ne: new Types.ObjectId(excludeId) };
   }
 
   if (name) {
-    const escapedName = name.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     readyFilters.name = { $regex: escapedName, $options: 'i' };
   }
 
@@ -34,17 +35,19 @@ export const buildFilters = (filters: MedicationsDTO = {}) => {
   }
 
   if (startDate) {
-    readyFilters.startDate = { $gte: new Date(startDate).toISOString() };
+    readyFilters.startDate = { $gte: `${startDate}T00:00:00Z` };
   }
 
   if (endDate) {
-    readyFilters.endDate = { $lte: new Date(endDate).toISOString() };
+    readyFilters.endDate = { $lte: `${endDate}T23:59:59Z` };
   }
 
+  const sortField = isSortByLocation ? 'location.clinicName' : sortBy;
   const sortOrder = sortDirection === 'asc' ? 1 : -1;
   const sortOptions: Record<string, 1 | -1> = {
-    [sortBy]: sortOrder,
+    [sortField]: sortOrder,
+    _id: sortOrder,
   };
 
-  return { readyFilters, sortOptions };
+  return { readyFilters, sortOptions, isSortByLocation };
 };

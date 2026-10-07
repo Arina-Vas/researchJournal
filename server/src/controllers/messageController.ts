@@ -22,6 +22,6 @@ export const getMessagesHistory = async (
 
     res.json(await getRoomHistory(room));
   } catch (err) {
-    res.status(500).json({ message: 'Ошибка сервера при получении данных' });
+    res.status(500).json({ message: 'Server error while fetching data' });
   }
 };
