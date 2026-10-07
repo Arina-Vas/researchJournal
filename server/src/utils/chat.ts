@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 import { Message } from '../models/Message.js';
-import { type ChatMessageDTO, ObjectIdSchema } from '@research/shared';
+import { type ChatMessageDTO } from '@research/shared';
 import { User } from '../models/User.js';
 
 export const HISTORY_LIMIT = 50;
@@ -16,17 +16,9 @@ interface PopulatedMessage {
   createdAt: Date;
   sender: PopulatedSender | null;
 }
+
 type PopulatedMessageWithSender = PopulatedMessage & { sender: PopulatedSender };
 const hasSender = (msg: PopulatedMessage): msg is PopulatedMessageWithSender => msg.sender !== null;
-
-export const isRoomMember = (room: string, userId: string): boolean => {
-  const ids = room.split('_');
-  return (
-    ids.length === 2 &&
-    ids.every(id => ObjectIdSchema.safeParse(id).success) &&
-    ids.includes(userId)
-  );
-};
 
 export const toMessageDTO = (msg: PopulatedMessageWithSender): ChatMessageDTO => ({
   id: msg._id.toString(),

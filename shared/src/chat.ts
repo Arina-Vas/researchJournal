@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { UserDTOSchema } from './auth.js';
+import { ObjectIdSchema } from './common.js';
 
 export const WS_CLOSE_TOKEN_EXPIRED = 4001;
 export const WS_CLOSE_USER_DELETED = 4003;
@@ -63,3 +64,13 @@ export const parseClientEvent = (raw: unknown): ClientEvent | null =>
 
 export const parseServerEvent = (raw: unknown): ServerEvent | null =>
   parseEvent(ServerEventSchema, raw);
+
+export const ChatRoomSchema = z
+  .templateLiteral([ObjectIdSchema, '_', ObjectIdSchema])
+  .refine(room => {
+    const [a, b] = room.split('_');
+    return a! < b!;
+  }, 'Invalid room');
+
+export const isRoomMember = (room: string, userId: string): boolean =>
+  ChatRoomSchema.safeParse(room).success && room.split('_').includes(userId);

@@ -2,9 +2,10 @@ import type { IncomingMessage, Server } from 'http';
 import type { Duplex } from 'stream';
 import { WebSocketServer, WebSocket } from 'ws';
 import { verifyAccessToken } from '../utils/tokens.js';
-import { createMessage, getRoomHistory, isRoomMember } from '../utils/chat.js';
+import { createMessage, getRoomHistory } from '../utils/chat.js';
 import type { AuthedSocket } from '../types/chat.js';
 import {
+  isRoomMember,
   isToken,
   type JwtPayload,
   parseClientEvent,
