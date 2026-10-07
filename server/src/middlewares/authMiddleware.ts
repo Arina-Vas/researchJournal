@@ -2,9 +2,10 @@ import { type AuthRequest } from '../types/user.js';
 import type { NextFunction, Response } from 'express';
 import { verifyAccessToken } from '../utils/tokens.js';
 import jwt from 'jsonwebtoken';
-import { isToken } from '@research/shared';
+import { isToken, type JwtPayload } from '@research/shared';
+import { User } from '../models/User.js';
 
-export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -19,13 +20,24 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
     return;
   }
 
+  let payload: JwtPayload;
   try {
-    req.user = verifyAccessToken(token);
+    payload = verifyAccessToken(token);
     next();
   } catch (error) {
     if (!(error instanceof jwt.TokenExpiredError)) {
       console.error(error);
     }
     res.status(401).json({ message: 'Access token is invalid or expired' });
+    return;
   }
+
+  const user = await User.exists({ _id: payload.userId });
+  if (!user) {
+    res.status(401).json({ message: 'User does not exist' });
+    return;
+  }
+
+  req.user = payload;
+  next();
 };

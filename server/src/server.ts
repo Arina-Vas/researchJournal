@@ -11,6 +11,7 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import http from 'http';
 import { initWebSocketServer } from './webSocket/ws.js';
+import helmet from 'helmet';
 
 const app: Express = express();
 
@@ -23,6 +24,7 @@ app.use(
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(helmet());
 
 const port = process.env.PORT || '3001';
 
