@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-import express, { type Express, type NextFunction, type Request, type Response } from 'express';
+import express, { type Express } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { connectDB } from './db.js';
@@ -12,6 +12,7 @@ import userRoutes from './routes/userRoutes.js';
 import http from 'http';
 import { initWebSocketServer } from './webSocket/ws.js';
 import helmet from 'helmet';
+import { errorHandler, notFoundHandler } from './middlewares/errorHandler.js';
 
 const app: Express = express();
 
@@ -34,13 +35,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/users', userRoutes);
 
-app.use((err: unknown, _req: Request, res: Response, next: NextFunction) => {
-  if (err instanceof SyntaxError && 'body' in err) {
-    res.status(400).json({ message: 'Invalid JSON' });
-    return;
-  }
-  next(err);
-});
+app.use('/api', notFoundHandler);
+app.use(errorHandler);
 
 const server = http.createServer(app);
 const startServer = async () => {
