@@ -4,6 +4,8 @@ import { isSessionExpiredError } from './isSessionExpiredError';
 import { RefreshResponseSchema, type Token } from '@research/shared';
 import { parseResponse } from './parseResponse';
 
+const REFRESH_RETRY_DELAY = 300;
+
 export const instance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
@@ -23,11 +25,22 @@ instance.interceptors.request.use(config => {
 
 let refreshPromise: Promise<Token> | null = null;
 
+const requestRefresh = () =>
+  instance.post('auth/refresh').then(res => parseResponse(RefreshResponseSchema, res.data));
+
+const requestRefreshWithRetry = async () => {
+  try {
+    return await requestRefresh();
+  } catch (error) {
+    if (!isAxiosError(error) || error.response?.status !== 403) throw error;
+    await new Promise(resolve => setTimeout(resolve, REFRESH_RETRY_DELAY));
+    return requestRefresh();
+  }
+};
+
 export const refreshAccessToken = (): Promise<Token> => {
   if (refreshPromise === null) {
-    refreshPromise = instance
-      .post('auth/refresh')
-      .then(res => parseResponse(RefreshResponseSchema, res.data))
+    refreshPromise = requestRefreshWithRetry()
       .then(({ accessToken }) => {
         tokenStorage.set(accessToken);
         return accessToken;
