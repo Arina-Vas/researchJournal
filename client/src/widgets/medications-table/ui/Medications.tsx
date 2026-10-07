@@ -44,7 +44,7 @@ export const Medications = () => {
 
   const onSort = (value: SortBy) => {
     setSortBy(value);
-    setSortDirection(p => (p === 'asc' ? 'desc' : 'asc'));
+    setSortDirection(p => (sortBy === value && p === 'asc' ? 'desc' : 'asc'));
     resetPage();
   };
 
