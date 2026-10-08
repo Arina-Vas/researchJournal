@@ -4,8 +4,8 @@ import { defineConfig } from 'vite';
 import path from 'path';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 // https://vite.dev/config/
-export default defineConfig({
-  base: '/',
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/researchJournal/' : '/',
   plugins: [
     tanstackRouter({
       target: 'react',
@@ -19,4 +19,4 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, './src'),
     },
   },
-});
+}));

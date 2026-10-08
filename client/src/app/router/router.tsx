@@ -6,6 +6,7 @@ import { NotFound } from '../../shared/ui/notFound/NotFound';
 // Create a new router instance
 export const router = createRouter({
   routeTree,
+  basepath: import.meta.env.BASE_URL,
   context: { auth: undefined! },
   defaultPreload: 'intent',
   scrollRestoration: true,
