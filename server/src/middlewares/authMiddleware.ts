@@ -24,7 +24,7 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
   try {
     payload = verifyAccessToken(token);
   } catch (error) {
-    if (!(error instanceof jwt.TokenExpiredError)) {
+    if (!(error instanceof jwt.JsonWebTokenError)) {
       console.error(error);
     }
     res.status(401).json({ message: 'Access token is invalid or expired' });
