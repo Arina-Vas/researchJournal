@@ -74,3 +74,6 @@ export const ChatRoomSchema = z
 
 export const isRoomMember = (room: string, userId: string): boolean =>
   ChatRoomSchema.safeParse(room).success && room.split('_').includes(userId);
+
+export const getPeerId = (room: string, myId: string): string | undefined =>
+  room.split('_').find(id => id !== myId);

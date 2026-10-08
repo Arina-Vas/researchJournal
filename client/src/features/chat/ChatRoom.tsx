@@ -1,16 +1,15 @@
 import { type SubmitEvent, useEffect, useRef, useState } from 'react';
-import { Link } from '@tanstack/react-router';
+import { Link, Navigate } from '@tanstack/react-router';
 import s from './ChatRoom.module.css';
 import { useAuth } from '../../app/providers/auth-provider/use-auth';
 import { useGetUserById } from '../../entities/user/lib/hooks';
-import { getPeerId } from '../../shared/utils/getRoomId';
 import { Input } from '../../shared/ui/input/Input';
 import { Button } from '../../shared/ui/button/Button';
 import type { SocketStatus } from '../../entities/message/lib/type';
 import { useChatSocket } from './lib/useChatSocket';
 import { formatTime } from '../../shared/utils/formatTime';
 import { Spinner } from '../../shared/ui/spinner/Spinner';
-import { MAX_MESSAGE_LENGTH } from '@research/shared';
+import { getPeerId, MAX_MESSAGE_LENGTH } from '@research/shared';
 
 const STATUS_LABEL: Record<SocketStatus, string> = {
   connecting: 'Connecting…',
@@ -24,8 +23,8 @@ type Props = {
 
 export const ChatRoom = ({ room }: Props) => {
   const { user } = useAuth();
-  const peerId = user ? getPeerId(room, user.id) : '';
-  const { data: friend } = useGetUserById(peerId || '');
+  const peerId = user ? getPeerId(room, user.id) : null;
+  const { data: friend, isError } = useGetUserById(peerId ?? '');
 
   const { messages, status, sendMessage, isHistoryLoaded } = useChatSocket(room);
   const [text, setText] = useState('');
@@ -43,6 +42,8 @@ export const ChatRoom = ({ room }: Props) => {
     list.scrollTo({ top: list.scrollHeight, behavior: isFirstScroll.current ? 'auto' : 'smooth' });
     if (messages.length) isFirstScroll.current = false;
   }, [messages]);
+
+  if (isError) return <Navigate to="/chat" replace />;
 
   const onSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();

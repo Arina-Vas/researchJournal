@@ -5,6 +5,7 @@ import { verifyAccessToken } from '../utils/tokens.js';
 import { createMessage, getRoomHistory } from '../utils/chat.js';
 import type { AuthedSocket } from '../types/chat.js';
 import {
+  getPeerId,
   isRoomMember,
   isToken,
   type JwtPayload,
@@ -13,6 +14,7 @@ import {
   WS_CLOSE_TOKEN_EXPIRED,
   WS_CLOSE_USER_DELETED,
 } from '@research/shared';
+import { User } from '../models/User.js';
 
 const WS_PATH = '/ws';
 const HEARTBEAT_INTERVAL = 30_000;
@@ -110,6 +112,13 @@ export const initWebSocketServer = (server: Server) => {
         sendError(ws, 'Access to this room is denied');
         return;
       }
+
+      const peerId = getPeerId(room, ws.userId);
+      if( await User.exists({ userId: peerId })) {
+        sendError(ws, 'Access to this room is denied');
+        return;
+      }
+
 
       try {
         switch (event.type) {
