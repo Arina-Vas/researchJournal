@@ -38,8 +38,8 @@ export const selectTotalTestsByMonth = (items: MedicationWithLocation[]) => {
     const itemDate = parseEndDate(item.endDate);
     if (!itemDate) return;
 
-    const itemYear = itemDate.getFullYear();
-    const itemMonth = itemDate.getMonth();
+    const itemYear = itemDate.getUTCFullYear();
+    const itemMonth = itemDate.getUTCMonth();
 
     const monthData = monthsMap.get(itemMonth);
     if (!monthData) return;
@@ -60,7 +60,7 @@ export const selectTestingProcessByPhase = (items: MedicationWithLocation[]) => 
 
   items.forEach(item => {
     const itemDate = parseEndDate(item.endDate);
-    if (!itemDate || itemDate.getFullYear() !== currentYear) return;
+    if (!itemDate || itemDate.getUTCFullYear() !== currentYear) return;
 
     const current = map.get(item.phase) || { name: item.phase, value: 0 };
     map.set(item.phase, { name: item.phase, value: current.value + 1 });
@@ -111,8 +111,8 @@ export const selectApprovalRateByMonth = (items: MedicationWithLocation[]) => {
     const itemDate = parseEndDate(item.endDate);
     if (!itemDate) return;
 
-    const itemYear = itemDate.getFullYear();
-    const itemMonth = itemDate.getMonth();
+    const itemYear = itemDate.getUTCFullYear();
+    const itemMonth = itemDate.getUTCMonth();
     const monthData = monthsMap.get(itemMonth);
     if (!monthData) return;
 
@@ -140,9 +140,9 @@ export const selectStatusByDate = (items: MedicationWithLocation[]) => {
 
   items.forEach(item => {
     const dateObj = parseEndDate(item.endDate);
-    if (!dateObj || dateObj.getFullYear() !== currentYear) return;
+    if (!dateObj || dateObj.getUTCFullYear() !== currentYear) return;
 
-    const formattedDate = dateObj.toLocaleDateString('en-US');
+    const formattedDate = dateObj.toLocaleDateString('en-US', { timeZone: 'UTC' });
     const current = map.get(formattedDate) || { completed: 0, awaiting: 0, originalDate: dateObj };
 
     if (item.status === 'completed') {
@@ -160,7 +160,7 @@ export const selectStatusByDate = (items: MedicationWithLocation[]) => {
       const completedPercent = Math.round((counts.completed / total) * 100);
 
       return {
-        date: counts.originalDate.toLocaleDateString('en-US'),
+        date: counts.originalDate.toLocaleDateString('en-US', { timeZone: 'UTC' }),
         completed: completedPercent === 0 ? 0.01 : completedPercent,
         rawCompleted: completedPercent,
         awaiting: 100 - completedPercent,
