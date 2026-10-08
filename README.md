@@ -3,6 +3,7 @@
 A web application for tracking medications in clinical development. Users can browse research data on a dashboard, search and filter the medication list, view each medication with its clinic on a map, and chat with other researchers in real time.
 
 Live demo: https://arina-vas.github.io/researchJournal/
+API: https://researchjournal.onrender.com
 
 ## Features
 

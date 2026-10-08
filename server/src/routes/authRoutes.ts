@@ -16,6 +16,7 @@ const authLimiter = rateLimit({
   message: { message: 'Too many attempts, please try again later' },
   standardHeaders: 'draft-8',
   legacyHeaders: false,
+  skipSuccessfulRequests: true,
 });
 
 const router = Router();

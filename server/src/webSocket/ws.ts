@@ -113,14 +113,15 @@ export const initWebSocketServer = (server: Server) => {
         return;
       }
 
-      const peerId = getPeerId(room, ws.userId);
-      if( await User.exists({ userId: peerId })) {
-        sendError(ws, 'Access to this room is denied');
-        return;
-      }
-
-
       try {
+        if (event.type !== 'LEAVE_ROOM') {
+          const peerId = getPeerId(room, ws.userId);
+          if (!peerId || !(await User.exists({ _id: peerId }))) {
+            sendError(ws, 'User not found');
+            return;
+          }
+        }
+
         switch (event.type) {
           case 'JOIN_ROOM': {
             joinRoom(ws, room);
