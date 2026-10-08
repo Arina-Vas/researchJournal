@@ -30,6 +30,7 @@ export const FiltersBlock = ({ onChange }: Props) => {
     if (searchName === undefined) return;
 
     onChange({ name: trimmedValue.length >= MIN_SEARCH_LENGTH ? trimmedValue : undefined });
+    //eslint-disable-next-line
   }, [debouncedSearch]);
 
   const applyFilters = () => {
