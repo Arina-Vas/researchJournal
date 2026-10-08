@@ -1,7 +1,7 @@
 import s from './MedicationRow.module.css';
 import Success from '@/shared/assets/images/Success.svg';
 import Error from '@/shared/assets/images/Error.svg';
-import { useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { formatDate } from '../../../../shared/utils/formatDate';
 import type { MedicationWithLocation } from '@research/shared';
 
@@ -11,7 +11,16 @@ export const MedicationRow = ({ item }: { item: MedicationWithLocation }) => {
   const navigate = useNavigate();
   return (
     <tr className={s.row} onClick={() => navigate({ to: `/medications/${item._id}` })}>
-      <td className={`${s.item} ${s.nameCell}`}>{item.name}</td>
+      <td className={`${s.item} ${s.nameCell}`}>
+        <Link
+          className={s.link}
+          to={`/medications/$id`}
+          params={{ id: item._id }}
+          onClick={e => e.stopPropagation()}
+        >
+          {item.name}
+        </Link>
+      </td>
       <td className={s.item}>{item.location.clinicName}</td>
       <td className={s.item}>{formatDate(item.startDate)}</td>
       <td className={s.item}>{formatDate(item.endDate)}</td>
