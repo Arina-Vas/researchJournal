@@ -27,6 +27,12 @@ jobs:
       - name: Install dependencies
         run: npm ci --workspace client --workspace shared --include-workspace-root
 
+      - name: Lint
+        run: npm run lint --workspace client
+
+      - name: Test
+        run: npm test --workspace shared --workspace client
+
       - name: Build
         working-directory: client
         env:
