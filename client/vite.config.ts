@@ -19,4 +19,9 @@ export default defineConfig(({ command }) => ({
       '@': path.resolve(import.meta.dirname, './src'),
     },
   },
+  test: {
+    environment: 'jsdom',
+    // run in a timezone west of UTC so date bugs show up
+    env: { TZ: 'America/Los_Angeles' },
+  },
 }));
