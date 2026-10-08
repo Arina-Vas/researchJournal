@@ -16,6 +16,8 @@ import { errorHandler, notFoundHandler } from './middlewares/errorHandler.js';
 
 const app: Express = express();
 
+//Without this req.ip setting, all users will have the same proxy IP.
+app.set('trust proxy', 1);
 app.use(
   cors({
     origin: process.env.CLIENT_URL || 'http://localhost:5173',
@@ -28,6 +30,8 @@ app.use(cookieParser());
 app.use(helmet());
 
 const port = process.env.PORT || '3001';
+
+app.get('/api/ip', (req, res) => res.json({ ip: req.ip }));
 
 app.use('/api/medications', medicationRoutes);
 app.use('/api/locations', locationRoutes);
@@ -46,7 +50,7 @@ const startServer = async () => {
     initWebSocketServer(server);
 
     server.listen(port, () => {
-      console.log(`WS & HTTP server is running on ws://localhost:${port}`);
+      console.log(`WS & Server is running on port ${port}`);
     });
   } catch (e) {
     console.error(e);
