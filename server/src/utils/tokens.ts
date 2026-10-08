@@ -1,6 +1,7 @@
 import jwt, { type SignOptions } from 'jsonwebtoken';
 import { isToken, type JwtPayload, JwtPayloadSchema, type Token } from '@research/shared';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
+import { z } from 'zod';
 
 interface Tokens {
   accessToken: Token;
@@ -12,6 +13,15 @@ const requireEnv = (name: string): string => {
   if (!value) throw new Error(`Missing required env variable: ${name}`);
   return value;
 };
+
+const TokenHashSchema = z
+  .string()
+  .regex(/^[0-9a-f]{64}$/)
+  .brand<'TokenHash'>();
+export type TokenHash = z.infer<typeof TokenHashSchema>;
+
+export const hashToken = (token: Token): TokenHash =>
+  TokenHashSchema.parse(createHash('sha256').update(token).digest('hex'));
 
 const JWT_ACCESS_SECRET = requireEnv('JWT_ACCESS_SECRET');
 const JWT_REFRESH_SECRET = requireEnv('JWT_REFRESH_SECRET');

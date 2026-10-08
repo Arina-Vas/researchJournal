@@ -2,7 +2,7 @@ import { type Request, type Response } from 'express';
 import { User } from '../models/User.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { generateToken, verifyRefreshToken } from '../utils/tokens.js';
+import { generateToken, hashToken, verifyRefreshToken } from '../utils/tokens.js';
 import { type AuthRequest } from '../types/user.js';
 import {
   type AuthResponse,
@@ -56,9 +56,10 @@ export const registerUser = async (
   });
 
   const { refreshToken, accessToken } = generateToken({ userId: newUser.id.toString() });
+  const hashedRefreshToken = hashToken(refreshToken);
 
   newUser.refreshTokens.push({
-    refreshToken,
+    refreshToken: hashedRefreshToken,
     userAgent: req.headers['user-agent'] || 'unknown',
     ip: req.ip || 'unknown',
     createdAt: new Date(),
@@ -104,6 +105,8 @@ export const loginUser = async (
 
   const { refreshToken, accessToken } = generateToken({ userId: user.id.toString() });
 
+  const hashedRefreshToken = hashToken(refreshToken);
+
   // check session exist
   const currentUserAgent = req.headers['user-agent'] || 'unknown';
   const currentIp = req.ip || 'unknown';
@@ -113,7 +116,7 @@ export const loginUser = async (
   );
 
   if (session) {
-    session.refreshToken = refreshToken;
+    session.refreshToken = hashedRefreshToken;
     session.createdAt = new Date();
   } else {
     if (user.refreshTokens.length >= MAX_SESSIONS) {
@@ -122,7 +125,7 @@ export const loginUser = async (
     }
 
     user.refreshTokens.push({
-      refreshToken,
+      refreshToken: hashedRefreshToken,
       userAgent: currentUserAgent,
       ip: currentIp,
       createdAt: new Date(),
@@ -144,9 +147,10 @@ export const logoutUser = async (req: Request, res: Response<MessageResponse>): 
   const refreshToken = req.cookies.refreshToken;
 
   if (isToken(refreshToken)) {
+    const hashedRefreshToken = hashToken(refreshToken);
     await User.updateOne(
-      { 'refreshTokens.refreshToken': refreshToken },
-      { $pull: { refreshTokens: { refreshToken } } },
+      { 'refreshTokens.refreshToken': hashedRefreshToken },
+      { $pull: { refreshTokens: { refreshToken: hashedRefreshToken } } },
     );
   }
 
@@ -164,6 +168,7 @@ export const refreshToken = async (
   }
 
   const refreshToken = req.cookies.refreshToken;
+  const incomingTokenHashed = hashToken(refreshToken);
 
   let payload: JwtPayload;
   try {
@@ -174,20 +179,20 @@ export const refreshToken = async (
       res.status(401).json({ message: 'Refresh token is invalid or expired' });
       return;
     }
-    res.status(500).json({ message: 'Server error during token refresh' });
-    return;
+    throw error;
   }
 
   const tokens = generateToken({ userId: payload.userId });
+  const hashedRefreshToken = hashToken(tokens.refreshToken);
 
   const findFilter = {
     _id: payload.userId,
-    'refreshTokens.refreshToken': refreshToken,
+    'refreshTokens.refreshToken': incomingTokenHashed,
   };
 
   const updateFields = {
     $set: {
-      'refreshTokens.$.refreshToken': tokens.refreshToken,
+      'refreshTokens.$.refreshToken': hashedRefreshToken,
       'refreshTokens.$.createdAt': new Date(),
     },
   };

@@ -1,8 +1,8 @@
 import { Schema, model } from 'mongoose';
-import type { Token } from '@research/shared';
+import type { TokenHash } from '../utils/tokens.js';
 
 interface Session {
-  refreshToken: Token;
+  refreshToken: TokenHash;
   userAgent?: string;
   ip?: string;
   createdAt: Date;
